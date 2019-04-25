@@ -79,32 +79,32 @@ namespace FreeQuant.Modules {
         internal void SendOrder(Order order) {
             orderList.Add(order);
             activeOrderList.Add(order);
-            if (mTdProvider != null) {
-                Tick t;
-                double uper = 0;
-                double lower = 0;
-                if (lastTickDic.TryGetValue(order.InstrumentID, out t)) {
-                    uper = t.UpperLimitPrice;
-                    lower = t.LowerLimitPrice;
-                }
-                //
-                Instrument inst;
-                double priceTick = 0;
-                if (mTdProvider.TryGetInstrument(order.InstrumentID, out inst)) {
-                    priceTick = inst.PriceTick;
-                }
-                //
-                if (priceTick != 0) {
-                    order.Price = ((int)(order.Price / priceTick)) * priceTick;
-                }
-                if (order.Price > uper && uper != 0) {
-                    order.Price = uper;
-                } else if (order.Price < lower) {
-                    order.Price = lower;
-                }
-                //
-                mTdProvider.SendOrder(order);
-            }
+//            if (mTdProvider != null) {
+//                Tick t;
+//                double uper = 0;
+//                double lower = 0;
+//                if (lastTickDic.TryGetValue(order.Instrument, out t)) {
+//                    uper = t.UpperLimitPrice;
+//                    lower = t.LowerLimitPrice;
+//                }
+//                //
+//                Instrument inst;
+//                double priceTick = 0;
+//                if (mTdProvider.TryGetInstrument(order.Instrument, out inst)) {
+//                    priceTick = inst.PriceTick;
+//                }
+//                //
+//                if (priceTick != 0) {
+//                    order.Price = ((int)(order.Price / priceTick)) * priceTick;
+//                }
+//                if (order.Price > uper && uper != 0) {
+//                    order.Price = uper;
+//                } else if (order.Price < lower) {
+//                    order.Price = lower;
+//                }
+//                //
+//                mTdProvider.SendOrder(order);
+//            }
         }
 
         //撤单
@@ -122,11 +122,6 @@ namespace FreeQuant.Modules {
             }
         }
 
-        //获取合约
-        public bool TryGetInstrument(string instrumentID, out Instrument inst) {
-            return mTdProvider.TryGetInstrument(instrumentID, out inst);
-        }
-
         //订单生成函数
         public Order BuyOrder(int vol) {
             if (lastTickDic.ContainsKey(mMainInstrument)) {
@@ -141,11 +136,11 @@ namespace FreeQuant.Modules {
         public Order BuyOrder(int vol, double price) {
             return BuyOrder(vol, price, mMainInstrument);
         }
-        public Order BuyOrder(int vol, double price, string instrumentID) {
+        public Order BuyOrder(int vol, double price, Instrument instrument) {
             if (vol < 0) {
-                return BuyOrder(0, price, instrumentID);
+                return BuyOrder(0, price, instrument);
             }
-            Order order = new Order(this, instrumentID, DirectionType.Buy, price, vol);
+            Order order = new Order(this, instrument, DirectionType.Buy, price, vol);
             return order;
         }
         public Order SellOrder(int vol) {
@@ -161,11 +156,11 @@ namespace FreeQuant.Modules {
         public Order SellOrder(int vol, double price) {
             return SellOrder(vol, price, mMainInstrument);
         }
-        public Order SellOrder(int vol, double price, string instrumentID) {
+        public Order SellOrder(int vol, double price, Instrument instrument) {
             if (vol < 0) {
-                return SellOrder(0, price, instrumentID);
+                return SellOrder(0, price, instrument);
             }
-            Order order = new Order(this, instrumentID, DirectionType.Sell, price, vol);
+            Order order = new Order(this, instrument, DirectionType.Sell, price, vol);
             return order;
         }
         public Order ToPositionOrder(int position) {
@@ -181,12 +176,12 @@ namespace FreeQuant.Modules {
         public Order ToPositionOrder(int position, double price) {
             return ToPositionOrder(position, price, mMainInstrument);
         }
-        public Order ToPositionOrder(int position, double price, string instrumentID) {
+        public Order ToPositionOrder(int position, double price, Instrument instrument) {
             int myPos = GetPosition(mMainInstrument);
             if (position > myPos) {
-                return BuyOrder(position - myPos, price, instrumentID);
+                return BuyOrder(position - myPos, price, instrument);
             } else if (position < myPos) {
-                return SellOrder(myPos - position, price, instrumentID);
+                return SellOrder(myPos - position, price, instrument);
             } else {
                 return BuyOrder(0);
             }
@@ -197,7 +192,7 @@ namespace FreeQuant.Modules {
     public partial class BaseStrategy {
         //写日志
         public void Log(string content) {
-            LogUtils.UserLog(content);
+            FqLog.UserLog(content);
         }
     }
 

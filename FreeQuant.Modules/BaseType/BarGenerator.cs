@@ -22,7 +22,7 @@ namespace FreeQuant.Modules {
         }
 
         internal void addTick(Tick tick) {
-            if (!tick.InstrumentId.Equals(mInstrumentID))
+            if (!tick.Instrument.Equals(mInstrumentID))
                 return;
             //判断是否需要生成新bar
             if (mBar != null) {

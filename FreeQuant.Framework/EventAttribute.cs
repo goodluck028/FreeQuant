@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreeQuant.Modules {
-    internal class OrderDispatcher {
+namespace FreeQuant.Framework {
+    public class EventAttribute:Attribute {
     }
 }

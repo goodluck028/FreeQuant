@@ -24,7 +24,7 @@ namespace FreeQuant.Modules {
             try {
                 files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\providers");
             } catch (Exception ex) {
-                LogUtils.EnginLog(ex.StackTrace);
+                FqLog.EnginLog(ex.StackTrace);
             }
 
             //加载策略

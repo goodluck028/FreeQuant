@@ -24,7 +24,7 @@ namespace FreeQuant.Modules {
             try {
                 files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\strategys");
             } catch (Exception ex) {
-                LogUtils.EnginLog(ex.StackTrace);
+                FqLog.EnginLog(ex.StackTrace);
             }
 
             //加载策略
@@ -79,7 +79,7 @@ namespace FreeQuant.Modules {
         private TickDispatcher mTickDispatcher = new TickDispatcher();
         internal List<Instrument> InstrumentList => mTickDispatcher.InstrumentList;
         private void Subscribe(BaseStrategy stg, Instrument inst) {
-            mTickDispatcher.SubscribTick(stg, inst);
+            mTickDispatcher.SubscribTick(inst, stg);
         }
         #endregion
 
