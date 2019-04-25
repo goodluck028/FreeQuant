@@ -2,12 +2,10 @@
 
 namespace FreeQuant.Framework {
     internal class Event {
-        private EventType mEventType;
         private Type mValueType;
         private object mValue;
 
-        internal Event(EventType eventType, Type valueType, object value) {
-            mEventType = eventType;
+        internal Event(Type valueType, object value) {
             mValueType = valueType;
             mValue = value;
         }
@@ -23,13 +21,5 @@ namespace FreeQuant.Framework {
                 return mValueType;
             }
         }
-
-        internal EventType EventType {
-            get { return mEventType; }
-        }
-    }
-
-    internal enum EventType {
-        publish, request
     }
 }

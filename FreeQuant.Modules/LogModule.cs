@@ -15,23 +15,30 @@ namespace FreeQuant.Modules
         }
     }
 
-    public static class FqLog {
-        //
-        static FqLog() {
-            EventBus.SubscribeLog<Log>(_onLog);
+    public class FqLog {
+
+        private static FqLog mInstance = new FqLog();
+
+        public static FqLog Instance => mInstance;
+
+        private FqLog()
+        {
+            EventBus.Register(this);
         }
 
         //
         internal static void EnginLog(string content) {
             Log log = new Log(LogType.Enginlog, content);
-            EventBus.PublishLog(log);
+            EventBus.PostLog(log);
         }
         internal static void UserLog(string content) {
             Log log = new Log(LogType.UserLog, content);
-            EventBus.PublishLog(log);
+            EventBus.PostLog(log);
         }
+
         //
-        private static void _onLog(Log log) {
+        [OnLog]
+        public void _onLog(Log log) {
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string folderName = log.Type.ToString();
             if (!string.IsNullOrEmpty(path)) {
@@ -55,7 +62,7 @@ namespace FreeQuant.Modules
         }
     }
 
-    internal class Log {
+    public class Log {
         LogType type;
         string content;
 
@@ -77,7 +84,7 @@ namespace FreeQuant.Modules
         }
     }
 
-    internal enum LogType {
+    public enum LogType {
         Enginlog,
         UserLog
     }

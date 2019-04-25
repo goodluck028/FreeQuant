@@ -11,16 +11,18 @@ using FreeQuant.Framework;
 
 namespace FreeQuant.Modules {
     public class DataBaseModule : BaseModule {
-        public override void Start() {
-            EventBus.Subscribe<Position>(_onPostion);
-            EventBus.Subscribe<Order>(_onOrder);
+        public override void Start()
+        {
+            EventBus.Register(this);
         }
 
-        private void _onPostion(Position position) {
+        [OnEvent]
+        public void _onPostion(Position position) {
             savePosition(position);
         }
 
-        private void _onOrder(Order order) {
+        [OnEvent]
+        public void _onOrder(Order order) {
             saveOrder(order);
         }
 
