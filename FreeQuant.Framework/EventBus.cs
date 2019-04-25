@@ -28,7 +28,7 @@ namespace FreeQuant.Framework {
             if (obj == null)
                 return;
             Type t = obj.GetType();
-            MethodInfo[] infos = t.GetMethods();
+            MethodInfo[] infos = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
             foreach (MethodInfo md in infos) {
                 //方法只能有一个参数
                 ParameterInfo[] parameters = md.GetParameters();
@@ -68,7 +68,7 @@ namespace FreeQuant.Framework {
             if (obj == null)
                 return;
             Type t = obj.GetType();
-            MethodInfo[] infos = t.GetMethods();
+            MethodInfo[] infos = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
             foreach (MethodInfo md in infos) {
                 //方法只能有一个参数
                 ParameterInfo[] parameters = md.GetParameters();

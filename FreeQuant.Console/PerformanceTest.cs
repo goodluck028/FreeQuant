@@ -9,7 +9,7 @@ namespace FreeQuant.Console {
     public class PerformanceTest {
 
         [OnEvent]
-        public void onTime(DateTime time)
+        private void onTime(DateTime time)
         {
             System.Console.WriteLine((DateTime.Now-time).TotalMilliseconds);
         }
@@ -18,7 +18,7 @@ namespace FreeQuant.Console {
         private DateTime BeginTime;
 
         [OnEvent]
-        public void onInt(int i)
+        private void onInt(int i)
         {
         }
     }

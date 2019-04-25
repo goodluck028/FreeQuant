@@ -6,9 +6,8 @@ using System.Reflection;
 
 namespace FreeQuant.Framework {
     public static class ModuleLoader {
-        internal static List<BaseModule> mModules = new List<BaseModule>();
-
-        internal static void LoadModules() {
+        private static List<BaseModule> mModules = new List<BaseModule>();
+        public static void LoadModules() {
             //获取文件列表 
             string[] files = new string[] { };
             try {

@@ -9,6 +9,7 @@ using FreeQuant.Framework;
 namespace FreeQuant.Console {
     class Program {
         static void Main(string[] args) {
+            ModuleLoader.LoadModules();
             PerformanceTest test = new PerformanceTest();
             EventBus.Register(test);
             for (int i = 0; i <= 100; i++)
