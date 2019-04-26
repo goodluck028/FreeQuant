@@ -9,14 +9,17 @@ using FreeQuant.Framework;
 namespace FreeQuant.Console {
     class Program {
         static void Main(string[] args) {
-            ModuleLoader.LoadModules();
+            ModuleLoader.LoadAllModules();
             PerformanceTest test = new PerformanceTest();
             EventBus.Register(test);
-            for (int i = 0; i <= 100; i++)
-            {
-                EventBus.PostEvent(DateTime.Now);
+            for (int i = 0; i < 100; i++) {
+                Thread.Sleep(500);
                 EventBus.PostEvent(i);
+                if (i == 50) {
+                    EventBus.UnRegister(test);
+                }
             }
+
             System.Console.ReadKey();
         }
     }

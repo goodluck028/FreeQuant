@@ -5,9 +5,13 @@ using System.Reflection;
 
 
 namespace FreeQuant.Framework {
+    public abstract class BaseModule {
+        public abstract void Start();
+    }
+
     public static class ModuleLoader {
         private static List<BaseModule> mModules = new List<BaseModule>();
-        public static void LoadModules() {
+        public static void LoadAllModules() {
             //获取文件列表 
             string[] files = new string[] { };
             try {

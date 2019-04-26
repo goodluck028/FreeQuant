@@ -21,14 +21,14 @@ namespace FreeQuant.Framework {
         }
 
         public static void Run() {
-            ModuleLoader.LoadModules();
+            ModuleLoader.LoadAllModules();
         }
 
         public static void Register(object obj) {
             if (obj == null)
                 return;
             Type t = obj.GetType();
-            MethodInfo[] infos = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            MethodInfo[] infos = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             foreach (MethodInfo md in infos) {
                 //方法只能有一个参数
                 ParameterInfo[] parameters = md.GetParameters();
@@ -68,7 +68,7 @@ namespace FreeQuant.Framework {
             if (obj == null)
                 return;
             Type t = obj.GetType();
-            MethodInfo[] infos = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            MethodInfo[] infos = t.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             foreach (MethodInfo md in infos) {
                 //方法只能有一个参数
                 ParameterInfo[] parameters = md.GetParameters();
