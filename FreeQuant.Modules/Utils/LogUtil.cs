@@ -9,15 +9,9 @@ using FreeQuant.Framework;
 
 namespace FreeQuant.Modules
 {
-    public class LogModule : BaseModule {
-        public override void OnLoad() {
-            FqLog.EnginLog("日志模块启动");
-        }
-    }
-
-    public class FqLog {
-        private static FqLog mInstance = new FqLog();
-        private FqLog()
+    public class LogUtil {
+        private static LogUtil mInstance = new LogUtil();
+        private LogUtil()
         {
             EventBus.Register(this);
         }

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("XAPI2.Modules")]
+[assembly: AssemblyTitle("Modules.Xapi2")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("XAPI2.Modules")]
+[assembly: AssemblyProduct("Modules.Xapi2")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("9322978a-ac5b-4a8c-ae16-8da11ae53cfe")]
+[assembly: Guid("f28b8655-3cdd-4691-97fc-9e0efcaa2663")]
 
 // 程序集的版本信息由下列四个值组成: 
 //

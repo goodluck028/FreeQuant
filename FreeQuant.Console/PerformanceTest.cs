@@ -9,12 +9,14 @@ namespace FreeQuant.Console {
     public class PerformanceTest {
 
         [OnEvent]
-        private void onTime(DateTime time) {
+        protected void onTime(DateTime time) {
         }
 
         [OnEvent]
-        private void onInt(int i) {
+        protected void onInt(int i) {
             System.Console.WriteLine(i);
         }
     }
+
+    public class PerformanceTest2 : PerformanceTest { }
 }

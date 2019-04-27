@@ -11,7 +11,7 @@ namespace FreeQuant.Modules {
     internal class StrategyManager : BaseModule {
 
         public override void OnLoad() {
-            FqLog.EnginLog("策略管理模块启动");
+            LogUtil.EnginLog("策略管理模块启动");
             loadStrategy();
         }
         //策略添加
@@ -27,7 +27,7 @@ namespace FreeQuant.Modules {
                     Directory.CreateDirectory(dir);
                 }
             } catch (Exception ex) {
-                FqLog.EnginLog(ex.StackTrace);
+                LogUtil.EnginLog(ex.StackTrace);
             }
 
             //加载策略

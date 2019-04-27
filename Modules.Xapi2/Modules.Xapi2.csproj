@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9322978A-AC5B-4A8C-AE16-8DA11AE53CFE}</ProjectGuid>
+    <ProjectGuid>{F28B8655-3CDD-4691-97FC-9E0EFCAA2663}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XAPI2.Modules</RootNamespace>
-    <AssemblyName>XAPI2.Modules</AssemblyName>
+    <RootNamespace>Modules.Xapi2</RootNamespace>
+    <AssemblyName>Modules.Xapi2</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,11 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XapiMdBrokerModule.cs" />
     <Compile Include="XapiTdBrokerModule.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\XAPI2\languages\CSharp\XAPI_CSharp\XAPI_CSharp.csproj">
+      <Project>{6aa065f5-2e4a-4112-a3ae-1f75cae42ffb}</Project>
+      <Name>XAPI_CSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FreeQuant.Framework\FreeQuant.Framework.csproj">
       <Project>{87b4aea7-403c-44cd-aa46-a700b8cec2a3}</Project>
       <Name>FreeQuant.Framework</Name>

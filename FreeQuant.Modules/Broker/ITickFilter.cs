@@ -10,7 +10,7 @@ namespace FreeQuant.Modules {
         bool Check(Tick Tick);
     }
 
-    internal class DefaultTickFilter : ITickFilter
+    public class DefaultTickFilter : ITickFilter
     {
         private Tick lastTick;
         public bool Check(Tick tick)

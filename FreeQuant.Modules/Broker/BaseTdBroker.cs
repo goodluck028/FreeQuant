@@ -11,6 +11,7 @@ namespace FreeQuant.Modules {
 
         public override void OnLoad() {
             EventBus.Register(this);
+            LogUtil.EnginLog("交易模块启动");
         }
 
         #region EventBus事件

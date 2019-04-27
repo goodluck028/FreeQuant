@@ -192,7 +192,7 @@ namespace FreeQuant.Modules {
     public partial class BaseStrategy {
         //写日志
         public void Log(string content) {
-            FqLog.UserLog(content);
+            LogUtil.UserLog(content);
         }
     }
 

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FreeQuant.Modules;
 
-namespace XAPI2.Modules {
+namespace Modules.Xapi2 {
     public class XapiTdBroker : BaseTdBroker {
 
 

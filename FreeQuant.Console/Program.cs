@@ -10,7 +10,7 @@ namespace FreeQuant.Console {
     class Program {
         static void Main(string[] args) {
             ModuleLoader.LoadAllModules();
-            PerformanceTest test = new PerformanceTest();
+            PerformanceTest2 test = new PerformanceTest2();
             EventBus.Register(test);
             for (int i = 0; i < 100; i++) {
                 Thread.Sleep(500);

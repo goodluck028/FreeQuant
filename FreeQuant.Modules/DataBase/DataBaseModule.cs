@@ -13,7 +13,7 @@ namespace FreeQuant.Modules {
     public class DataBaseManager : BaseModule {
         public override void OnLoad()
         {
-            FqLog.EnginLog("数据库模块启动");
+            LogUtil.EnginLog("数据库模块启动");
             EventBus.Register(this);
         }
 

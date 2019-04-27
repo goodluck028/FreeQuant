@@ -28,7 +28,7 @@ namespace FreeQuant.Framework {
                     Assembly assembly = Assembly.LoadFrom(f);
                     Type[] types = assembly.GetTypes();
                     foreach (Type t in types) {
-                        if (!t.IsSubclassOf(typeof(BaseModule)))
+                        if (!t.IsSubclassOf(typeof(BaseModule)) || t.IsAbstract)
                             continue;
 
                         BaseModule mdl = Activator.CreateInstance(t) as BaseModule;

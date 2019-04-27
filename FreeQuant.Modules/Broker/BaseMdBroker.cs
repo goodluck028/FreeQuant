@@ -10,6 +10,7 @@ namespace FreeQuant.Modules {
     public abstract class BaseMdBroker : BaseModule {
         public override void OnLoad() {
             EventBus.Register(this);
+            LogUtil.EnginLog("行情模块启动");
         }
 
         #region EventBus事件
