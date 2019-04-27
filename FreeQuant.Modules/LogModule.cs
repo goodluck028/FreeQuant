@@ -10,7 +10,7 @@ using FreeQuant.Framework;
 namespace FreeQuant.Modules
 {
     public class LogModule : BaseModule {
-        public override void Start() {
+        public override void OnLoad() {
             FqLog.EnginLog("日志模块启动");
         }
     }

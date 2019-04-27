@@ -5,24 +5,27 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using FreeQuant.Framework;
 
 namespace FreeQuant.Modules {
-    internal class StrategyModule {
-        private static StrategyModule mInstance = new StrategyModule();
+    internal class StrategyManager : BaseModule {
 
-        public static StrategyModule Instance => mInstance;
-
-        private StrategyModule() {
+        public override void OnLoad() {
+            FqLog.EnginLog("策略管理模块启动");
             loadStrategy();
         }
-
         //策略添加
         private Dictionary<string, BaseStrategy> mStrategyMap = new Dictionary<string, BaseStrategy>();
         private void loadStrategy() {
             //获取文件列表 
             string[] files = new string[] { };
             try {
-                files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\strategys");
+                string dir = AppDomain.CurrentDomain.BaseDirectory + "\\strategys";
+                if (Directory.Exists(dir)) {
+                    files = Directory.GetFiles(dir);
+                } else {
+                    Directory.CreateDirectory(dir);
+                }
             } catch (Exception ex) {
                 FqLog.EnginLog(ex.StackTrace);
             }
@@ -84,11 +87,11 @@ namespace FreeQuant.Modules {
         #endregion
 
         #region 处理交易
-        private void sendOrder(Order order) {
+        private void sendOrder(StrategyOrder strategyOrder) {
 
         }
 
-        private void cancelOrder(Order order) {
+        private void cancelOrder(StrategyOrder strategyOrder) {
 
         }
 

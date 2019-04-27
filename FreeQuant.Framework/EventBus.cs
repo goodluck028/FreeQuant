@@ -6,7 +6,6 @@ using System.Threading;
 
 namespace FreeQuant.Framework {
     public static class EventBus {
-
         //
         private static EventQueue mQueue = new EventQueue(ThreadPriority.Highest);
         private static EventQueue mLogQueue = new EventQueue(ThreadPriority.Lowest);
@@ -14,7 +13,6 @@ namespace FreeQuant.Framework {
         private static ConcurrentDictionary<Type, HashSet<InvokeWrapper>> mLogInvokeMap = new ConcurrentDictionary<Type, HashSet<InvokeWrapper>>();
 
         //
-
         static EventBus() {
             mQueue.OnEvent += _onEvent;
             mLogQueue.OnEvent += _onLog;
@@ -24,6 +22,10 @@ namespace FreeQuant.Framework {
             ModuleLoader.LoadAllModules();
         }
 
+        /// <summary>
+        /// 注册
+        /// </summary>
+        /// <param name="obj"></param>
         public static void Register(object obj) {
             if (obj == null)
                 return;
@@ -64,6 +66,10 @@ namespace FreeQuant.Framework {
             }
         }
 
+        /// <summary>
+        /// 解除注册
+        /// </summary>
+        /// <param name="obj"></param>
         public static void UnRegister(object obj) {
             if (obj == null)
                 return;
@@ -116,7 +122,11 @@ namespace FreeQuant.Framework {
             if (mEventInvokeMap.TryGetValue(t, out set)) {
                 lock (mEventInvokeMap) {
                     foreach (InvokeWrapper wrapper in set) {
-                        wrapper.Invoke(evt.Value);
+                        try {
+                            wrapper.Invoke(evt.Value);
+                        } catch (Exception e) {
+                            Console.WriteLine(e);
+                        }
                     }
                 }
             }
@@ -145,7 +155,11 @@ namespace FreeQuant.Framework {
             if (mLogInvokeMap.TryGetValue(t, out set)) {
                 lock (mLogInvokeMap) {
                     foreach (InvokeWrapper wrapper in set) {
-                        wrapper.Invoke(evt.Value);
+                        try {
+                            wrapper.Invoke(evt.Value);
+                        } catch (Exception e) {
+                            Console.WriteLine(e);
+                        }
                     }
                 }
             }

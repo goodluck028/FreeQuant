@@ -49,22 +49,23 @@
     <Compile Include="BaseType\Bar.cs" />
     <Compile Include="BaseType\BarGenerator.cs" />
     <Compile Include="BaseType\Instrument.cs" />
-    <Compile Include="BaseType\Order.cs" />
+    <Compile Include="BaseType\StrategyOrder.cs" />
     <Compile Include="BaseType\Position.cs" />
-    <Compile Include="BaseType\Request.cs" />
     <Compile Include="BaseType\Tick.cs" />
-    <Compile Include="Broker\BrokerManager.cs" />
-    <Compile Include="Broker\IMdBroker.cs" />
-    <Compile Include="Broker\ITdBroker.cs" />
+    <Compile Include="Broker\BaseMdBroker.cs" />
+    <Compile Include="Broker\BaseTdBroker.cs" />
+    <Compile Include="Broker\Event.cs" />
     <Compile Include="Broker\ITickFilter.cs" />
     <Compile Include="DataBase\DataBaseModule.cs" />
     <Compile Include="DataBase\SqliteHelper.cs" />
-    <Compile Include="Instrument\InstrumentManager.cs" />
+    <Compile Include="Instrument\InstrumentModule.cs" />
     <Compile Include="LogModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategy\BaseStrategy.cs" />
     <Compile Include="Strategy\OrderDispatcher.cs" />
+    <Compile Include="Strategy\StrategyEvent.cs" />
     <Compile Include="Strategy\StrategyModule.cs" />
+    <Compile Include="Strategy\StrategyRequest.cs" />
     <Compile Include="Strategy\TickDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>

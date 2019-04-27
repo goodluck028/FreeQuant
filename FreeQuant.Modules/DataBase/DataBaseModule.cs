@@ -10,9 +10,10 @@ using System.Threading;
 using FreeQuant.Framework;
 
 namespace FreeQuant.Modules {
-    public class DataBaseModule : BaseModule {
-        public override void Start()
+    public class DataBaseManager : BaseModule {
+        public override void OnLoad()
         {
+            FqLog.EnginLog("数据库模块启动");
             EventBus.Register(this);
         }
 
@@ -22,8 +23,8 @@ namespace FreeQuant.Modules {
         }
 
         [OnEvent]
-        public void _onOrder(Order order) {
-            saveOrder(order);
+        public void _onOrder(StrategyOrder strategyOrder) {
+            saveOrder(strategyOrder);
         }
 
         //持仓
@@ -45,7 +46,7 @@ namespace FreeQuant.Modules {
         }
 
         //订单
-        private void saveOrder(Order o) {
+        private void saveOrder(StrategyOrder o) {
             string direction = o.Direction == DirectionType.Buy ? "多" : "空";
             string sql = $@"insert into [t_order]
                             ([strategy_name], [instrument_id], [direction], [price], [volume], [volume_traded], [order_time])

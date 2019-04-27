@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Modules {
     //订单委托
-    public delegate void OrderChanged(Order order);
-    public class Order {
+    public delegate void OrderChanged(StrategyOrder strategyOrder);
+    public class StrategyOrder {
         //策略
         private BaseStrategy mStrategy;
         //合约
@@ -27,12 +27,12 @@ namespace FreeQuant.Modules {
         //状态
         private OrderStatus mStatus = OrderStatus.Normal;
         //子订单
-        private List<SubOrder> mSubOrders = new List<SubOrder>();
+        private List<BrokerOrder> mSubOrders = new List<BrokerOrder>();
 
         //事件
         public event OrderChanged OnChanged;
 
-        public Order(BaseStrategy strategy, Instrument instrument, DirectionType direction, double price, int volume) {
+        public StrategyOrder(BaseStrategy strategy, Instrument instrument, DirectionType direction, double price, int volume) {
             this.mStrategy = strategy;
             this.mInstrument = instrument;
             this.mDirection = direction;
@@ -95,14 +95,14 @@ namespace FreeQuant.Modules {
             }
         }
 
-        internal List<SubOrder> SubOrders {
+        internal List<BrokerOrder> SubOrders {
             get {
                 return mSubOrders;
             }
         }
 
         //
-        internal void AddSubOrder(SubOrder o) {
+        internal void AddSubOrder(BrokerOrder o) {
             mSubOrders.Add(o);
         }
         internal void RefreshSubOrders() {
@@ -128,7 +128,7 @@ namespace FreeQuant.Modules {
             /*统计，这个地方有点复杂，会出现子订单一个正常，一个错误，一个撤单这种情况，
              * partial>normal>canceled
              */
-            foreach (SubOrder sOrder in mSubOrders) {
+            foreach (BrokerOrder sOrder in mSubOrders) {
                 //
                 left += sOrder.VolumeLeft;
                 traded += sOrder.VolumeTraded;
@@ -193,9 +193,9 @@ namespace FreeQuant.Modules {
         }
     }
 
-    internal class SubOrder {
+    public class BrokerOrder {
         //合并订单
-        private Order pOrder;
+        private StrategyOrder mPStrategyOrder;
 
         //用户标识
         private int customID = 0;
@@ -230,8 +230,8 @@ namespace FreeQuant.Modules {
         // 状态
         private OrderStatus status;
 
-        public SubOrder(Order pOrder, string instrumentID, DirectionType direction, OffsetType offset, double limitPrice, DateTime insertTime, int volume, int volumeLeft, OrderStatus status) {
-            this.pOrder = pOrder;
+        public BrokerOrder(StrategyOrder pStrategyOrder, string instrumentID, DirectionType direction, OffsetType offset, double limitPrice, DateTime insertTime, int volume, int volumeLeft, OrderStatus status) {
+            this.mPStrategyOrder = pStrategyOrder;
             this.instrumentID = instrumentID;
             this.direction = direction;
             this.offset = offset;
@@ -243,7 +243,7 @@ namespace FreeQuant.Modules {
         }
 
         internal void Refresh() {
-            pOrder.RefreshSubOrders();
+            mPStrategyOrder.RefreshSubOrders();
         }
 
         public string OrderID {

@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace FreeQuant.Framework {
     public abstract class BaseModule {
-        public abstract void Start();
+        public abstract void OnLoad();
     }
 
     public static class ModuleLoader {
@@ -36,7 +36,7 @@ namespace FreeQuant.Framework {
                             continue;
 
                         mModules.Add(mdl);
-                        mdl.Start();
+                        mdl.OnLoad();
                     }
                 } catch (Exception e) {
                     Console.WriteLine(e);
