@@ -66,6 +66,7 @@
     <Compile Include="DataBase\DataBaseModule.cs" />
     <Compile Include="DataBase\SqliteHelper.cs" />
     <Compile Include="Instrument\InstrumentModule.cs" />
+    <Compile Include="Utils\LogModule.cs" />
     <Compile Include="Utils\LogUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategy\BaseStrategy.cs" />
@@ -81,9 +82,7 @@
       <Name>FreeQuant.Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NetWork\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

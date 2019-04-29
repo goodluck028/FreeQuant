@@ -94,7 +94,5 @@ namespace FreeQuant.Modules {
         SHFE,
         /// 中金所
         CFFEX,
-        /// 上海国际能源交易中心股份有限公司
-        INE,
     }
 }

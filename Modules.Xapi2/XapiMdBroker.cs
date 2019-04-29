@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using FreeQuant.Modules;
-using FreeQuant.Modules.Broker;
 using XAPI.Callback;
 using XAPI;
 
@@ -13,25 +12,25 @@ namespace Modules.Xapi2 {
     public class XapiMdBroker : BaseMdBroker {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_Quote_x86.dll");
         private Account mAccount = ConfigUtil.Config.MyMdAccount;
-        XApi mdApi;
+        XApi mMdApi;
 
         public override void Login() {
-            mdApi = new XApi(mdPath);
-            mdApi.Server.Address = mAccount.Server;
-            mdApi.Server.BrokerID = mAccount.Broker;
-            mdApi.User.UserID = mAccount.Investor;
-            mdApi.User.Password = mAccount.Password;
-            mdApi.OnConnectionStatus = (object sender, XAPI.ConnectionStatus status, ref RspUserLoginField userLogin, int size1) => {
+            mMdApi = new XApi(mdPath);
+            mMdApi.Server.Address = mAccount.Server;
+            mMdApi.Server.BrokerID = mAccount.Broker;
+            mMdApi.User.UserID = mAccount.Investor;
+            mMdApi.User.Password = mAccount.Password;
+            mMdApi.OnConnectionStatus = (object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1) => {
                 LogUtil.EnginLog("行情状态:" + status.ToString());
             };
 
-            mdApi.OnRtnDepthMarketData = _onRtnDepthMarketData;
+            mMdApi.OnRtnDepthMarketData = _onRtnDepthMarketData;
 
-            mdApi.Connect();
+            mMdApi.Connect();
         }
 
         public override void Logout() {
-            mdApi.Dispose();
+            mMdApi.Dispose();
         }
 
         public override void SubscribeMarketData(Instrument inst) {
@@ -39,7 +38,7 @@ namespace Modules.Xapi2 {
         }
 
         public override void UnSubscribeMarketData(Instrument Instrument) {
-            mdApi.Unsubscribe(Instrument.InstrumentID,"");
+            mMdApi.Unsubscribe(Instrument.InstrumentID,"");
         }
 
         private Dictionary<string,ITickFilter> mFilterMap = new Dictionary<string, ITickFilter>(); 

@@ -125,7 +125,7 @@ namespace FreeQuant.Framework {
                         try {
                             wrapper.Invoke(evt.Value);
                         } catch (Exception e) {
-                            Console.WriteLine(e);
+                            EventBus.PostLog(new Error(e));
                         }
                     }
                 }
@@ -158,7 +158,7 @@ namespace FreeQuant.Framework {
                         try {
                             wrapper.Invoke(evt.Value);
                         } catch (Exception e) {
-                            Console.WriteLine(e);
+                            EventBus.PostLog(new Error(e));
                         }
                     }
                 }

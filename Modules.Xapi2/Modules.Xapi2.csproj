@@ -41,8 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XapiMdBrokerModule.cs" />
-    <Compile Include="XapiTdBrokerModule.cs" />
+    <Compile Include="XapiMdBroker.cs" />
+    <Compile Include="XapiTdBroker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\XAPI2\languages\CSharp\XAPI_CSharp\XAPI_CSharp.csproj">
