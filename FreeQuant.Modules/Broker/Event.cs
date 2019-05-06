@@ -68,14 +68,64 @@ namespace FreeQuant.Modules.Broker {
         public BrokerOrder Order => mOrder;
     }
 
-    public class OrderReturnEvent {
-        private BrokerOrder mOrder;
+    public class OrderReturnEvent
+    {
+        private string localId;
+        private string orderId;
+        private long tradeVol;
+        private long leftVol;
+        private OrderStatus status;
 
-        public OrderReturnEvent(BrokerOrder order) {
-            mOrder = order;
+        public OrderReturnEvent(string localId, string orderId, long tradeVol, long leftVol, OrderStatus status)
+        {
+            this.localId = localId;
+            this.orderId = orderId;
+            this.tradeVol = tradeVol;
+            this.leftVol = leftVol;
+            this.status = status;
         }
 
-        public BrokerOrder Order => mOrder;
+        public string LocalId => localId;
+
+        public string OrderId => orderId;
+
+        public long TradeVol => tradeVol;
+
+        public long LeftVol => leftVol;
+
+        public OrderStatus Status => status;
+    }
+
+    public class TradeReturnEvent
+    {
+        private string localId;
+        private long tradeVol;
+
+        public TradeReturnEvent(string localId, long tradeVol)
+        {
+            this.localId = localId;
+            this.tradeVol = tradeVol;
+        }
+
+        public string LocalId => localId;
+
+        public long TradeVol => tradeVol;
+    }
+
+    public class BrokerOrderCancelEvent
+    {
+        private string localId;
+        private string orderId;
+
+        public BrokerOrderCancelEvent(string localId, string orderId)
+        {
+            this.localId = localId;
+            this.orderId = orderId;
+        }
+
+        public string LocalId => localId;
+
+        public string OrderId => orderId;
     }
     #endregion
 

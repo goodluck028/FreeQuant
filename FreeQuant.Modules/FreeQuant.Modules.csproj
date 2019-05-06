@@ -55,7 +55,7 @@
     <Compile Include="BaseType\BarGenerator.cs" />
     <Compile Include="BaseType\Instrument.cs" />
     <Compile Include="BaseType\ServerInfo.cs" />
-    <Compile Include="BaseType\StrategyOrder.cs" />
+    <Compile Include="BaseType\Order.cs" />
     <Compile Include="BaseType\Position.cs" />
     <Compile Include="BaseType\Tick.cs" />
     <Compile Include="Broker\BaseMdBroker.cs" />

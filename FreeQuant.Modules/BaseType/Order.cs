@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Modules {
     //订单委托
-    public delegate void OrderChanged(StrategyOrder strategyOrder);
-    public class StrategyOrder {
+    public class Order {
         //策略
         private BaseStrategy mStrategy;
         //合约
@@ -30,9 +29,9 @@ namespace FreeQuant.Modules {
         private List<BrokerOrder> mSubOrders = new List<BrokerOrder>();
 
         //事件
-        public event OrderChanged OnChanged;
+        public event Action<Order> OnChanged;
 
-        public StrategyOrder(BaseStrategy strategy, Instrument instrument, DirectionType direction, double price, int volume) {
+        public Order(BaseStrategy strategy, Instrument instrument, DirectionType direction, double price, int volume) {
             this.mStrategy = strategy;
             this.mInstrument = instrument;
             this.mDirection = direction;
@@ -128,12 +127,12 @@ namespace FreeQuant.Modules {
             /*统计，这个地方有点复杂，会出现子订单一个正常，一个错误，一个撤单这种情况，
              * partial>normal>canceled
              */
-            foreach (BrokerOrder sOrder in mSubOrders) {
+            foreach (BrokerOrder brokerOrder in mSubOrders) {
                 //
-                left += sOrder.VolumeLeft;
-                traded += sOrder.VolumeTraded;
+                left += brokerOrder.VolumeLeft;
+                traded += brokerOrder.VolumeTraded;
                 //
-                switch (sOrder.Status) {
+                switch (brokerOrder.Status) {
                     case OrderStatus.Normal:
                         normalCount++;
                         break;
@@ -195,16 +194,16 @@ namespace FreeQuant.Modules {
 
     public class BrokerOrder {
         //合并订单
-        private StrategyOrder mPStrategyOrder;
+        private Order mPOrder;
 
-        //用户标识
-        private int customID = 0;
+        //发单标识
+        private string localID;
 
         // 报单标识
-        private string orderID = string.Empty;
+        private string orderID;
 
         // 合约
-        private string instrumentID = string.Empty;
+        private string instrumentID;
 
         // 买卖
         private DirectionType direction;
@@ -230,8 +229,8 @@ namespace FreeQuant.Modules {
         // 状态
         private OrderStatus status;
 
-        public BrokerOrder(StrategyOrder pStrategyOrder, string instrumentID, DirectionType direction, OffsetType offset, double limitPrice, DateTime insertTime, int volume, int volumeLeft, OrderStatus status) {
-            this.mPStrategyOrder = pStrategyOrder;
+        public BrokerOrder(Order pOrder, string instrumentID, DirectionType direction, OffsetType offset, double limitPrice, DateTime insertTime, int volume, int volumeLeft, OrderStatus status) {
+            this.mPOrder = pOrder;
             this.instrumentID = instrumentID;
             this.direction = direction;
             this.offset = offset;
@@ -243,102 +242,55 @@ namespace FreeQuant.Modules {
         }
 
         internal void Refresh() {
-            mPStrategyOrder.RefreshSubOrders();
+            mPOrder.RefreshSubOrders();
         }
 
-        public string OrderID {
-            get {
-                return orderID;
-            }
+        public Order POrder => mPOrder;
 
-            set {
-                orderID = value;
-            }
+        public string InstrumentId => instrumentID;
+
+        public DirectionType Direction => direction;
+
+        public OffsetType Offset => offset;
+
+        public double LimitPrice => limitPrice;
+
+        public int Volume => volume;
+
+        public string LocalId
+        {
+            get { return localID; }
+            set { localID = value; }
         }
 
-        public string InstrumentID {
-            get {
-                return instrumentID;
-            }
-
-            set {
-                instrumentID = value;
-            }
+        public string OrderId
+        {
+            get { return orderID; }
+            set { orderID = value; }
         }
 
-        public DirectionType Direction {
-            get {
-                return direction;
-            }
-
-            set {
-                direction = value;
-            }
+        public DateTime InsertTime
+        {
+            get { return insertTime; }
+            set { insertTime = value; }
         }
 
-        public OffsetType Offset {
-            get {
-                return offset;
-            }
-
-            set {
-                offset = value;
-            }
+        public int VolumeTraded
+        {
+            get { return volumeTraded; }
+            set { volumeTraded = value; }
         }
 
-        public double LimitPrice {
-            get {
-                return limitPrice;
-            }
-
-            set {
-                limitPrice = value;
-            }
+        public int VolumeLeft
+        {
+            get { return volumeLeft; }
+            set { volumeLeft = value; }
         }
 
-        public int Volume {
-            get {
-                return volume;
-            }
-        }
-
-        public int VolumeLeft {
-            get {
-                return volumeLeft;
-            }
-            set {
-                volumeLeft = value;
-            }
-        }
-
-        public OrderStatus Status {
-            get {
-                return status;
-            }
-
-            set {
-                status = value;
-            }
-        }
-
-        public int CustomID {
-            get {
-                return customID;
-            }
-
-            set {
-                customID = value;
-            }
-        }
-
-        public int VolumeTraded {
-            get {
-                return volumeTraded;
-            }
-
-            set {
-                volumeTraded = value;
-            }
+        public OrderStatus Status
+        {
+            get { return status; }
+            set { status = value; }
         }
     }
 

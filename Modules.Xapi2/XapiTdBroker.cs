@@ -11,13 +11,13 @@ using FreeQuant.Framework;
 using FreeQuant.Modules.Broker;
 using XAPI.Callback;
 using XAPI;
+using OrderStatus = XAPI.OrderStatus;
 
 namespace Modules.Xapi2 {
     public class XapiTdBroker : BaseTdBroker {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_Trade_x86.dll");
         private Account mAccount = ConfigUtil.Config.MyMdAccount;
         XApi mTdApi;
-        private ConcurrentDictionary<string,OrderPair> mOrderMap = new ConcurrentDictionary<string, OrderPair>(); 
 
         protected override void Login() {
             mTdApi = new XApi(mdPath);
@@ -28,6 +28,7 @@ namespace Modules.Xapi2 {
             mTdApi.Server.PrivateTopicResumeType = ResumeType.Quick;
             mTdApi.OnRspQryInstrument = _onRspQryInstrument;
             mTdApi.OnRtnOrder = _onRtnOrder;
+            mTdApi.OnRtnTrade = _onRtnTrade;
             mTdApi.OnRspQrySettlementInfo = (object sender, ref SettlementInfoClass settlementInfo, int size1, bool bIsLast) => {
                 LogUtil.EnginLog("结算确认:" + settlementInfo.Content);
             };
@@ -47,11 +48,10 @@ namespace Modules.Xapi2 {
             mTdApi.ReqQuery(QueryType.ReqQryInstrument, query);
         }
 
-        protected override void SendOrder(BrokerOrder bod) {
-
+        protected override void SendOrder(BrokerOrder brokerOrder) {
         }
 
-        protected override void CancelOrder(BrokerOrder bod) {
+        protected override void CancelOrder(BrokerOrder brokerOrder) {
         }
 
         private void _onRspQryInstrument(object sender, ref InstrumentField instrument, int size1, bool bIsLast) {
@@ -90,29 +90,45 @@ namespace Modules.Xapi2 {
 
         private void _onRtnOrder(object sender, ref OrderField order)
         {
-            //TODO:考虑多线程同步
-            OrderPair pair;
-            if (mOrderMap.TryGetValue(order.OrderID, out pair))
+            FreeQuant.Modules.OrderStatus status = FreeQuant.Modules.OrderStatus.Normal;
+            switch (order.Status)
             {
-                EventBus.PostEvent(new OrderReturnEvent(pair.BrokerOrder));
+                case OrderStatus.NotSent:
+                case OrderStatus.PendingNew:
+                case OrderStatus.New:
+                    status = FreeQuant.Modules.OrderStatus.Normal;
+                    break;
+                case OrderStatus.Rejected:
+                case OrderStatus.Expired:
+                    status = FreeQuant.Modules.OrderStatus.Error;
+                    break;
+                case OrderStatus.PartiallyFilled:
+                    status = FreeQuant.Modules.OrderStatus.Partial;
+                    break;
+                case OrderStatus.Filled:
+                    status = FreeQuant.Modules.OrderStatus.Filled;
+                    break;
+                case OrderStatus.Cancelled:
+                    status = FreeQuant.Modules.OrderStatus.Canceled;
+                    break;
+                case OrderStatus.PendingCancel:
+                case OrderStatus.PendingReplace:
+                case OrderStatus.Replaced:
+                    break;
             }
 
-        }
-    }
+            OrderReturnEvent evt = new OrderReturnEvent(order.LocalID
+                , order.OrderID
+                , Convert.ToInt64(order.CumQty)
+                , Convert.ToInt64(order.LeavesQty)
+                , status);
 
-    internal class OrderPair
-    {
-        private OrderField mXapiOrder;
-        private BrokerOrder mBrokerOrder;
-
-        public OrderPair(OrderField xapiOrder, BrokerOrder brokerOrder)
-        {
-            mXapiOrder = xapiOrder;
-            mBrokerOrder = brokerOrder;
+            EventBus.PostEvent(evt);
         }
 
-        public OrderField XapiOrder => mXapiOrder;
-
-        public BrokerOrder BrokerOrder => mBrokerOrder;
+        private void _onRtnTrade(object sender, ref TradeField trade) {
+            TradeReturnEvent evt = new TradeReturnEvent(trade.ID, Convert.ToInt64(trade.Qty));
+            EventBus.PostEvent(evt);
+        }
     }
 }

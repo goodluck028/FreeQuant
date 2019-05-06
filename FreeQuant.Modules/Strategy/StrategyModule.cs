@@ -87,11 +87,11 @@ namespace FreeQuant.Modules {
         #endregion
 
         #region 处理交易
-        private void sendOrder(StrategyOrder strategyOrder) {
+        private void sendOrder(Order order) {
 
         }
 
-        private void cancelOrder(StrategyOrder strategyOrder) {
+        private void cancelOrder(Order order) {
 
         }
 

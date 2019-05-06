@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace FreeQuant.Modules {
     public partial class BaseStrategy {
         internal event Action<BaseStrategy, Instrument> OnSubscribeInstrument;
-        internal event Action<StrategyOrder> OnSendOrder;
-        internal event Action<StrategyOrder> OnCancelOrder;
+        internal event Action<Order> OnSendOrder;
+        internal event Action<Order> OnCancelOrder;
         internal event Action<Position> OnChangePosition;
     }
 
@@ -71,59 +71,59 @@ namespace FreeQuant.Modules {
         }
 
         //订单
-        private List<StrategyOrder> orderList = new List<StrategyOrder>();
-        private List<StrategyOrder> activeOrderList = new List<StrategyOrder>();
-        private List<StrategyOrder> doneOrderList = new List<StrategyOrder>();
+        private List<Order> orderList = new List<Order>();
+        private List<Order> activeOrderList = new List<Order>();
+        private List<Order> doneOrderList = new List<Order>();
 
         //发送订单
-        internal void SendOrder(StrategyOrder strategyOrder) {
-            orderList.Add(strategyOrder);
-            activeOrderList.Add(strategyOrder);
+        internal void SendOrder(Order order) {
+            orderList.Add(order);
+            activeOrderList.Add(order);
 //            if (mTdProvider != null) {
 //                Tick t;
 //                double uper = 0;
 //                double lower = 0;
-//                if (lastTickDic.TryGetValue(strategyOrder.Instrument, out t)) {
+//                if (lastTickDic.TryGetValue(order.Instrument, out t)) {
 //                    uper = t.UpperLimitPrice;
 //                    lower = t.LowerLimitPrice;
 //                }
 //                //
 //                Instrument inst;
 //                double priceTick = 0;
-//                if (mTdProvider.TryGetInstrument(strategyOrder.Instrument, out inst)) {
+//                if (mTdProvider.TryGetInstrument(order.Instrument, out inst)) {
 //                    priceTick = inst.PriceTick;
 //                }
 //                //
 //                if (priceTick != 0) {
-//                    strategyOrder.Price = ((int)(strategyOrder.Price / priceTick)) * priceTick;
+//                    order.Price = ((int)(order.Price / priceTick)) * priceTick;
 //                }
-//                if (strategyOrder.Price > uper && uper != 0) {
-//                    strategyOrder.Price = uper;
-//                } else if (strategyOrder.Price < lower) {
-//                    strategyOrder.Price = lower;
+//                if (order.Price > uper && uper != 0) {
+//                    order.Price = uper;
+//                } else if (order.Price < lower) {
+//                    order.Price = lower;
 //                }
 //                //
-//                mTdProvider.SendOrder(strategyOrder);
+//                mTdProvider.SendOrder(order);
 //            }
         }
 
         //撤单
-        internal void CancleOrder(StrategyOrder strategyOrder) {
-            OnCancelOrder?.Invoke(strategyOrder);
+        internal void CancleOrder(Order order) {
+            OnCancelOrder?.Invoke(order);
         }
 
         //更新订单
-        internal void UpdateOrder(StrategyOrder strategyOrder) {
-            if (strategyOrder.Status == OrderStatus.Canceled
-                || strategyOrder.Status == OrderStatus.Error
-                || strategyOrder.Status == OrderStatus.Filled) {
-                activeOrderList.Remove(strategyOrder);
-                doneOrderList.Add(strategyOrder);
+        internal void UpdateOrder(Order order) {
+            if (order.Status == OrderStatus.Canceled
+                || order.Status == OrderStatus.Error
+                || order.Status == OrderStatus.Filled) {
+                activeOrderList.Remove(order);
+                doneOrderList.Add(order);
             }
         }
 
         //订单生成函数
-        public StrategyOrder BuyOrder(int vol) {
+        public Order BuyOrder(int vol) {
             if (lastTickDic.ContainsKey(mMainInstrument)) {
                 double price = 0;
                 price = lastTickDic[mMainInstrument].UpperLimitPrice;
@@ -133,17 +133,17 @@ namespace FreeQuant.Modules {
             }
 
         }
-        public StrategyOrder BuyOrder(int vol, double price) {
+        public Order BuyOrder(int vol, double price) {
             return BuyOrder(vol, price, mMainInstrument);
         }
-        public StrategyOrder BuyOrder(int vol, double price, Instrument instrument) {
+        public Order BuyOrder(int vol, double price, Instrument instrument) {
             if (vol < 0) {
                 return BuyOrder(0, price, instrument);
             }
-            StrategyOrder strategyOrder = new StrategyOrder(this, instrument, DirectionType.Buy, price, vol);
-            return strategyOrder;
+            Order order = new Order(this, instrument, DirectionType.Buy, price, vol);
+            return order;
         }
-        public StrategyOrder SellOrder(int vol) {
+        public Order SellOrder(int vol) {
             if (lastTickDic.ContainsKey(mMainInstrument)) {
                 double price = 0;
                 price = lastTickDic[mMainInstrument].LowerLimitPrice;
@@ -153,17 +153,17 @@ namespace FreeQuant.Modules {
             }
 
         }
-        public StrategyOrder SellOrder(int vol, double price) {
+        public Order SellOrder(int vol, double price) {
             return SellOrder(vol, price, mMainInstrument);
         }
-        public StrategyOrder SellOrder(int vol, double price, Instrument instrument) {
+        public Order SellOrder(int vol, double price, Instrument instrument) {
             if (vol < 0) {
                 return SellOrder(0, price, instrument);
             }
-            StrategyOrder strategyOrder = new StrategyOrder(this, instrument, DirectionType.Sell, price, vol);
-            return strategyOrder;
+            Order order = new Order(this, instrument, DirectionType.Sell, price, vol);
+            return order;
         }
-        public StrategyOrder ToPositionOrder(int position) {
+        public Order ToPositionOrder(int position) {
             int myPos = GetPosition(mMainInstrument);
             if (position > myPos && lastTickDic.ContainsKey(mMainInstrument)) {
                 return BuyOrder(position - myPos, lastTickDic[mMainInstrument].UpperLimitPrice, mMainInstrument);
@@ -173,10 +173,10 @@ namespace FreeQuant.Modules {
                 return BuyOrder(0);
             }
         }
-        public StrategyOrder ToPositionOrder(int position, double price) {
+        public Order ToPositionOrder(int position, double price) {
             return ToPositionOrder(position, price, mMainInstrument);
         }
-        public StrategyOrder ToPositionOrder(int position, double price, Instrument instrument) {
+        public Order ToPositionOrder(int position, double price, Instrument instrument) {
             int myPos = GetPosition(mMainInstrument);
             if (position > myPos) {
                 return BuyOrder(position - myPos, price, instrument);

@@ -23,8 +23,8 @@ namespace FreeQuant.Modules {
         }
 
         [OnEvent]
-        public void _onOrder(StrategyOrder strategyOrder) {
-            saveOrder(strategyOrder);
+        public void _onOrder(Order order) {
+            saveOrder(order);
         }
 
         //持仓
@@ -46,7 +46,7 @@ namespace FreeQuant.Modules {
         }
 
         //订单
-        private void saveOrder(StrategyOrder o) {
+        private void saveOrder(Order o) {
             string direction = o.Direction == DirectionType.Buy ? "多" : "空";
             string sql = $@"insert into [t_order]
                             ([strategy_name], [instrument_id], [direction], [price], [volume], [volume_traded], [order_time])
