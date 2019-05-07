@@ -63,9 +63,12 @@ namespace FreeQuant.Modules {
         protected abstract void SendOrder(BrokerOrder order);
         //撤销订单
         protected abstract void CancelOrder(BrokerOrder order);
-        //订单事件
-        protected void PostOrderEvent(BrokerOrder order) {
-            BrokerOrderEvent evt = new BrokerOrderEvent(order);
+        //
+        protected void PostOrderEvent(BrokerOrderEvent evt) {
+            EventBus.PostEvent(evt);
+        }
+
+        protected void PostTradeEvent(BrokerTradeEvent evt) {
             EventBus.PostEvent(evt);
         }
         #endregion

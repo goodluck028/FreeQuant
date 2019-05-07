@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using FreeQuant.Modules;
 using System.IO;
-using FreeQuant.Framework;
 using FreeQuant.Modules.Broker;
 using XAPI.Callback;
 using XAPI;
@@ -49,9 +43,30 @@ namespace Modules.Xapi2 {
         }
 
         protected override void SendOrder(BrokerOrder brokerOrder) {
+            OrderField field = new OrderField();
+            field.Type = OrderType.Limit;
+            field.HedgeFlag = HedgeFlagType.Speculation;
+            field.InstrumentID = brokerOrder.InstrumentId;
+            field.Side = brokerOrder.Direction == DirectionType.Buy ? OrderSide.Buy : OrderSide.Sell;
+            switch (brokerOrder.Offset) {
+                case OffsetType.Close:
+                    field.OpenClose = OpenCloseType.Close;
+                    break;
+                case OffsetType.CloseToday:
+                    field.OpenClose = OpenCloseType.CloseToday;
+                    break;
+                default:
+                    field.OpenClose = OpenCloseType.Open;
+                    break;
+            }
+            field.Price = brokerOrder.LimitPrice;
+            field.Qty = brokerOrder.Volume;
+            string localId = mTdApi.SendOrder(field);
+            brokerOrder.LocalId = localId;
         }
 
         protected override void CancelOrder(BrokerOrder brokerOrder) {
+            mTdApi.CancelOrder(brokerOrder.LocalId);
         }
 
         private void _onRspQryInstrument(object sender, ref InstrumentField instrument, int size1, bool bIsLast) {
@@ -83,16 +98,13 @@ namespace Modules.Xapi2 {
                         , instrument.VolumeMultiple
                         , instrument.PriceTick
                         , 1000);
-                InstrumentReturnEvent evt = new InstrumentReturnEvent(inst);
-                EventBus.PostEvent(evt);
+                PostInstrumentEvent(inst);
             }
         }
 
-        private void _onRtnOrder(object sender, ref OrderField order)
-        {
+        private void _onRtnOrder(object sender, ref OrderField order) {
             FreeQuant.Modules.OrderStatus status = FreeQuant.Modules.OrderStatus.Normal;
-            switch (order.Status)
-            {
+            switch (order.Status) {
                 case OrderStatus.NotSent:
                 case OrderStatus.PendingNew:
                 case OrderStatus.New:
@@ -114,21 +126,20 @@ namespace Modules.Xapi2 {
                 case OrderStatus.PendingCancel:
                 case OrderStatus.PendingReplace:
                 case OrderStatus.Replaced:
-                    break;
+                    return;
             }
 
-            OrderReturnEvent evt = new OrderReturnEvent(order.LocalID
+            BrokerOrderEvent evt = new BrokerOrderEvent(order.LocalID
                 , order.OrderID
                 , Convert.ToInt64(order.CumQty)
                 , Convert.ToInt64(order.LeavesQty)
                 , status);
-
-            EventBus.PostEvent(evt);
+            PostOrderEvent(evt);
         }
 
         private void _onRtnTrade(object sender, ref TradeField trade) {
-            TradeReturnEvent evt = new TradeReturnEvent(trade.ID, Convert.ToInt64(trade.Qty));
-            EventBus.PostEvent(evt);
+            BrokerTradeEvent evt = new BrokerTradeEvent(trade.ID, Convert.ToInt64(trade.Qty));
+            PostTradeEvent(evt);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using FreeQuant.Framework;
+using FreeQuant.Modules.Broker;
 
 namespace FreeQuant.Modules {
     internal class StrategyManager : BaseModule {
@@ -82,13 +83,19 @@ namespace FreeQuant.Modules {
         private TickDispatcher mTickDispatcher = new TickDispatcher();
         internal List<Instrument> InstrumentList => mTickDispatcher.InstrumentList;
         private void Subscribe(BaseStrategy stg, Instrument inst) {
-            mTickDispatcher.SubscribTick(inst, stg);
+            mTickDispatcher.Map(inst, stg);
+            SubscribeInstrumentRequest request = new SubscribeInstrumentRequest(inst);
+            EventBus.PostEvent(request);
+        }
+
+        [OnEvent]
+        private void OnTickEvent(TickEvent evt) {
+            mTickDispatcher.Dispatch(evt.Tick);
         }
         #endregion
 
         #region 处理交易
         private void sendOrder(Order order) {
-
         }
 
         private void cancelOrder(Order order) {

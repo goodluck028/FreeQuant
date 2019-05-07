@@ -68,7 +68,7 @@ namespace FreeQuant.Modules.Broker {
         public BrokerOrder Order => mOrder;
     }
 
-    public class OrderReturnEvent
+    public class BrokerOrderEvent
     {
         private string localId;
         private string orderId;
@@ -76,7 +76,7 @@ namespace FreeQuant.Modules.Broker {
         private long leftVol;
         private OrderStatus status;
 
-        public OrderReturnEvent(string localId, string orderId, long tradeVol, long leftVol, OrderStatus status)
+        public BrokerOrderEvent(string localId, string orderId, long tradeVol, long leftVol, OrderStatus status)
         {
             this.localId = localId;
             this.orderId = orderId;
@@ -96,12 +96,12 @@ namespace FreeQuant.Modules.Broker {
         public OrderStatus Status => status;
     }
 
-    public class TradeReturnEvent
+    public class BrokerTradeEvent
     {
         private string localId;
         private long tradeVol;
 
-        public TradeReturnEvent(string localId, long tradeVol)
+        public BrokerTradeEvent(string localId, long tradeVol)
         {
             this.localId = localId;
             this.tradeVol = tradeVol;
@@ -110,22 +110,6 @@ namespace FreeQuant.Modules.Broker {
         public string LocalId => localId;
 
         public long TradeVol => tradeVol;
-    }
-
-    public class BrokerOrderCancelEvent
-    {
-        private string localId;
-        private string orderId;
-
-        public BrokerOrderCancelEvent(string localId, string orderId)
-        {
-            this.localId = localId;
-            this.orderId = orderId;
-        }
-
-        public string LocalId => localId;
-
-        public string OrderId => orderId;
     }
     #endregion
 
@@ -182,11 +166,11 @@ namespace FreeQuant.Modules.Broker {
         public Instrument Instrument => mInstrument;
     }
 
-    public class TickReturnEvent
+    public class TickEvent
     {
         private Tick mTick;
 
-        public TickReturnEvent(Tick tick)
+        public TickEvent(Tick tick)
         {
             mTick = tick;
         }

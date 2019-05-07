@@ -59,7 +59,7 @@ namespace FreeQuant.Modules {
         public abstract void UnSubscribeMarketData(Instrument Instrument);
         //行情事件
         public void PostTickEvent(Tick tick) {
-            TickReturnEvent evt = new TickReturnEvent(tick);
+            TickEvent evt = new TickEvent(tick);
             EventBus.PostEvent(evt);
         }
         #endregion

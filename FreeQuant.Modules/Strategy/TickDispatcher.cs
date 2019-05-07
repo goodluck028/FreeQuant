@@ -8,7 +8,7 @@ namespace FreeQuant.Modules {
     internal class TickDispatcher {
         private Dictionary<Instrument, HashSet<BaseStrategy>> mTickSendMap = new Dictionary<Instrument, HashSet<BaseStrategy>>();
 
-        public void SubscribTick(Instrument inst, BaseStrategy stg) {
+        public void Map(Instrument inst, BaseStrategy stg) {
             HashSet<BaseStrategy> set;
             if (!mTickSendMap.TryGetValue(inst, out set)) {
                 set = new HashSet<BaseStrategy>();
@@ -17,7 +17,7 @@ namespace FreeQuant.Modules {
             set.Add(stg);
         }
 
-        public void SendTick(Tick tick) {
+        public void Dispatch(Tick tick) {
             HashSet<BaseStrategy> set;
             if (mTickSendMap.TryGetValue(tick.Instrument, out set)) {
                 foreach (BaseStrategy stg in set) {
