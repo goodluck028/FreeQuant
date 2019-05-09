@@ -5,18 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FreeQuant.Framework;
-using FreeQuant.Modules.Broker;
 
 namespace FreeQuant.Modules {
-    public class InstrumentManager : BaseModule {
+    public class InstrumentManager {
         private static ConcurrentDictionary<string, Instrument> mInstrumentMap = new ConcurrentDictionary<string, Instrument>();
-
-        public override void OnLoad() {
+        public InstrumentManager() {
             LogUtil.EnginLog("合约管理模块启动");
         }
 
         [OnEvent]
-        private void OnInstrument(InstrumentReturnEvent evt) {
+        private void OnInstrument(InstrumentEvent evt) {
             Instrument inst = evt.Instrument;
             mInstrumentMap.TryAdd(inst.InstrumentID, inst);
         }
@@ -30,6 +28,9 @@ namespace FreeQuant.Modules {
             }
         }
 
-
+        public static void QueryInstrument()
+        {
+            EventBus.PostEvent(new QueryInstrumentRequest());
+        }
     }
 }

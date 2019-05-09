@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,7 +44,7 @@
     <Compile Include="Event.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="EventQueue.cs" />
-    <Compile Include="Module.cs" />
+    <Compile Include="ComponentLoader.cs" />
     <Compile Include="Attribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

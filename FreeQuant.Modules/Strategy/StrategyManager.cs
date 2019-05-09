@@ -9,12 +9,14 @@ using FreeQuant.Framework;
 using FreeQuant.Modules.Broker;
 
 namespace FreeQuant.Modules {
-    internal class StrategyManager : BaseModule {
-
-        public override void OnLoad() {
-            LogUtil.EnginLog("策略管理模块启动");
+    [Component]
+    internal class StrategyManager{
+        public StrategyManager()
+        {
             loadStrategy();
+            LogUtil.EnginLog("策略管理组件启动");
         }
+
         //策略添加
         private Dictionary<string, BaseStrategy> mStrategyMap = new Dictionary<string, BaseStrategy>();
         private void loadStrategy() {

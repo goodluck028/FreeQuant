@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreeQuant.Modules.Broker {
+namespace FreeQuant.Modules {
     #region 交易
     public class TdBrokerLoginRequest { }
 
@@ -40,18 +40,52 @@ namespace FreeQuant.Modules.Broker {
 
     public class QueryInstrumentRequest { }
 
-    public class InstrumentReturnEvent {
+    public class InstrumentEvent {
         private Instrument mInstrument;
-        public InstrumentReturnEvent(Instrument instrument) {
+        public InstrumentEvent(Instrument instrument) {
             mInstrument = instrument;
         }
         public Instrument Instrument => mInstrument;
     }
 
-    public class SendOrderRequest {
+    public class QueryPositionRequest { }
+
+    public class BrokerPositionEvent
+    {
+        private string instrumentId;
+        private DirectionType direction;
+        private long ydPosition;
+        private long ydFrozen;
+        private long tdPosition;
+        private long tdFrozen;
+
+        public BrokerPositionEvent(string instrumentId, DirectionType direction, long ydPosition, long ydFrozen, long tdPosition, long tdFrozen)
+        {
+            this.instrumentId = instrumentId;
+            this.direction = direction;
+            this.ydPosition = ydPosition;
+            this.ydFrozen = ydFrozen;
+            this.tdPosition = tdPosition;
+            this.tdFrozen = tdFrozen;
+        }
+
+        public string InstrumentId => instrumentId;
+
+        public DirectionType Direction => direction;
+
+        public long YdPosition => ydPosition;
+
+        public long YdFrozen => ydFrozen;
+
+        public long TdPosition => tdPosition;
+
+        public long TdFrozen => tdFrozen;
+    }
+
+    public class BrokerOrderRequest {
         private BrokerOrder mOrder;
 
-        public SendOrderRequest(BrokerOrder order) {
+        public BrokerOrderRequest(BrokerOrder order) {
             mOrder = order;
         }
 

@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using FreeQuant.Framework;
 
-namespace FreeQuant.Modules.Utils {
-    internal class LogModule : BaseModule {
-        public override void OnLoad() {
-            Console.WriteLine("日志模块启动");
+namespace FreeQuant.Modules {
+    [Component]
+    internal class LogModule{
+        public LogModule()
+        {
+            Console.WriteLine("日志组件启动");
         }
 
         [OnLog]

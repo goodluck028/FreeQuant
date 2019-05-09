@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using FreeQuant.Modules;
 using System.IO;
-using FreeQuant.Modules.Broker;
 using XAPI.Callback;
 using XAPI;
 using OrderStatus = XAPI.OrderStatus;
@@ -21,6 +20,7 @@ namespace Modules.Xapi2 {
             mTdApi.User.Password = mAccount.Password;
             mTdApi.Server.PrivateTopicResumeType = ResumeType.Quick;
             mTdApi.OnRspQryInstrument = _onRspQryInstrument;
+            mTdApi.OnRspQryInvestorPosition = _OnRspQryInvestorPosition;
             mTdApi.OnRtnOrder = _onRtnOrder;
             mTdApi.OnRtnTrade = _onRtnTrade;
             mTdApi.OnRspQrySettlementInfo = (object sender, ref SettlementInfoClass settlementInfo, int size1, bool bIsLast) => {
@@ -40,6 +40,11 @@ namespace Modules.Xapi2 {
         protected override void QueryInstrument() {
             ReqQueryField query = new ReqQueryField();
             mTdApi.ReqQuery(QueryType.ReqQryInstrument, query);
+        }
+
+        protected override void QueryPosition() {
+            ReqQueryField query = new ReqQueryField();
+            mTdApi.ReqQuery(QueryType.ReqQryInvestorPosition, query);
         }
 
         protected override void SendOrder(BrokerOrder brokerOrder) {
@@ -100,6 +105,24 @@ namespace Modules.Xapi2 {
                         , 1000);
                 PostInstrumentEvent(inst);
             }
+        }
+
+        private void _OnRspQryInvestorPosition(object sender, ref PositionField position, int size1, bool bIsLast) {
+            Instrument inst = InstrumentManager.GetInstrument(position.InstrumentID);
+            if (inst == null)
+                return;
+            //
+            DirectionType type = DirectionType.Buy;
+            if (position.Side == PositionSide.Short) {
+                type = DirectionType.Sell;
+            }
+            BrokerPositionEvent evt = new BrokerPositionEvent(position.InstrumentID
+                , type
+                , Convert.ToInt64(position.HistoryPosition)
+                , Convert.ToInt64(position.HistoryFrozen)
+                , Convert.ToInt64(position.TodayPosition)
+                , Convert.ToInt64(position.TodayBSFrozen));
+            PostPositionEvent(evt);
         }
 
         private void _onRtnOrder(object sender, ref OrderField order) {

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Reflection;
 
 
 namespace FreeQuant.Framework {
-    public abstract class BaseModule {
-        public abstract void OnLoad();
-    }
-
     public static class ModuleLoader {
-        private static List<BaseModule> mModules = new List<BaseModule>();
+        private static ArrayList mList = new ArrayList();
         public static void LoadAllModules() {
             //获取文件列表 
             string[] files = new string[] { };
@@ -28,15 +24,18 @@ namespace FreeQuant.Framework {
                     Assembly assembly = Assembly.LoadFrom(f);
                     Type[] types = assembly.GetTypes();
                     foreach (Type t in types) {
-                        if (!t.IsSubclassOf(typeof(BaseModule)) || t.IsAbstract)
-                            continue;
-
-                        BaseModule mdl = Activator.CreateInstance(t) as BaseModule;
-                        if (mdl == null)
-                            continue;
-
-                        mModules.Add(mdl);
-                        mdl.OnLoad();
+                        foreach (Attribute attr in t.GetCustomAttributes()) {
+                            if (attr is ComponentAttribute) {
+                                if (t.IsInterface || t.IsAbstract)
+                                    continue;
+                                //
+                                object obj = Activator.CreateInstance(t);
+                                if (obj == null)
+                                    continue;
+                                //
+                                mList.Add(obj);
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     Console.WriteLine(e);

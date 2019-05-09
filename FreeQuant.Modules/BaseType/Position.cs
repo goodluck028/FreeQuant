@@ -38,4 +38,72 @@ namespace FreeQuant.Modules {
             internal set { mLastTime = value; }
         }
     }
+
+    public class BrokerPosition
+    {
+        private Instrument mInstrument;
+        private long mYdLong;
+        private long mFrozenYdLong;
+        private long mYdShort;
+        private long mFrozenYdShort;
+        private long mTdLong;
+        private long mFrozenTdLong;
+        private long mTdShort;
+        private long mFrozenTdShort;
+
+        public BrokerPosition(Instrument instrument)
+        {
+            mInstrument = instrument;
+        }
+
+        public Instrument Instrument => mInstrument;
+
+        public long YdLong
+        {
+            get { return mYdLong; }
+            set { mYdLong = value; }
+        }
+
+        public long FrozenYdLong
+        {
+            get { return mFrozenYdLong; }
+            set { mFrozenYdLong = value; }
+        }
+
+        public long YdShort
+        {
+            get { return mYdShort; }
+            set { mYdShort = value; }
+        }
+
+        public long FrozenYdShort
+        {
+            get { return mFrozenYdShort; }
+            set { mFrozenYdShort = value; }
+        }
+
+        public long TdLong
+        {
+            get { return mTdLong; }
+            set { mTdLong = value; }
+        }
+
+        public long FrozenTdLong
+        {
+            get { return mFrozenTdLong; }
+            set { mFrozenTdLong = value; }
+        }
+
+        public long TdShort
+        {
+            get { return mTdShort; }
+            set { mTdShort = value; }
+        }
+
+        public long FrozenTdShort
+        {
+            get { return mFrozenTdShort; }
+            set { mFrozenTdShort = value; }
+        }
+    }
 }

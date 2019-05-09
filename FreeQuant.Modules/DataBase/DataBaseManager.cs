@@ -10,11 +10,12 @@ using System.Threading;
 using FreeQuant.Framework;
 
 namespace FreeQuant.Modules {
-    public class DataBaseManager : BaseModule {
-        public override void OnLoad()
+    [Component]
+    public class DataBaseManager{
+        public DataBaseManager()
         {
-            LogUtil.EnginLog("数据库模块启动");
             EventBus.Register(this);
+            LogUtil.EnginLog("数据库组件启动");
         }
 
         [OnEvent]

@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FreeQuant.Framework;
-using FreeQuant.Modules.Broker;
 
 namespace FreeQuant.Modules {
-    public abstract class BaseTdBroker : BaseModule {
-
-        public override void OnLoad() {
+    [Component]
+    public abstract class BaseTdBroker {
+        public BaseTdBroker() {
             EventBus.Register(this);
-            LogUtil.EnginLog("交易模块启动");
+            LogUtil.EnginLog("交易组件启动");
         }
 
         #region EventBus事件
@@ -31,7 +30,12 @@ namespace FreeQuant.Modules {
         }
 
         [OnEvent]
-        private void OnSendOrderRequest(SendOrderRequest request) {
+        private void OnQueryPosition(QueryPositionRequest request) {
+            QueryPosition();
+        }
+
+        [OnEvent]
+        private void OnSendOrderRequest(BrokerOrderRequest request) {
             SendOrder(request.Order);
         }
 
@@ -77,12 +81,18 @@ namespace FreeQuant.Modules {
         //请求合约
         protected abstract void QueryInstrument();
         protected void PostInstrumentEvent(Instrument inst) {
-            InstrumentReturnEvent evt = new InstrumentReturnEvent(inst);
+            InstrumentEvent evt = new InstrumentEvent(inst);
             EventBus.PostEvent(evt);
         }
         #endregion
 
+        #region 持仓
+        protected abstract void QueryPosition();
 
+        protected void PostPositionEvent(BrokerPositionEvent evt) {
+            EventBus.PostEvent(evt);
+        }
+        #endregion
 
     }
 }

@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,20 +61,20 @@
     <Compile Include="BaseType\Tick.cs" />
     <Compile Include="Broker\BaseMdBroker.cs" />
     <Compile Include="Broker\BaseTdBroker.cs" />
-    <Compile Include="Broker\Event.cs" />
+    <Compile Include="Broker\BrokerEvent.cs" />
+    <Compile Include="Broker\BrokerPositionManager.cs" />
     <Compile Include="Broker\ITickFilter.cs" />
+    <Compile Include="Strategy\OrderManager.cs" />
     <Compile Include="Utils\ConfigUtil.cs" />
-    <Compile Include="DataBase\DataBaseModule.cs" />
+    <Compile Include="DataBase\DataBaseManager.cs" />
     <Compile Include="DataBase\SqliteHelper.cs" />
-    <Compile Include="Instrument\InstrumentModule.cs" />
+    <Compile Include="Instrument\InstrumentManager.cs" />
     <Compile Include="Utils\LogModule.cs" />
     <Compile Include="Utils\LogUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategy\BaseStrategy.cs" />
-    <Compile Include="Strategy\OrderDispatcher.cs" />
     <Compile Include="Strategy\StrategyEvent.cs" />
-    <Compile Include="Strategy\StrategyModule.cs" />
-    <Compile Include="Strategy\StrategyRequest.cs" />
+    <Compile Include="Strategy\StrategyManager.cs" />
     <Compile Include="Strategy\TickDispatcher.cs" />
   </ItemGroup>
   <ItemGroup>
