@@ -13,9 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XAPI_CSharp", "..\XAPI2\lan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Utilities", "..\dotnetcodes\DotNet.Utilities\DotNet.Utilities.csproj", "{643D406D-38E5-4A6E-8308-E48B87A1B69B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.Modules", "FreeQuant.Modules\FreeQuant.Modules.csproj", "{6BE77E5E-291D-456B-97D3-30DFCF93985C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.Components", "FreeQuant.Components\FreeQuant.Components.csproj", "{6BE77E5E-291D-456B-97D3-30DFCF93985C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules.Xapi2", "Modules.Xapi2\Modules.Xapi2.csproj", "{F28B8655-3CDD-4691-97FC-9E0EFCAA2663}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Components.Xapi2", "Components.Xapi2\Components.Xapi2.csproj", "{F28B8655-3CDD-4691-97FC-9E0EFCAA2663}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
