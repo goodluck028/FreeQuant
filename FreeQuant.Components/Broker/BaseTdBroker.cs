@@ -68,11 +68,13 @@ namespace FreeQuant.Components {
         //撤销订单
         protected abstract void CancelOrder(Order order);
         //
-        protected void PostOrderEvent(OrderEvent evt) {
+        protected void PostOrderEvent(Order order) {
+            OrderEvent evt = new OrderEvent(order);
             EventBus.PostEvent(evt);
         }
 
-        protected void PostTradeEvent(TradeEvent evt) {
+        protected void PostTradeEvent(Order order, long tradeVol) {
+            TradeEvent evt = new TradeEvent(order, tradeVol);
             EventBus.PostEvent(evt);
         }
         #endregion

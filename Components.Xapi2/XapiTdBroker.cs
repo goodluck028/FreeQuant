@@ -47,7 +47,7 @@ namespace Components.Xapi2 {
             mTdApi.ReqQuery(QueryType.ReqQryInvestorPosition, query);
         }
 
-        protected override void SendOrder(BrokerOrder brokerOrder) {
+        protected override void SendOrder(Order order) {
             OrderField field = new OrderField();
             field.Type = OrderType.Limit;
             field.HedgeFlag = HedgeFlagType.Speculation;
@@ -70,7 +70,7 @@ namespace Components.Xapi2 {
             brokerOrder.LocalId = localId;
         }
 
-        protected override void CancelOrder(BrokerOrder brokerOrder) {
+        protected override void CancelOrder(Order order) {
             mTdApi.CancelOrder(brokerOrder.LocalId);
         }
 
