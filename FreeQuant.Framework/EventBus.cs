@@ -19,7 +19,7 @@ namespace FreeQuant.Framework {
         }
 
         public static void Run() {
-            ModuleLoader.LoadAllModules();
+            ComponentLoader.LoadAllComponents();
         }
 
         /// <summary>

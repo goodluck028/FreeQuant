@@ -5,9 +5,9 @@ using System.Reflection;
 
 
 namespace FreeQuant.Framework {
-    public static class ModuleLoader {
+    public static class ComponentLoader {
         private static ArrayList mList = new ArrayList();
-        public static void LoadAllModules() {
+        public static void LoadAllComponents() {
             //获取文件列表 
             string[] files = new string[] { };
             try {

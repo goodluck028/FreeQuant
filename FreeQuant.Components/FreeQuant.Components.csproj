@@ -62,8 +62,8 @@
     <Compile Include="Broker\BaseMdBroker.cs" />
     <Compile Include="Broker\BaseTdBroker.cs" />
     <Compile Include="Broker\BrokerEvent.cs" />
-    <Compile Include="Broker\BrokerPositionManager.cs" />
     <Compile Include="Broker\ITickFilter.cs" />
+    <Compile Include="Dispatcher\FrameworkDispatcher.cs" />
     <Compile Include="Strategy\OrderManager.cs" />
     <Compile Include="Utils\ConfigUtil.cs" />
     <Compile Include="DataBase\DataBaseManager.cs" />

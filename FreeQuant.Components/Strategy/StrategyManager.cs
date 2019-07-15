@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using FreeQuant.Components.Broker;
 using FreeQuant.Framework;
 
 namespace FreeQuant.Components {

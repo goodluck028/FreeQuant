@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FreeQuant.Framework;
 
 namespace FreeQuant.Components {
+    [Component]
     public class InstrumentManager {
         private static ConcurrentDictionary<string, Instrument> mInstrumentMap = new ConcurrentDictionary<string, Instrument>();
         public InstrumentManager() {

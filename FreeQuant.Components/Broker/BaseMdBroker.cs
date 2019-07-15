@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FreeQuant.Components.Broker;
 using FreeQuant.Framework;
 
 namespace FreeQuant.Components {

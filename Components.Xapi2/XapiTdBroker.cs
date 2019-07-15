@@ -107,25 +107,14 @@ namespace Components.Xapi2 {
             }
         }
 
-        private void _OnRspQryInvestorPosition(object sender, ref PositionField position, int size1, bool bIsLast) {
-            Instrument inst = InstrumentManager.GetInstrument(position.InstrumentID);
-            if (inst == null)
-                return;
-            //
-            DirectionType type = DirectionType.Buy;
-            if (position.Side == PositionSide.Short) {
-                type = DirectionType.Sell;
-            }
-            BrokerPositionEvent evt = new BrokerPositionEvent(position.InstrumentID
-                , type
-                , Convert.ToInt64(position.HistoryPosition)
-                , Convert.ToInt64(position.HistoryFrozen)
-                , Convert.ToInt64(position.TodayPosition)
-                , Convert.ToInt64(position.TodayBSFrozen));
-            PostPositionEvent(evt);
+        private void _OnRspQryInvestorPosition(object sender, ref PositionField position, int size1, bool bIsLast)
+        {
+            BrokerPositionManger.Instance.UpdatePosition(position);
         }
 
-        private void _onRtnOrder(object sender, ref OrderField order) {
+        private void _onRtnOrder(object sender, ref OrderField order)
+        {
+            BrokerPositionManger.Instance.AddOrder(order);
             FreeQuant.Components.OrderStatus status = FreeQuant.Components.OrderStatus.Normal;
             switch (order.Status) {
                 case OrderStatus.NotSent:
@@ -151,18 +140,12 @@ namespace Components.Xapi2 {
                 case OrderStatus.Replaced:
                     return;
             }
-
-            BrokerOrderEvent evt = new BrokerOrderEvent(order.LocalID
-                , order.OrderID
-                , Convert.ToInt64(order.CumQty)
-                , Convert.ToInt64(order.LeavesQty)
-                , status);
-            PostOrderEvent(evt);
+            //todo 转换订单
+            
         }
 
         private void _onRtnTrade(object sender, ref TradeField trade) {
-            BrokerTradeEvent evt = new BrokerTradeEvent(trade.ID, Convert.ToInt64(trade.Qty));
-            PostTradeEvent(evt);
+            BrokerPositionManger.Instance.UpdatePosition(trade);
         }
     }
 }

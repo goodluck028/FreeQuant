@@ -5,21 +5,26 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FreeQuant.Framework;
+using FreeQuant.Components;
 
 namespace FreeQuant.Console {
     class Program {
-        static void Main(string[] args) {
-            ModuleLoader.LoadAllModules();
-            PerformanceTest2 test = new PerformanceTest2();
-            EventBus.Register(test);
-            for (int i = 0; i < 100; i++) {
-                Thread.Sleep(500);
-                EventBus.PostEvent(i);
-                if (i == 50) {
-                    EventBus.UnRegister(test);
+        static void Main(string[] args)
+        {
+            while (true)
+            {
+                ConsoleKeyInfo info = System.Console.ReadKey();
+                if (info.Modifiers == ConsoleModifiers.Control && info.Key == ConsoleKey.Q)
+                {
+                    System.Console.WriteLine("aaaaa");
+                    break;
                 }
             }
 
+            System.Console.ReadKey();
+
+            ComponentLoader.LoadAllComponents();
+            FrameworkDispatcher.Run();
             System.Console.ReadKey();
         }
     }
