@@ -18,8 +18,11 @@ namespace FreeQuant.Framework {
             mLogQueue.OnEvent += _onLog;
         }
 
-        public static void Run() {
-            ComponentLoader.LoadAllComponents();
+        //停止总线
+        public static void Stop()
+        {
+            mQueue.Stop();
+            mLogQueue.Stop();
         }
 
         /// <summary>

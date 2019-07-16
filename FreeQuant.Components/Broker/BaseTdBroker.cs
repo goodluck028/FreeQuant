@@ -71,6 +71,8 @@ namespace FreeQuant.Components {
         protected void PostOrderEvent(Order order) {
             OrderEvent evt = new OrderEvent(order);
             EventBus.PostEvent(evt);
+            //
+            order.EmmitChange();
         }
 
         protected void PostTradeEvent(Order order, long tradeVol) {

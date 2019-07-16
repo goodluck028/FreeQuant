@@ -9,23 +9,19 @@ using FreeQuant.Components;
 
 namespace FreeQuant.Console {
     class Program {
-        static void Main(string[] args)
-        {
-            while (true)
-            {
+        static void Main(string[] args) {
+            //启动
+            ComponentLoader.LoadAllComponents();
+            FrameworkDispatcher.Run();
+            //键盘退出
+            while (true) {
+                System.Console.WriteLine("输入Ctrl + Q退出");
                 ConsoleKeyInfo info = System.Console.ReadKey();
-                if (info.Modifiers == ConsoleModifiers.Control && info.Key == ConsoleKey.Q)
-                {
-                    System.Console.WriteLine("aaaaa");
+                if (info.Modifiers == ConsoleModifiers.Control && info.Key == ConsoleKey.Q) {
+                    EventBus.Stop();
                     break;
                 }
             }
-
-            System.Console.ReadKey();
-
-            ComponentLoader.LoadAllComponents();
-            FrameworkDispatcher.Run();
-            System.Console.ReadKey();
         }
     }
 }

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace FreeQuant.Components {
     //订单委托
     public class Order {
+        //ID
+        private string mLocalId;
         //策略
         private BaseStrategy mStrategy;
         //合约
@@ -73,16 +75,23 @@ namespace FreeQuant.Components {
             }
         }
 
+        public int VolumeTraded {
+            get { return mVolumeTraded; }
+            set { mVolumeTraded = value; }
+        }
+
         public int VolumeLeft {
             get {
                 return mVolumeLeft;
             }
+            set { mVolumeLeft = value; }
         }
 
         public OrderStatus Status {
             get {
                 return mStatus;
             }
+            set { mStatus = value; }
         }
 
         public DateTime OrderTime {
@@ -95,6 +104,16 @@ namespace FreeQuant.Components {
             get {
                 return mStrategy;
             }
+        }
+
+        public string LocalId {
+            get { return mLocalId; }
+            set { mLocalId = value; }
+        }
+
+        //
+        internal void EmmitChange() {
+            OnChanged?.Invoke(this);
         }
 
         //发送订单

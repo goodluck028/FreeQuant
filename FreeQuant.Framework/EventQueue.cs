@@ -36,6 +36,12 @@ namespace FreeQuant.Framework {
 
         }
 
+        internal void Stop() {
+            if (mThread != null && mThread.IsAlive) {
+                mThread.Interrupt();
+            }
+        }
+
         public event Action<Event> OnEvent;
     }
 }

@@ -29,8 +29,7 @@ namespace FreeQuant.Components {
 
         //订阅行情
         public void SubscribInstrument(params string[] instIds) {
-            foreach (string instId in instIds)
-            {
+            foreach (string instId in instIds) {
                 Instrument inst = InstrumentManager.GetInstrument(instId);
                 OnSubscribeInstrument?.Invoke(this, inst);
                 mMainInstrument = mMainInstrument ?? inst;
@@ -104,44 +103,44 @@ namespace FreeQuant.Components {
         }
 
         //订单生成函数
-        public Order BuyOrder(int vol) {
+        public Order BuyOrder(int vol, OffsetType offset = OffsetType.Auto) {
             if (lastTickDic.ContainsKey(mMainInstrument)) {
                 double price = 0;
                 price = lastTickDic[mMainInstrument].UpperLimitPrice;
-                return BuyOrder(vol, price);
+                return BuyOrder(vol, price, offset);
             } else {
                 return BuyOrder(0, 0);
             }
 
         }
-        public Order BuyOrder(int vol, double price) {
-            return BuyOrder(vol, price, mMainInstrument);
+        public Order BuyOrder(int vol, double price, OffsetType offset = OffsetType.Auto) {
+            return BuyOrder(vol, price, mMainInstrument, offset);
         }
-        public Order BuyOrder(int vol, double price, Instrument instrument) {
+        public Order BuyOrder(int vol, double price, Instrument instrument, OffsetType offset = OffsetType.Auto) {
             if (vol < 0) {
                 return BuyOrder(0, price, instrument);
             }
-            Order order = new Order(this, instrument, DirectionType.Buy, price, vol);
+            Order order = new Order(this, instrument, DirectionType.Buy, offset, price, vol);
             return order;
         }
-        public Order SellOrder(int vol) {
+        public Order SellOrder(int vol, OffsetType offset = OffsetType.Auto) {
             if (lastTickDic.ContainsKey(mMainInstrument)) {
                 double price = 0;
                 price = lastTickDic[mMainInstrument].LowerLimitPrice;
-                return SellOrder(vol, price);
+                return SellOrder(vol, price, offset);
             } else {
                 return SellOrder(0, 0);
             }
 
         }
-        public Order SellOrder(int vol, double price) {
-            return SellOrder(vol, price, mMainInstrument);
+        public Order SellOrder(int vol, double price, OffsetType offset = OffsetType.Auto) {
+            return SellOrder(vol, price, mMainInstrument, offset);
         }
-        public Order SellOrder(int vol, double price, Instrument instrument) {
+        public Order SellOrder(int vol, double price, Instrument instrument, OffsetType offset = OffsetType.Auto) {
             if (vol < 0) {
                 return SellOrder(0, price, instrument);
             }
-            Order order = new Order(this, instrument, DirectionType.Sell, price, vol);
+            Order order = new Order(this, instrument, DirectionType.Sell, offset, price, vol);
             return order;
         }
         public Order ToPositionOrder(int position) {

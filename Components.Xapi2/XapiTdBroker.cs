@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using FreeQuant.Components;
 using System.IO;
@@ -11,7 +12,10 @@ namespace Components.Xapi2 {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_Trade_x86.dll");
         private Account mAccount = ConfigUtil.Config.MyMdAccount;
         XApi mTdApi;
-
+        //
+        ConcurrentDictionary<string, OrderField> mBrokerOrderMap = new ConcurrentDictionary<string, OrderField>();
+        ConcurrentDictionary<string, Order> mOrderMap = new ConcurrentDictionary<string, Order>();
+        //
         protected override void Login() {
             mTdApi = new XApi(mdPath);
             mTdApi.Server.Address = mAccount.Server;
@@ -51,9 +55,9 @@ namespace Components.Xapi2 {
             OrderField field = new OrderField();
             field.Type = OrderType.Limit;
             field.HedgeFlag = HedgeFlagType.Speculation;
-            field.InstrumentID = brokerOrder.InstrumentId;
-            field.Side = brokerOrder.Direction == DirectionType.Buy ? OrderSide.Buy : OrderSide.Sell;
-            switch (brokerOrder.Offset) {
+            field.InstrumentID = order.Instrument.InstrumentID;
+            field.Side = order.Direction == DirectionType.Buy ? OrderSide.Buy : OrderSide.Sell;
+            switch (order.Offset) {
                 case OffsetType.Close:
                     field.OpenClose = OpenCloseType.Close;
                     break;
@@ -64,14 +68,27 @@ namespace Components.Xapi2 {
                     field.OpenClose = OpenCloseType.Open;
                     break;
             }
-            field.Price = brokerOrder.LimitPrice;
-            field.Qty = brokerOrder.Volume;
+            field.Price = order.Price;
+            field.Qty = order.Volume;
+
+            //自动开平
+            if (order.Offset == OffsetType.Auto)
+            {
+                BrokerPositionManger.Instance.AutoClose(field);
+            }
+
             string localId = mTdApi.SendOrder(field);
-            brokerOrder.LocalId = localId;
+
+            //这里只记录策略订单，接口订单要等前置返回信息再记录
+            order.LocalId = localId;
+            mOrderMap.TryAdd(localId, order);
         }
 
         protected override void CancelOrder(Order order) {
-            mTdApi.CancelOrder(brokerOrder.LocalId);
+            OrderField field;
+            if (mBrokerOrderMap.TryGetValue(order.LocalId, out field)) {
+                mTdApi.CancelOrder(field.ID);
+            }
         }
 
         private void _onRspQryInstrument(object sender, ref InstrumentField instrument, int size1, bool bIsLast) {
@@ -107,16 +124,29 @@ namespace Components.Xapi2 {
             }
         }
 
-        private void _OnRspQryInvestorPosition(object sender, ref PositionField position, int size1, bool bIsLast)
-        {
+        private void _OnRspQryInvestorPosition(object sender, ref PositionField position, int size1, bool bIsLast) {
             BrokerPositionManger.Instance.UpdatePosition(position);
         }
 
-        private void _onRtnOrder(object sender, ref OrderField order)
-        {
-            BrokerPositionManger.Instance.AddOrder(order);
+        private void _onRtnOrder(object sender, ref OrderField field) {
+            BrokerPositionManger.Instance.AddOrder(field);
+            //转换订单
+            Order order = convertOrder(field);
+            PostOrderEvent(order);
+        }
+
+        private void _onRtnTrade(object sender, ref TradeField trade) {
+            BrokerPositionManger.Instance.UpdatePosition(trade);
+        }
+
+        //转换订单
+        private Order convertOrder(OrderField field) {
+            Order order;
+            if (!mOrderMap.TryGetValue(field.LocalID, out order)) {
+                return null;
+            }
             FreeQuant.Components.OrderStatus status = FreeQuant.Components.OrderStatus.Normal;
-            switch (order.Status) {
+            switch (field.Status) {
                 case OrderStatus.NotSent:
                 case OrderStatus.PendingNew:
                 case OrderStatus.New:
@@ -125,27 +155,37 @@ namespace Components.Xapi2 {
                 case OrderStatus.Rejected:
                 case OrderStatus.Expired:
                     status = FreeQuant.Components.OrderStatus.Error;
+                    deleteOrder(field);
                     break;
                 case OrderStatus.PartiallyFilled:
                     status = FreeQuant.Components.OrderStatus.Partial;
                     break;
                 case OrderStatus.Filled:
                     status = FreeQuant.Components.OrderStatus.Filled;
+                    deleteOrder(field);
                     break;
                 case OrderStatus.Cancelled:
                     status = FreeQuant.Components.OrderStatus.Canceled;
+                    deleteOrder(field);
                     break;
                 case OrderStatus.PendingCancel:
                 case OrderStatus.PendingReplace:
                 case OrderStatus.Replaced:
-                    return;
+                    break;
             }
-            //todo 转换订单
-            
+
+            order.Status = status;
+            order.VolumeLeft = (int)field.LeavesQty;
+            order.VolumeTraded = (int)field.CumQty;
+
+            return order;
         }
 
-        private void _onRtnTrade(object sender, ref TradeField trade) {
-            BrokerPositionManger.Instance.UpdatePosition(trade);
+        private void deleteOrder(OrderField field) {
+            Order o;
+            OrderField f;
+            mOrderMap.TryRemove(field.LocalID, out o);
+            mBrokerOrderMap.TryRemove(field.LocalID, out f);
         }
     }
 }
