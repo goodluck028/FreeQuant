@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FreeQuant.Framework;
 
 namespace FreeQuant.Components {
-    [Component]
+
     public abstract class BaseTdBroker {
         public BaseTdBroker() {
             EventBus.Register(this);
@@ -15,32 +15,32 @@ namespace FreeQuant.Components {
 
         #region EventBus事件
         [OnEvent]
-        private void OnTdBrokerLoginRequest(TdBrokerLoginRequest request) {
+        protected void OnTdBrokerLoginRequest(TdBrokerLoginRequest request) {
             Login();
         }
 
         [OnEvent]
-        private void OnTdBrokerLogoutRequest(TdBrokerLogoutRequest request) {
+        protected void OnTdBrokerLogoutRequest(TdBrokerLogoutRequest request) {
             Logout();
         }
 
         [OnEvent]
-        private void OnQueryInstrumentRequest(QueryInstrumentRequest request) {
+        protected void OnQueryInstrumentRequest(QueryInstrumentRequest request) {
             QueryInstrument();
         }
 
         [OnEvent]
-        private void OnQueryPosition(QueryPositionRequest request) {
+        protected void OnQueryPosition(QueryPositionRequest request) {
             QueryPosition();
         }
 
         [OnEvent]
-        private void OnSendOrderRequest(SendOrderRequest request) {
+        protected void OnSendOrderRequest(SendOrderRequest request) {
             SendOrder(request.Order);
         }
 
         [OnEvent]
-        private void OnCancelOrderRequest(CancelOrderRequest request) {
+        protected void OnCancelOrderRequest(CancelOrderRequest request) {
             CancelOrder(request.Order);
         }
         #endregion

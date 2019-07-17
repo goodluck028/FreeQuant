@@ -7,7 +7,6 @@ using FreeQuant.Framework;
 
 namespace FreeQuant.Components {
 
-    [Component]
     public abstract class BaseMdBroker{
         public BaseMdBroker()
         {
@@ -17,22 +16,22 @@ namespace FreeQuant.Components {
 
         #region EventBus事件
         [OnEvent]
-        private void OnMdBrokerLoginRequest(TdBrokerLoginRequest request) {
+        protected void OnMdBrokerLoginRequest(MdBrokerLoginRequest request) {
             Login();
         }
 
         [OnEvent]
-        private void OnMdBrokerLogoutRequest(TdBrokerLogoutRequest request) {
+        protected void OnMdBrokerLogoutRequest(MdBrokerLogoutRequest request) {
             Logout();
         }
 
         [OnEvent]
-        private void OnSubscribInstrumentRequest(SubscribeInstrumentRequest request) {
+        protected void OnSubscribInstrumentRequest(SubscribeInstrumentRequest request) {
             SubscribeMarketData(request.Instrument);
         }
 
         [OnEvent]
-        private void OnUnsubscribInstrumentRequest(UnsubscribeInstrumentRequest request) {
+        protected void OnUnsubscribInstrumentRequest(UnsubscribeInstrumentRequest request) {
             UnSubscribeMarketData(request.Instrument);
         }
         #endregion

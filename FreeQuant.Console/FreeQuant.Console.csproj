@@ -50,6 +50,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Components.Xapi2\Components.Xapi2.csproj">
+      <Project>{f28b8655-3cdd-4691-97fc-9e0efcaa2663}</Project>
+      <Name>Components.Xapi2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FreeQuant.Components\FreeQuant.Components.csproj">
       <Project>{6be77e5e-291d-456b-97d3-30dfcf93985c}</Project>
       <Name>FreeQuant.Components</Name>

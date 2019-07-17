@@ -3,13 +3,15 @@ using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using FreeQuant.Components;
 using System.IO;
+using FreeQuant.Framework;
 using XAPI.Callback;
 using XAPI;
 using OrderStatus = XAPI.OrderStatus;
 
 namespace Components.Xapi2 {
+    [Component]
     public class XapiTdBroker : BaseTdBroker {
-        string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_Trade_x86.dll");
+        string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_Trade_x64.dll");
         private Account mAccount = ConfigUtil.Config.MyMdAccount;
         XApi mTdApi;
         //

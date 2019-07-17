@@ -38,7 +38,6 @@ namespace FreeQuant.Framework {
                         }
                     }
                 } catch (Exception e) {
-                    Console.WriteLine(e);
                 }
 
             }
