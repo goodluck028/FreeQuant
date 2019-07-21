@@ -127,10 +127,23 @@ namespace Components.Xapi2 {
         }
 
         private void _OnRspQryInvestorPosition(object sender, ref PositionField position, int size1, bool bIsLast) {
-            BrokerPositionManger.Instance.UpdatePosition(position);
+            EventBus.PostEvent(position);
+        }
+
+        //这样搞，是为了避免接口线程和事件线程同时操作对象需要加锁的麻烦，但是会增加延迟。
+        [OnEvent]
+        private void onBroderPosition(PositionField field)
+        {
+            BrokerPositionManger.Instance.UpdatePosition(field);
         }
 
         private void _onRtnOrder(object sender, ref OrderField field) {
+            EventBus.PostEvent(field);
+        }
+
+        [OnEvent]
+        private void onBrokerOrder(OrderField field)
+        {
             BrokerPositionManger.Instance.AddOrder(field);
             //转换订单
             Order order = convertOrder(field);
@@ -138,7 +151,13 @@ namespace Components.Xapi2 {
         }
 
         private void _onRtnTrade(object sender, ref TradeField trade) {
-            BrokerPositionManger.Instance.UpdatePosition(trade);
+            EventBus.PostEvent(trade);
+        }
+
+        [OnEvent]
+        private void onBroderTrade(TradeField field)
+        {
+            BrokerPositionManger.Instance.UpdatePosition(field);
         }
 
         //转换订单
