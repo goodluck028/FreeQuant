@@ -85,12 +85,12 @@ namespace FreeQuant.Components {
         internal List<Instrument> InstrumentList => mTickDispatcher.InstrumentList;
         private void Subscribe(BaseStrategy stg, Instrument inst) {
             mTickDispatcher.Map(inst, stg);
-            SubscribeInstrumentRequest request = new SubscribeInstrumentRequest(inst);
+            BrokerEvent.SubscribeInstrumentRequest request = new BrokerEvent.SubscribeInstrumentRequest(inst);
             EventBus.PostEvent(request);
         }
 
         [OnEvent]
-        private void OnTickEvent(TickEvent evt) {
+        private void OnTickEvent(BrokerEvent.TickEvent evt) {
             mTickDispatcher.Dispatch(evt.Tick);
         }
         #endregion
@@ -98,18 +98,18 @@ namespace FreeQuant.Components {
         #region 处理交易
         private OrderManager mOrderManager = new OrderManager();
         private void sendOrder(Order order) {
-            SendOrderRequest request = new SendOrderRequest(order);
+            StrategyEvent.SendOrderRequest request = new StrategyEvent.SendOrderRequest(order);
             EventBus.PostEvent(request);
             mOrderManager.AddOrder(order);
         }
 
         private void cancelOrder(Order order) {
-            CancelOrderRequest request = new CancelOrderRequest(order);
+            StrategyEvent.CancelOrderRequest request = new StrategyEvent.CancelOrderRequest(order);
             EventBus.PostEvent(request);
         }
 
         private void changePosition(Position position) {
-            ChangePositionEvent evt = new ChangePositionEvent(position);
+            StrategyEvent.ChangePositionEvent evt = new StrategyEvent.ChangePositionEvent(position);
             EventBus.PostEvent(evt);
         }
         #endregion

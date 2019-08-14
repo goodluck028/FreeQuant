@@ -5,45 +5,55 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FreeQuant.Components {
-    public class SendOrderRequest {
-        private Order mOrder;
-
-        public SendOrderRequest(Order order) {
-            mOrder = order;
-        }
-
-        public Order Order => mOrder;
-    }
-
-    public class CancelOrderRequest {
-        private Order mOrder;
-
-        public CancelOrderRequest(Order order) {
-            mOrder = order;
-        }
-
-        public Order Order => mOrder;
-    }
-
-    public class ChangePositionEvent
+    public static class StrategyEvent
     {
-        private Position mPosition;
 
-        public ChangePositionEvent(Position position)
+        public class SendOrderRequest
         {
-            mPosition = position;
+            private Order mOrder;
+
+            public SendOrderRequest(Order order)
+            {
+                mOrder = order;
+            }
+
+            public Order Order => mOrder;
         }
 
-        public Position Position => mPosition;
-    }
+        public class CancelOrderRequest
+        {
+            private Order mOrder;
 
-    public class OrderEvent {
-        private Order mOrder;
+            public CancelOrderRequest(Order order)
+            {
+                mOrder = order;
+            }
 
-        public OrderEvent(Order order) {
-            mOrder = order;
+            public Order Order => mOrder;
         }
 
-        public Order Order => mOrder;
+        public class ChangePositionEvent
+        {
+            private Position mPosition;
+
+            public ChangePositionEvent(Position position)
+            {
+                mPosition = position;
+            }
+
+            public Position Position => mPosition;
+        }
+
+        public class OrderEvent
+        {
+            private Order mOrder;
+
+            public OrderEvent(Order order)
+            {
+                mOrder = order;
+            }
+
+            public Order Order => mOrder;
+        }
     }
 }

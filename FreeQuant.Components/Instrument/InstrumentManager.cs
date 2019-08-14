@@ -15,7 +15,7 @@ namespace FreeQuant.Components {
         }
 
         [OnEvent]
-        private void OnInstrument(InstrumentEvent evt) {
+        private void OnInstrument(BrokerEvent.InstrumentEvent evt) {
             Instrument inst = evt.Instrument;
             mInstrumentMap.TryAdd(inst.InstrumentID, inst);
         }

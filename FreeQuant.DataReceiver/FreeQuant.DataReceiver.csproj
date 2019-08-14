@@ -78,7 +78,7 @@
     <Compile Include="MySqlHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StrategyComponentsDispatcher.cs" />
+    <Compile Include="ReceiverComponentsScheduler.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

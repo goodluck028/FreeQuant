@@ -24,7 +24,7 @@ namespace FreeQuant.DataReceiver {
 
         //数据
         [OnEvent]
-        private void _onTick(TickEvent tick) {
+        private void _onTick(BrokerEvent.TickEvent tick) {
 
         }
     }

@@ -15,32 +15,32 @@ namespace FreeQuant.Components {
 
         #region EventBus事件
         [OnEvent]
-        protected void OnTdBrokerLoginRequest(TdBrokerLoginRequest request) {
+        protected void OnTdBrokerLoginRequest(BrokerEvent.TdBrokerLoginRequest request) {
             Login();
         }
 
         [OnEvent]
-        protected void OnTdBrokerLogoutRequest(TdBrokerLogoutRequest request) {
+        protected void OnTdBrokerLogoutRequest(BrokerEvent.TdBrokerLogoutRequest request) {
             Logout();
         }
 
         [OnEvent]
-        protected void OnQueryInstrumentRequest(QueryInstrumentRequest request) {
+        protected void OnQueryInstrumentRequest(BrokerEvent.QueryInstrumentRequest request) {
             QueryInstrument();
         }
 
         [OnEvent]
-        protected void OnQueryPosition(QueryPositionRequest request) {
+        protected void OnQueryPosition(BrokerEvent.QueryPositionRequest request) {
             QueryPosition();
         }
 
         [OnEvent]
-        protected void OnSendOrderRequest(SendOrderRequest request) {
+        protected void OnSendOrderRequest(StrategyEvent.SendOrderRequest request) {
             SendOrder(request.Order);
         }
 
         [OnEvent]
-        protected void OnCancelOrderRequest(CancelOrderRequest request) {
+        protected void OnCancelOrderRequest(StrategyEvent.CancelOrderRequest request) {
             CancelOrder(request.Order);
         }
         #endregion
@@ -50,14 +50,14 @@ namespace FreeQuant.Components {
         protected abstract void Login();
         //登录结果事件
         protected void PostLoginEvent(bool isSuccess = true, string errorMsg = "") {
-            TdBrokerLoginEvent evt = new TdBrokerLoginEvent(isSuccess, errorMsg);
+            BrokerEvent.TdBrokerLoginEvent evt = new BrokerEvent.TdBrokerLoginEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         //登出
         protected abstract void Logout();
         //登出结果事件
         protected void PostLogoutEvent(bool isSuccess = true, string errorMsg = "") {
-            TdBrokerLogoutEvent evt = new TdBrokerLogoutEvent(isSuccess, errorMsg);
+            BrokerEvent.TdBrokerLogoutEvent evt = new BrokerEvent.TdBrokerLogoutEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         #endregion
@@ -69,14 +69,14 @@ namespace FreeQuant.Components {
         protected abstract void CancelOrder(Order order);
         //
         protected void PostOrderEvent(Order order) {
-            OrderEvent evt = new OrderEvent(order);
+            StrategyEvent.OrderEvent evt = new StrategyEvent.OrderEvent(order);
             EventBus.PostEvent(evt);
             //
             order.EmmitChange();
         }
 
         protected void PostTradeEvent(Order order, long tradeVol) {
-            TradeEvent evt = new TradeEvent(order, tradeVol);
+            BrokerEvent.TradeEvent evt = new BrokerEvent.TradeEvent(order, tradeVol);
             EventBus.PostEvent(evt);
         }
         #endregion
@@ -85,7 +85,7 @@ namespace FreeQuant.Components {
         //请求合约
         protected abstract void QueryInstrument();
         protected void PostInstrumentEvent(Instrument inst) {
-            InstrumentEvent evt = new InstrumentEvent(inst);
+            BrokerEvent.InstrumentEvent evt = new BrokerEvent.InstrumentEvent(inst);
             EventBus.PostEvent(evt);
         }
         #endregion
@@ -93,7 +93,7 @@ namespace FreeQuant.Components {
         #region 持仓
         protected abstract void QueryPosition();
 
-        protected void PostPositionEvent(PositionEvent evt) {
+        protected void PostPositionEvent(BrokerEvent.PositionEvent evt) {
             EventBus.PostEvent(evt);
         }
         #endregion

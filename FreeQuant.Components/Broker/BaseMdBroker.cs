@@ -16,22 +16,22 @@ namespace FreeQuant.Components {
 
         #region EventBus事件
         [OnEvent]
-        protected void OnMdBrokerLoginRequest(MdBrokerLoginRequest request) {
+        protected void OnMdBrokerLoginRequest(BrokerEvent.MdBrokerLoginRequest request) {
             Login();
         }
 
         [OnEvent]
-        protected void OnMdBrokerLogoutRequest(MdBrokerLogoutRequest request) {
+        protected void OnMdBrokerLogoutRequest(BrokerEvent.MdBrokerLogoutRequest request) {
             Logout();
         }
 
         [OnEvent]
-        protected void OnSubscribInstrumentRequest(SubscribeInstrumentRequest request) {
+        protected void OnSubscribInstrumentRequest(BrokerEvent.SubscribeInstrumentRequest request) {
             SubscribeMarketData(request.Instrument);
         }
 
         [OnEvent]
-        protected void OnUnsubscribInstrumentRequest(UnsubscribeInstrumentRequest request) {
+        protected void OnUnsubscribInstrumentRequest(BrokerEvent.UnsubscribeInstrumentRequest request) {
             UnSubscribeMarketData(request.Instrument);
         }
         #endregion
@@ -41,14 +41,14 @@ namespace FreeQuant.Components {
         public abstract void Login();
         //登录结果事件
         protected void PostLoginEvent(bool isSuccess = true, string errorMsg = "") {
-            MdBrokerLoginEvent evt = new MdBrokerLoginEvent(isSuccess, errorMsg);
+            BrokerEvent.MdBrokerLoginEvent evt = new BrokerEvent.MdBrokerLoginEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         //登出
         public abstract void Logout();
         //登出结果事件
         protected void PostLogoutEvent(bool isSuccess = true, string errorMsg = "") {
-            MdBrokerLogoutEvent evt = new MdBrokerLogoutEvent(isSuccess, errorMsg);
+            BrokerEvent.MdBrokerLogoutEvent evt = new BrokerEvent.MdBrokerLogoutEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         #endregion
@@ -60,7 +60,7 @@ namespace FreeQuant.Components {
         public abstract void UnSubscribeMarketData(Instrument Instrument);
         //行情事件
         public void PostTickEvent(Tick tick) {
-            TickEvent evt = new TickEvent(tick);
+            BrokerEvent.TickEvent evt = new BrokerEvent.TickEvent(tick);
             EventBus.PostEvent(evt);
         }
         #endregion
