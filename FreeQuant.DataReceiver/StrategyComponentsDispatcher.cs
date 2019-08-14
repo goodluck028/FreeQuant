@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FreeQuant.Framework;
+using FreeQuant.Components;
 
-namespace FreeQuant.Components {
-    public class FrameworkDispatcher {
-        public static FrameworkDispatcher mInstance;
-        private FrameworkDispatcher() {
+namespace FreeQuant.DataReceiver {
+    public class StrategyComponentsDispatcher {
+        public static StrategyComponentsDispatcher mInstance;
+        private StrategyComponentsDispatcher() {
             EventBus.Register(this);
             //登录行情
             MdBrokerLoginRequest request = new MdBrokerLoginRequest();
@@ -16,7 +17,7 @@ namespace FreeQuant.Components {
         }
         public static void Run() {
             if (mInstance == null) {
-                mInstance = new FrameworkDispatcher();
+                mInstance = new StrategyComponentsDispatcher();
             }
         }
 

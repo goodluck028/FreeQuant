@@ -68,17 +68,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="DataReceiver.cs" />
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MySqlHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="StrategyComponentsDispatcher.cs" />
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -105,6 +107,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DataReceiver.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Components.Xapi2\Components.Xapi2.csproj">
+      <Project>{f28b8655-3cdd-4691-97fc-9e0efcaa2663}</Project>
+      <Name>Components.Xapi2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreeQuant.Components\FreeQuant.Components.csproj">
+      <Project>{6be77e5e-291d-456b-97d3-30dfcf93985c}</Project>
+      <Name>FreeQuant.Components</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FreeQuant.Framework\FreeQuant.Framework.csproj">
+      <Project>{87b4aea7-403c-44cd-aa46-a700b8cec2a3}</Project>
+      <Name>FreeQuant.Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -28,20 +28,20 @@ namespace FreeQuant.Components
         }
         //
         public static void EnginLog(string content) {
-            Log log = new Log(LogType.Enginlog, content);
-            EventBus.PostLog(log);
+            LogEvent logEvent = new LogEvent(LogType.Enginlog, content);
+            EventBus.PostLog(logEvent);
         }
         public static void UserLog(string content) {
-            Log log = new Log(LogType.UserLog, content);
-            EventBus.PostLog(log);
+            LogEvent logEvent = new LogEvent(LogType.UserLog, content);
+            EventBus.PostLog(logEvent);
         }
         //
         [OnLog]
-        private void _onLog(Log log) {
+        private void _onLog(LogEvent logEvent) {
             string path = AppDomain.CurrentDomain.BaseDirectory;
-            string folderName = log.Type.ToString();
+            string folderName = logEvent.Type.ToString();
             if (!string.IsNullOrEmpty(path)) {
-                path = AppDomain.CurrentDomain.BaseDirectory + "\\log\\" + folderName;
+                path = AppDomain.CurrentDomain.BaseDirectory + "\\logEvent\\" + folderName;
                 if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
                 }
@@ -52,7 +52,7 @@ namespace FreeQuant.Components
                 }
                 if (File.Exists(path)) {
                     StreamWriter sw = new StreamWriter(path, true, System.Text.Encoding.Default);
-                    string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + log.Content;
+                    string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + logEvent.Content;
                     Console.WriteLine(c);
                     sw.WriteLine(c);
                     sw.Close();
@@ -61,11 +61,11 @@ namespace FreeQuant.Components
         }
     }
 
-    internal class Log {
+    public class LogEvent {
         LogType type;
         string content;
 
-        public Log(LogType type, string content) {
+        public LogEvent(LogType type, string content) {
             this.type = type;
             this.content = content;
         }
@@ -83,7 +83,7 @@ namespace FreeQuant.Components
         }
     }
 
-    internal enum LogType {
+    public enum LogType {
         Enginlog,
         UserLog
     }
