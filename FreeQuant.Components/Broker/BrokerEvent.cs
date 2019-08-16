@@ -9,14 +9,14 @@ namespace FreeQuant.Components {
 
         #region 交易
 
-        public class TdBrokerLoginRequest {
+        public class TdLoginRequest {
         }
 
-        public class TdBrokerLoginEvent {
+        public class TdLoginEvent {
             private bool mIsLoginSuccess;
             private string mErrorMsg;
 
-            public TdBrokerLoginEvent(bool isLoginSuccess, string errorMsg) {
+            public TdLoginEvent(bool isLoginSuccess, string errorMsg) {
                 mIsLoginSuccess = isLoginSuccess;
                 mErrorMsg = errorMsg;
             }
@@ -26,14 +26,14 @@ namespace FreeQuant.Components {
             public string ErrorMsg => mErrorMsg;
         }
 
-        public class TdBrokerLogoutRequest {
+        public class TdLogoutRequest {
         }
 
-        public class TdBrokerLogoutEvent {
+        public class TdLogoutEvent {
             private bool mIsLogoutSuccess;
             private string mErrorMsg;
 
-            public TdBrokerLogoutEvent(bool isLogoutSuccess, string errorMsg) {
+            public TdLogoutEvent(bool isLogoutSuccess, string errorMsg) {
                 mIsLogoutSuccess = isLogoutSuccess;
                 mErrorMsg = errorMsg;
             }
@@ -108,14 +108,14 @@ namespace FreeQuant.Components {
 
         #region 行情
 
-        public class MdBrokerLoginRequest {
+        public class MdLoginRequest {
         }
 
-        public class MdBrokerLoginEvent {
+        public class MdLoginEvent {
             private bool mIsLoginSuccess;
             private string mErrorMsg;
 
-            public MdBrokerLoginEvent(bool isLoginSuccess, string errorMsg) {
+            public MdLoginEvent(bool isLoginSuccess, string errorMsg) {
                 mIsLoginSuccess = isLoginSuccess;
                 mErrorMsg = errorMsg;
             }
@@ -125,14 +125,14 @@ namespace FreeQuant.Components {
             public string ErrorMsg => mErrorMsg;
         }
 
-        public class MdBrokerLogoutRequest {
+        public class MdLogoutRequest {
         }
 
-        public class MdBrokerLogoutEvent {
+        public class MdLogoutEvent {
             private bool mIsLogoutSuccess;
             private string mErrorMsg;
 
-            public MdBrokerLogoutEvent(bool isLogoutSuccess, string errorMsg) {
+            public MdLogoutEvent(bool isLogoutSuccess, string errorMsg) {
                 mIsLogoutSuccess = isLogoutSuccess;
                 mErrorMsg = errorMsg;
             }

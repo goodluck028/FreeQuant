@@ -15,12 +15,12 @@ namespace FreeQuant.Components {
 
         #region EventBus事件
         [OnEvent]
-        protected void OnTdBrokerLoginRequest(BrokerEvent.TdBrokerLoginRequest request) {
+        protected void OnTdBrokerLoginRequest(BrokerEvent.TdLoginRequest request) {
             Login();
         }
 
         [OnEvent]
-        protected void OnTdBrokerLogoutRequest(BrokerEvent.TdBrokerLogoutRequest request) {
+        protected void OnTdBrokerLogoutRequest(BrokerEvent.TdLogoutRequest request) {
             Logout();
         }
 
@@ -50,14 +50,14 @@ namespace FreeQuant.Components {
         protected abstract void Login();
         //登录结果事件
         protected void PostLoginEvent(bool isSuccess = true, string errorMsg = "") {
-            BrokerEvent.TdBrokerLoginEvent evt = new BrokerEvent.TdBrokerLoginEvent(isSuccess, errorMsg);
+            BrokerEvent.TdLoginEvent evt = new BrokerEvent.TdLoginEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         //登出
         protected abstract void Logout();
         //登出结果事件
         protected void PostLogoutEvent(bool isSuccess = true, string errorMsg = "") {
-            BrokerEvent.TdBrokerLogoutEvent evt = new BrokerEvent.TdBrokerLogoutEvent(isSuccess, errorMsg);
+            BrokerEvent.TdLogoutEvent evt = new BrokerEvent.TdLogoutEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         #endregion

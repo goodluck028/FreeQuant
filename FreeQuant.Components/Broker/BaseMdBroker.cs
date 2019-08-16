@@ -16,12 +16,12 @@ namespace FreeQuant.Components {
 
         #region EventBus事件
         [OnEvent]
-        protected void OnMdBrokerLoginRequest(BrokerEvent.MdBrokerLoginRequest request) {
+        protected void OnMdBrokerLoginRequest(BrokerEvent.MdLoginRequest request) {
             Login();
         }
 
         [OnEvent]
-        protected void OnMdBrokerLogoutRequest(BrokerEvent.MdBrokerLogoutRequest request) {
+        protected void OnMdBrokerLogoutRequest(BrokerEvent.MdLogoutRequest request) {
             Logout();
         }
 
@@ -41,14 +41,14 @@ namespace FreeQuant.Components {
         public abstract void Login();
         //登录结果事件
         protected void PostLoginEvent(bool isSuccess = true, string errorMsg = "") {
-            BrokerEvent.MdBrokerLoginEvent evt = new BrokerEvent.MdBrokerLoginEvent(isSuccess, errorMsg);
+            BrokerEvent.MdLoginEvent evt = new BrokerEvent.MdLoginEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         //登出
         public abstract void Logout();
         //登出结果事件
         protected void PostLogoutEvent(bool isSuccess = true, string errorMsg = "") {
-            BrokerEvent.MdBrokerLogoutEvent evt = new BrokerEvent.MdBrokerLogoutEvent(isSuccess, errorMsg);
+            BrokerEvent.MdLogoutEvent evt = new BrokerEvent.MdLogoutEvent(isSuccess, errorMsg);
             EventBus.PostEvent(evt);
         }
         #endregion

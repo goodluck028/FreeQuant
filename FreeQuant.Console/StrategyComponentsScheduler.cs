@@ -21,13 +21,13 @@ namespace FreeQuant.Console {
         private void start()
         {
             //登录行情
-            BrokerEvent.MdBrokerLoginRequest request = new BrokerEvent.MdBrokerLoginRequest();
+            BrokerEvent.MdLoginRequest request = new BrokerEvent.MdLoginRequest();
             EventBus.PostEvent(request);
         }
 
         //响应行情登录成功
         [OnEvent]
-        private void OnMdLogin(BrokerEvent.MdBrokerLoginEvent evt)
+        private void OnMdLogin(BrokerEvent.MdLoginEvent evt)
         {
 
         }

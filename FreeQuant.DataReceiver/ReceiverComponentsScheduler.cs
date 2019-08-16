@@ -21,25 +21,38 @@ namespace FreeQuant.DataReceiver {
 
         private void start()
         {
-            //登录交易
-            BrokerEvent.TdBrokerLoginRequest request = new BrokerEvent.TdBrokerLoginRequest();
-            EventBus.PostEvent(request);
-        }
-
-        [OnEvent]
-        private void OnTdLogin(BrokerEvent.TdBrokerLoginEvent evt)
-        {
-            //todo 查询合约
-
             //登录行情
-            BrokerEvent.MdBrokerLoginRequest request = new BrokerEvent.MdBrokerLoginRequest();
+            BrokerEvent.MdLoginRequest request = new BrokerEvent.MdLoginRequest();
             EventBus.PostEvent(request);
         }
 
-        //响应行情登录成功
+        //行情登录成功
         [OnEvent]
-        private void OnMdLogin(BrokerEvent.MdBrokerLoginEvent evt)
-        {
+        private void OnMdLogin(BrokerEvent.MdLoginEvent evt) {
+            //登录交易
+            BrokerEvent.TdLoginRequest request = new BrokerEvent.TdLoginRequest();
+            EventBus.PostEvent(request);
         }
+
+        //交易登录成功
+        [OnEvent]
+        private void OnTdLogin(BrokerEvent.TdLoginEvent evt)
+        {
+            //查询合约
+            BrokerEvent.QueryInstrumentRequest request = new BrokerEvent.QueryInstrumentRequest();
+            EventBus.PostEvent(request);
+        }
+
+        //合约返回
+        [OnEvent]
+        private void OnInstrument(BrokerEvent.InstrumentEvent evt)
+        {
+            //订阅合约
+            Instrument inst = evt.Instrument;
+            BrokerEvent.SubscribeInstrumentRequest request = new BrokerEvent.SubscribeInstrumentRequest(inst);
+            EventBus.PostEvent(request);
+        }
+
+
     }
 }

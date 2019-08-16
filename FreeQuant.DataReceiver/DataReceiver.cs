@@ -14,6 +14,10 @@ namespace FreeQuant.DataReceiver {
             EventBus.Register(this);
         }
         public static DataReceiver Instance => mInstance;
+
+        //bar生成器
+        Dictionary<string, BarGenerator> GeneratorMap = new Dictionary<string, BarGenerator>();
+
         //日志
         public Action<string> OnLog;
 
@@ -24,8 +28,21 @@ namespace FreeQuant.DataReceiver {
 
         //数据
         [OnEvent]
-        private void _onTick(BrokerEvent.TickEvent tick) {
+        private void _onTick(BrokerEvent.TickEvent evt) {
+            Tick tick = evt.Tick;
+            BarGenerator generator;
+            if (!GeneratorMap.TryGetValue(tick.Instrument.InstrumentID, out generator)) {
+                generator = new BarGenerator(tick.Instrument.InstrumentID, BarSizeType.Min1);
+                generator.OnBarTick += _onBarTick;
+                GeneratorMap.Add(tick.Instrument.InstrumentID, generator);
+            }
+            //
+            generator.addTick(tick);
 
+        }
+
+        private void _onBarTick(Bar bar, List<Tick> ticks) {
+            //todo 存储数据
         }
     }
 }

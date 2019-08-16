@@ -2,40 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using FreeQuant.Framework;
 
 namespace FreeQuant.Components {
-    internal delegate void OnBarDataDelegate(Bar bar, List<Tick> ticks);
     public class BarGenerator {
-        //
-        internal event OnBarDataDelegate OnBarData;
         //
         private string mInstrumentID;
         private List<Tick> mTickList;
         private Bar mBar;
         private BarSizeType mSizeType = BarSizeType.Min1;
-
+        //
+        public Action<Bar, List<Tick>> OnBarTick;
         //
         public BarGenerator(string instrumentID, BarSizeType sizeType) {
             mInstrumentID = instrumentID;
             mSizeType = sizeType;
+            EventBus.Register(this);
         }
 
-        internal void addTick(Tick tick) {
+        //每过1分钟判断一次，是否要生成新bar
+        public class TimerEvent { }
+        public static Timer timer = new Timer(_ => OnCallBack(), null, 0, 1000 * 60);
+        private static void OnCallBack() {
+            TimerEvent evt = new TimerEvent();
+            EventBus.PostEvent(evt);
+        }
+
+        [OnEvent]
+        private void onTimerEvent(TimerEvent evt) {
+            refreshBar(DateTime.Now);
+        }
+
+        //
+        public void addTick(Tick tick) {
             if (!tick.Instrument.Equals(mInstrumentID))
                 return;
+
             //判断是否需要生成新bar
-            if (mBar != null) {
-                DateTime barTime = mTickList[0].UpdateTime;
-                DateTime tickTime = tick.UpdateTime;
-                int barQuotient = (barTime.Day * 1440 + barTime.Hour * 60 + barTime.Minute) / ((int)mSizeType);
-                int tickQuotient = (tickTime.Day * 1440 + tickTime.Hour * 60 + barTime.Minute) / ((int)mSizeType);
-                if (!barQuotient.Equals(tickQuotient)) {
-                    OnBarData?.Invoke(mBar, mTickList);
-                    mBar = null;
-                    mTickList = null;
-                }
-            }
+            refreshBar(tick.UpdateTime);
 
             //更新bar数据
             if (mBar == null) {
@@ -58,6 +64,20 @@ namespace FreeQuant.Components {
             mBar.Volume = tick.Volume;
             mBar.OpenInterest = tick.OpenInterest;
             mTickList.Add(tick);
+        }
+        //判断是否需要生成新bar
+        private void refreshBar(DateTime current) {
+            if (mBar == null)
+                return;
+            //
+            DateTime barTime = mTickList[0].UpdateTime;
+            int barQuotient = (barTime.Day * 1440 + barTime.Hour * 60 + barTime.Minute) / ((int)mSizeType);
+            int tickQuotient = (current.Day * 1440 + current.Hour * 60 + barTime.Minute) / ((int)mSizeType);
+            if (!barQuotient.Equals(tickQuotient)) {
+                OnBarTick?.Invoke(mBar, mTickList);
+                mBar = null;
+                mTickList = null;
+            }
         }
     }
 
