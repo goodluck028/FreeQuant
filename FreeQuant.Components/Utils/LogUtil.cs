@@ -6,25 +6,12 @@ using System.Threading.Tasks;
 using System.IO;
 using FreeQuant.Framework;
 
-namespace FreeQuant.Components
-{
-    [Component]
-    internal class LogModule {
-        public LogModule() {
-            Console.WriteLine("日志组件启动");
-        }
-
-        [OnLog]
-        private void OnEngineError(Error error) {
-            LogUtil.EnginLog(error.Exception.Message);
-        }
-    }
-
+namespace FreeQuant.Components {
     public class LogUtil {
         private static LogUtil mInstance = new LogUtil();
-        private LogUtil()
-        {
+        private LogUtil() {
             EventBus.Register(this);
+            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志启动<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
         //
         public static void EnginLog(string content) {
@@ -35,13 +22,14 @@ namespace FreeQuant.Components
             LogEvent logEvent = new LogEvent(LogType.UserLog, content);
             EventBus.PostLog(logEvent);
         }
-        //
+
+        //写日志
         [OnLog]
         private void _onLog(LogEvent logEvent) {
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string folderName = logEvent.Type.ToString();
             if (!string.IsNullOrEmpty(path)) {
-                path = AppDomain.CurrentDomain.BaseDirectory + "\\logEvent\\" + folderName;
+                path = AppDomain.CurrentDomain.BaseDirectory + "\\log\\" + folderName;
                 if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
                 }
@@ -58,6 +46,12 @@ namespace FreeQuant.Components
                     sw.Close();
                 }
             }
+        }
+
+        //异常
+        [OnLog]
+        private void OnEngineError(Error error) {
+            EnginLog(error.Exception.Message);
         }
     }
 

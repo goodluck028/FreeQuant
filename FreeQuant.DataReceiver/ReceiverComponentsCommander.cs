@@ -7,15 +7,15 @@ using FreeQuant.Framework;
 using FreeQuant.Components;
 
 namespace FreeQuant.DataReceiver {
-    public class ReceiverComponentsScheduler {
-        public static ReceiverComponentsScheduler mInstance;
-        private ReceiverComponentsScheduler() {
+    public class ReceiverComponentsCommander {
+        public static ReceiverComponentsCommander mInstance;
+        private ReceiverComponentsCommander() {
             EventBus.Register(this);
             start();
         }
-        public static void Run() {
+        public static void Begin() {
             if (mInstance == null) {
-                mInstance = new ReceiverComponentsScheduler();
+                mInstance = new ReceiverComponentsCommander();
             }
         }
 

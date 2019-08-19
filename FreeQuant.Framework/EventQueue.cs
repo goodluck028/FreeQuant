@@ -15,7 +15,6 @@ namespace FreeQuant.Framework {
 
         public bool post(Event msg) {
             return mQueue.TryAdd(msg, 1000);
-
         }
 
         private void start() {

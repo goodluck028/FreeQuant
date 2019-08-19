@@ -128,7 +128,7 @@ namespace FreeQuant.Framework {
                         try {
                             wrapper.Invoke(evt.Value);
                         } catch (Exception e) {
-                            EventBus.PostLog(new Error(e));
+                            PostLog(new Error(e));
                         }
                     }
                 }

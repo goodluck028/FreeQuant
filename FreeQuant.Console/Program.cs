@@ -11,7 +11,7 @@ namespace FreeQuant.Console {
         static void Main(string[] args) {
             //启动
             ComponentLoader.LoadAllComponents();
-            StrategyComponentsScheduler.Run();
+            StrategyComponentsCommander.Begin();
             //键盘退出
             while (true) {
                 System.Console.WriteLine("输入Ctrl + Q退出");

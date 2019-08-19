@@ -7,14 +7,14 @@ using FreeQuant.Framework;
 using FreeQuant.Components;
 
 namespace FreeQuant.Console {
-    public class StrategyComponentsScheduler {
-        public static StrategyComponentsScheduler mInstance;
-        private StrategyComponentsScheduler() {
+    public class StrategyComponentsCommander {
+        public static StrategyComponentsCommander mInstance;
+        private StrategyComponentsCommander() {
             EventBus.Register(this);
         }
-        public static void Run() {
+        public static void Begin() {
             if (mInstance == null) {
-                mInstance = new StrategyComponentsScheduler();
+                mInstance = new StrategyComponentsCommander();
             }
         }
 
