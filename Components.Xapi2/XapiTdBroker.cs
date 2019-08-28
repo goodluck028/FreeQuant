@@ -11,7 +11,7 @@ using OrderStatus = XAPI.OrderStatus;
 namespace Components.Xapi2 {
     [Component]
     public class XapiTdBroker : BaseTdBroker {
-        string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_Trade_x64.dll");
+        string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Trade_x64.dll");
         private Account mAccount = ConfigUtil.Config.MyMdAccount;
         XApi mTdApi;
         //
@@ -20,6 +20,8 @@ namespace Components.Xapi2 {
         //
         protected override void Login() {
             mTdApi = new XApi(mdPath);
+            mTdApi.Server.UserProductInfo = "simnow_client_test";
+            mTdApi.Server.AuthCode = "0000000000000000";
             mTdApi.Server.Address = mAccount.Server;
             mTdApi.Server.BrokerID = mAccount.Broker;
             mTdApi.User.UserID = mAccount.Investor;

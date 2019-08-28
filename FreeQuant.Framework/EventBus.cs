@@ -56,7 +56,7 @@ namespace FreeQuant.Framework {
                     } else if (attr is OnLogAttribute) {
                         HashSet<InvokeWrapper> set;
                         if (mLogInvokeMap.TryGetValue(pType, out set)) {
-                            lock (mEventInvokeMap) {
+                            lock (mLogInvokeMap) {
                                 set.Add(new InvokeWrapper(obj, md));
                             }
                         } else {
@@ -161,7 +161,7 @@ namespace FreeQuant.Framework {
                         try {
                             wrapper.Invoke(evt.Value);
                         } catch (Exception e) {
-                            EventBus.PostLog(new Error(e));
+                            PostLog(new Error(e));
                         }
                     }
                 }

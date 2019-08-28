@@ -1,30 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections;
+using System.Threading;
 using System.Windows.Forms;
+using FreeQuant.Components;
 using FreeQuant.Framework;
 
 namespace FreeQuant.DataReceiver {
-    public partial class MainForm : Form {
+    public partial class MainForm : Form
+    {
         public MainForm() {
             InitializeComponent();
         }
 
         private void MainForm_Load(object sender, EventArgs e) {
+            //
+            LogUtil.Open();
+            //
             DataReceiver.Instance.OnLog = printLog;
             //
             ComponentLoader.LoadAllComponents();
-            ReceiverComponentsCommander.Begin();
+            ComponentsSchelduler.Begin();
+            //
+            initGrid();
 
         }
 
         private void initGrid() {
-
         }
 
         //输出日志
@@ -41,6 +42,10 @@ namespace FreeQuant.DataReceiver {
                 textBox1.ScrollToCaret();
             };
             Invoke(act);
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e) {
+            ComponentsSchelduler.Stop();
         }
     }
 }

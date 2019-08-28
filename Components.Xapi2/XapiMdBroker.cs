@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Threading;
 using FreeQuant.Components;
 using FreeQuant.Framework;
 using XAPI.Callback;
@@ -12,12 +13,14 @@ using XAPI;
 namespace Components.Xapi2 {
     [Component]
     public class XapiMdBroker : BaseMdBroker {
-        string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_Quote_x64.dll");
+        string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Quote_x64.dll");
         private Account mAccount = ConfigUtil.Config.MyMdAccount;
         XApi mMdApi;
 
         public override void Login() {
             mMdApi = new XApi(mdPath);
+            mMdApi.Server.UserProductInfo = "simnow_client_test";
+            mMdApi.Server.AuthCode = "0000000000000000";
             mMdApi.Server.Address = mAccount.Server;
             mMdApi.Server.BrokerID = mAccount.Broker;
             mMdApi.User.UserID = mAccount.Investor;
@@ -77,17 +80,15 @@ namespace Components.Xapi2 {
         }
 
         private void _onConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1) {
-            switch (status)
-            {
+            switch (status) {
                 case ConnectionStatus.Logined:
-                    PostLoginEvent(true,"登录成功");
+                    PostLoginEvent(true, "登录成功");
                     break;
             }
             LogUtil.EnginLog("行情状态:" + status.ToString());
         }
 
-        private void _onRtnError(object sender, ref ErrorField error)
-        {
+        private void _onRtnError(object sender, ref ErrorField error) {
             LogUtil.EnginLog($"行情错误({error.RawErrorID}):{error.Text}");
         }
     }

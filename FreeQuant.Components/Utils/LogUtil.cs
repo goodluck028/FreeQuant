@@ -8,9 +8,13 @@ using FreeQuant.Framework;
 
 namespace FreeQuant.Components {
     public class LogUtil {
-        private static LogUtil mInstance = new LogUtil();
-        private LogUtil() {
-            EventBus.Register(this);
+        private static LogUtil mInstance;
+        private LogUtil() {}
+
+        public static void Open()
+        {
+            mInstance = new LogUtil();
+            EventBus.Register(mInstance);
             EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志启动<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
         //

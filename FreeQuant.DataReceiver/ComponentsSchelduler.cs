@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FreeQuant.Framework;
+﻿using FreeQuant.Framework;
 using FreeQuant.Components;
 
 namespace FreeQuant.DataReceiver {
-    public class ReceiverComponentsCommander {
-        public static ReceiverComponentsCommander mInstance;
-        private ReceiverComponentsCommander() {
+    public class ComponentsSchelduler {
+        public static ComponentsSchelduler mInstance;
+        private ComponentsSchelduler() {
             EventBus.Register(this);
             start();
         }
         public static void Begin() {
             if (mInstance == null) {
-                mInstance = new ReceiverComponentsCommander();
+                mInstance = new ComponentsSchelduler();
             }
+        }
+
+        public static void Stop()
+        {
+            EventBus.Stop();
         }
 
         private void start()
