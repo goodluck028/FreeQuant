@@ -34,8 +34,8 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
+      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -52,11 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseType\Account.cs" />
     <Compile Include="BaseType\Bar.cs" />
     <Compile Include="BaseType\BarGenerator.cs" />
     <Compile Include="BaseType\Instrument.cs" />
-    <Compile Include="BaseType\ServerInfo.cs" />
     <Compile Include="BaseType\Order.cs" />
     <Compile Include="BaseType\Position.cs" />
     <Compile Include="BaseType\Tick.cs" />

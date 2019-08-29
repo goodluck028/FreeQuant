@@ -12,7 +12,6 @@ namespace Components.Xapi2 {
     [Component]
     public class XapiTdBroker : BaseTdBroker {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Trade_x64.dll");
-        private Account mAccount = ConfigUtil.Config.MyMdAccount;
         XApi mTdApi;
         //
         ConcurrentDictionary<string, OrderField> mBrokerOrderMap = new ConcurrentDictionary<string, OrderField>();
@@ -20,12 +19,12 @@ namespace Components.Xapi2 {
         //
         protected override void Login() {
             mTdApi = new XApi(mdPath);
-            mTdApi.Server.UserProductInfo = "simnow_client_test";
-            mTdApi.Server.AuthCode = "0000000000000000";
-            mTdApi.Server.Address = mAccount.Server;
-            mTdApi.Server.BrokerID = mAccount.Broker;
-            mTdApi.User.UserID = mAccount.Investor;
-            mTdApi.User.Password = mAccount.Password;
+            mTdApi.Server.AppID = ConfigUtil.Config.AppId;
+            mTdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
+            mTdApi.Server.Address = ConfigUtil.Config.TdServer;
+            mTdApi.Server.BrokerID = ConfigUtil.Config.TdBroker;
+            mTdApi.User.UserID = ConfigUtil.Config.TdInvestor;
+            mTdApi.User.Password = ConfigUtil.Config.TdPassword;
             mTdApi.Server.PrivateTopicResumeType = ResumeType.Quick;
             mTdApi.OnRspQryInstrument = _onRspQryInstrument;
             mTdApi.OnRspQryInvestorPosition = _OnRspQryInvestorPosition;

@@ -14,17 +14,16 @@ namespace Components.Xapi2 {
     [Component]
     public class XapiMdBroker : BaseMdBroker {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Quote_x64.dll");
-        private Account mAccount = ConfigUtil.Config.MyMdAccount;
         XApi mMdApi;
 
         public override void Login() {
             mMdApi = new XApi(mdPath);
-            mMdApi.Server.UserProductInfo = "simnow_client_test";
-            mMdApi.Server.AuthCode = "0000000000000000";
-            mMdApi.Server.Address = mAccount.Server;
-            mMdApi.Server.BrokerID = mAccount.Broker;
-            mMdApi.User.UserID = mAccount.Investor;
-            mMdApi.User.Password = mAccount.Password;
+            mMdApi.Server.AppID = ConfigUtil.Config.AppId;
+            mMdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
+            mMdApi.Server.Address = ConfigUtil.Config.MdServer;
+            mMdApi.Server.BrokerID = ConfigUtil.Config.MdBroker;
+            mMdApi.User.UserID = ConfigUtil.Config.MdInvestor;
+            mMdApi.User.Password = ConfigUtil.Config.MdPassword;
             mMdApi.OnConnectionStatus = _onConnectionStatus;
 
             mMdApi.OnRtnError = _onRtnError;
