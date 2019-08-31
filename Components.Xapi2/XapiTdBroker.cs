@@ -25,6 +25,7 @@ namespace Components.Xapi2 {
             mTdApi.Server.BrokerID = ConfigUtil.Config.TdBroker;
             mTdApi.User.UserID = ConfigUtil.Config.TdInvestor;
             mTdApi.User.Password = ConfigUtil.Config.TdPassword;
+            //
             mTdApi.Server.PrivateTopicResumeType = ResumeType.Quick;
             mTdApi.OnRspQryInstrument = _onRspQryInstrument;
             mTdApi.OnRspQryInvestorPosition = _OnRspQryInvestorPosition;
@@ -33,9 +34,7 @@ namespace Components.Xapi2 {
             mTdApi.OnRspQrySettlementInfo = (object sender, ref SettlementInfoClass settlementInfo, int size1, bool bIsLast) => {
                 LogUtil.EnginLog("结算确认:" + settlementInfo.Content);
             };
-            mTdApi.OnConnectionStatus = (object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1) => {
-                LogUtil.EnginLog("交易状态:" + status.ToString());
-            };
+            mTdApi.OnConnectionStatus = _onConnectionStatus;
 
             mTdApi.Connect();
         }
@@ -208,6 +207,20 @@ namespace Components.Xapi2 {
             OrderField f;
             mOrderMap.TryRemove(field.LocalID, out o);
             mBrokerOrderMap.TryRemove(field.LocalID, out f);
+        }
+
+        //状态变化
+        private void _onConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1)
+        {
+            switch (status)
+            {
+                case ConnectionStatus.Done:
+                    BrokerEvent.TdLoginEvent evt = new BrokerEvent.TdLoginEvent(true,"");
+                    EventBus.PostEvent(evt);
+                    break;
+            }
+            //
+            LogUtil.EnginLog("交易状态:" + status.ToString());
         }
     }
 }

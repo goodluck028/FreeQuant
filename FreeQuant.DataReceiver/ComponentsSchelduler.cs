@@ -50,7 +50,7 @@ namespace FreeQuant.DataReceiver {
             //订阅合约
             Instrument inst = evt.Instrument;
             BrokerEvent.SubscribeInstrumentRequest request = new BrokerEvent.SubscribeInstrumentRequest(inst);
-            //EventBus.PostEvent(request);
+            EventBus.PostEvent(request);
         }
 
 

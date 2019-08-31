@@ -24,14 +24,14 @@ namespace FreeQuant.Components {
         public void Output()
         {
             EventBus.Register(this);
-            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志启动<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志仅输出<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         private bool mIsRecord = false;
         public void Record() {
             mIsRecord = true;
             EventBus.Register(this);
-            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志启动<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志记录<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
 
         //系统日志

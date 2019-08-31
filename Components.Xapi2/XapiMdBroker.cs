@@ -39,10 +39,13 @@ namespace Components.Xapi2 {
 
         public override void SubscribeMarketData(Instrument inst) {
             mFilterMap.Add(inst.InstrumentID, new DefaultTickFilter());
+            mMdApi.Subscribe(inst.InstrumentID,"");
+            LogUtil.EnginLog("订阅合约："+inst.InstrumentID);
         }
 
-        public override void UnSubscribeMarketData(Instrument Instrument) {
-            mMdApi.Unsubscribe(Instrument.InstrumentID, "");
+        public override void UnSubscribeMarketData(Instrument inst) {
+            mMdApi.Unsubscribe(inst.InstrumentID, "");
+            LogUtil.EnginLog("退订合约：" + inst.InstrumentID);
         }
 
         private Dictionary<string, ITickFilter> mFilterMap = new Dictionary<string, ITickFilter>();
@@ -80,7 +83,7 @@ namespace Components.Xapi2 {
 
         private void _onConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1) {
             switch (status) {
-                case ConnectionStatus.Logined:
+                case ConnectionStatus.Done:
                     PostLoginEvent(true, "登录成功");
                     break;
             }
