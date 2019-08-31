@@ -67,6 +67,7 @@
     <Compile Include="DataBase\DataBaseManager.cs" />
     <Compile Include="DataBase\SqliteHelper.cs" />
     <Compile Include="Instrument\InstrumentManager.cs" />
+    <Compile Include="Utils\LogEvent.cs" />
     <Compile Include="Utils\LogUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategy\BaseStrategy.cs" />

@@ -1,37 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using FreeQuant.Framework;
 
 namespace FreeQuant.Components {
     public class LogUtil {
-        private static LogUtil mInstance;
-        private LogUtil() {}
+        private static LogUtil mInstance = new LogUtil();
+        public static LogUtil Logger => mInstance;
 
-        public static void Open()
-        {
-            mInstance = new LogUtil();
-            EventBus.Register(mInstance);
-            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志启动<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        }
-        //
+        //发送异步日志
         public static void EnginLog(string content) {
-            LogEvent logEvent = new LogEvent(LogType.Enginlog, content);
-            EventBus.PostLog(logEvent);
+            LogEvent.EnginLog evt = new LogEvent.EnginLog(content);
+            EventBus.PostLog(evt);
         }
         public static void UserLog(string content) {
-            LogEvent logEvent = new LogEvent(LogType.UserLog, content);
-            EventBus.PostLog(logEvent);
+            LogEvent.UserLog evt = new LogEvent.UserLog(content);
+            EventBus.PostLog(evt);
+        }
+        public static void Error(Exception ex) {
+            EventBus.PostLog(ex);
         }
 
         //写日志
+        public void Output()
+        {
+            EventBus.Register(this);
+            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志启动<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        }
+
+        private bool mIsRecord = false;
+        public void Record() {
+            mIsRecord = true;
+            EventBus.Register(this);
+            EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志启动<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        }
+
+        //系统日志
         [OnLog]
-        private void _onLog(LogEvent logEvent) {
+        private void OnEnginLog(LogEvent.EnginLog evt) {
+            PrintLog("EnginLog", evt.Content);
+        }
+
+        //用户日志
+        [OnLog]
+        private void OnUserLog(LogEvent.UserLog evt) {
+            PrintLog("UserLog", evt.Content);
+        }
+
+        //异常
+        [OnLog]
+        private void OnException(Exception ex) {
+            EnginLog(ex.Message);
+            PrintLog("error", ex.Message);
+        }
+
+        //
+        private void PrintLog(string fileName, string content) {
+            string log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + content;
+            Console.WriteLine(log);
+            if (!mIsRecord)
+                return;
+            //
             string path = AppDomain.CurrentDomain.BaseDirectory;
-            string folderName = logEvent.Type.ToString();
+            string folderName = fileName;
             if (!string.IsNullOrEmpty(path)) {
                 path = AppDomain.CurrentDomain.BaseDirectory + "\\log\\" + folderName;
                 if (!Directory.Exists(path)) {
@@ -44,45 +74,11 @@ namespace FreeQuant.Components {
                 }
                 if (File.Exists(path)) {
                     StreamWriter sw = new StreamWriter(path, true, System.Text.Encoding.Default);
-                    string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + logEvent.Content;
-                    Console.WriteLine(c);
-                    sw.WriteLine(c);
+                    sw.WriteLine(log);
                     sw.Close();
                 }
             }
         }
 
-        //异常
-        [OnLog]
-        private void OnEngineError(Error error) {
-            EnginLog(error.Exception.Message);
-        }
-    }
-
-    public class LogEvent {
-        LogType type;
-        string content;
-
-        public LogEvent(LogType type, string content) {
-            this.type = type;
-            this.content = content;
-        }
-
-        public LogType Type {
-            get {
-                return type;
-            }
-        }
-
-        public string Content {
-            get {
-                return content;
-            }
-        }
-    }
-
-    public enum LogType {
-        Enginlog,
-        UserLog
     }
 }

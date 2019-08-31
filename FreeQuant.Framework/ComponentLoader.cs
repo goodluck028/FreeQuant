@@ -18,7 +18,7 @@ namespace FreeQuant.Framework {
 
             //加载模块
             foreach (string f in files) {
-                if (!f.EndsWith(".dll"))
+                if (!f.EndsWith(".dll") && !f.EndsWith(".exe"))
                     continue;
                 try {
                     Assembly assembly = Assembly.LoadFrom(f);

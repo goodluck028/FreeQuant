@@ -22,16 +22,4 @@ namespace FreeQuant.Framework {
             }
         }
     }
-
-    public class Error
-    {
-        private Exception mException;
-
-        public Error(Exception exception)
-        {
-            mException = exception;
-        }
-
-        public Exception Exception => mException;
-    }
 }
