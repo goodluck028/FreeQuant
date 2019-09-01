@@ -46,6 +46,16 @@ namespace FreeQuant.Components {
         public class QueryInstrumentRequest {
         }
 
+        internal class BrokerInstrumentEvent {
+            private Instrument mInstrument;
+
+            public BrokerInstrumentEvent(Instrument instrument) {
+                mInstrument = instrument;
+            }
+
+            public Instrument Instrument => mInstrument;
+        }
+
         public class InstrumentEvent {
             private Instrument mInstrument;
 

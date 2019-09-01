@@ -11,13 +11,16 @@ namespace FreeQuant.Components {
     public class InstrumentManager {
         private static ConcurrentDictionary<string, Instrument> mInstrumentMap = new ConcurrentDictionary<string, Instrument>();
         public InstrumentManager() {
+            EventBus.Register(this);
             LogUtil.EnginLog("合约管理模块启动");
         }
 
         [OnEvent]
-        private void OnInstrument(BrokerEvent.InstrumentEvent evt) {
+        private void OnInstrument(BrokerEvent.BrokerInstrumentEvent evt) {
             Instrument inst = evt.Instrument;
             mInstrumentMap.TryAdd(inst.InstrumentID, inst);
+            BrokerEvent.InstrumentEvent evtOut = new BrokerEvent.InstrumentEvent(inst);
+            EventBus.PostEvent(evtOut);
         }
 
         public static Instrument GetInstrument(string instrumentId) {

@@ -85,7 +85,7 @@ namespace FreeQuant.Components {
         //请求合约
         protected abstract void QueryInstrument();
         protected void PostInstrumentEvent(Instrument inst) {
-            BrokerEvent.InstrumentEvent evt = new BrokerEvent.InstrumentEvent(inst);
+            BrokerEvent.BrokerInstrumentEvent evt = new BrokerEvent.BrokerInstrumentEvent(inst);
             EventBus.PostEvent(evt);
         }
         #endregion

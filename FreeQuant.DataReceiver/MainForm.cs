@@ -20,18 +20,21 @@ namespace FreeQuant.DataReceiver {
             ComponentLoader.LoadAllComponents();
             ComponentsSchelduler.Begin();
             //
-            initGrid();
+            initView();
         }
 
         //
         private DataTable mTable = new DataTable();
         Dictionary<string, DataRow> mRowMap = new Dictionary<string, DataRow>();
-        private void initGrid() {
+        private void initView() {
             mTable.Columns.Add("instrumentId", typeof(string));
             mTable.Columns.Add("tickSum", typeof(long));
             mTable.Columns.Add("lastPrice", typeof(double));
-            mTable.Columns.Add("updateTime", typeof(DateTime));
-            dataGridView1.DataSource = mTable;
+            mTable.Columns.Add("updateTime", typeof(string));
+            //不允许排序
+            for (int i = 0; i < dataGridView1.Columns.Count; i++) {
+                dataGridView1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         //输出日志
@@ -47,20 +50,15 @@ namespace FreeQuant.DataReceiver {
         private void OnException(Exception ex) {
             printLog(ex.Message);
         }
-        private int line = 0;
-        private void printLog(string log) {
-            if (line++ > 256) {
-                Invoke(new Action(() => {
-                    textBox1.Clear();
-                }));
-                line = 0;
-            }
-            //
-            string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + log + "\n";
 
+        private void printLog(string log) {
+            string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + log + "\n";
             Invoke(new Action(() => {
-                textBox1.AppendText(c);
-                textBox1.ScrollToCaret();
+                listBox1.Items.Add(c);
+                if (listBox1.Items.Count > 256) {
+                    listBox1.Items.RemoveAt(0);
+                }
+                listBox1.SelectedIndex = listBox1.Items.Count - 1;
             }));
         }
 
@@ -75,11 +73,41 @@ namespace FreeQuant.DataReceiver {
                 DataRow row;
                 row = mTable.NewRow();
                 row["instrumentId"] = evt.Instrument.InstrumentID;
+                row["tickSum"] = 0;
                 mTable.Rows.Add(row);
-                mTable.DefaultView.Sort = "instrumentId ASC";
-                mTable = mTable.DefaultView.ToTable();
-                dataGridView1.DataSource = mTable;
+                mRowMap.Add(evt.Instrument.InstrumentID, row);
             })));
+            delayOrderBy();
+        }
+        //延时排序
+        private long mTimeMili;
+        private Thread mDelay;
+        private void delayOrderBy() {
+            mTimeMili = DateTime.Now.Millisecond * DateTime.Now.Second;
+            //
+            if (mDelay != null && mDelay.IsAlive)
+                return;
+            //
+            mDelay = new Thread((() => {
+                long lastMili = 0;
+                while (lastMili != mTimeMili) {
+                    lastMili = mTimeMili;
+                    Thread.Sleep(1000);
+                }
+                Invoke(new Action((() => {
+                    mTable.DefaultView.Sort = "instrumentId ASC";
+                    mTable = mTable.DefaultView.ToTable();
+                    dataGridView1.DataSource = mTable;
+                    //
+                    mRowMap.Clear();
+                    foreach (DataRow row in mTable.Rows) {
+                        mRowMap.Add((string)row["instrumentId"], row);
+                    }
+                })));
+
+            }));
+            mDelay.Start();
+
         }
 
         //tick
@@ -90,12 +118,11 @@ namespace FreeQuant.DataReceiver {
                 DataRow row;
                 if (mRowMap.TryGetValue(tick.Instrument.InstrumentID, out row)) {
                     row["instrumentId"] = tick.Instrument.InstrumentID;
-                    row["tickSum"] = (int)row["tickSum"] + 1;
+                    row["tickSum"] = (long)row["tickSum"] + 1;
                     row["lastPrice"] = tick.LastPrice;
-                    row["updateTime"] = tick.UpdateTime;
+                    row["updateTime"] = tick.UpdateTime.ToString("yyyy-MM-dd hh:mm:ss.fff");
                 }
             })));
-
         }
 
         //行号

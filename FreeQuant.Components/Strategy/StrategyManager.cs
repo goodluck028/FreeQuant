@@ -9,10 +9,10 @@ using FreeQuant.Framework;
 
 namespace FreeQuant.Components {
     [Component]
-    internal class StrategyManager{
-        public StrategyManager()
-        {
+    internal class StrategyManager {
+        public StrategyManager() {
             loadStrategy();
+            EventBus.Register(this);
             LogUtil.EnginLog("策略管理组件启动");
         }
 
@@ -89,9 +89,19 @@ namespace FreeQuant.Components {
             EventBus.PostEvent(request);
         }
 
+        //行情
+        private Dictionary<string, ITickFilter> mFilterMap = new Dictionary<string, ITickFilter>();
         [OnEvent]
         private void OnTickEvent(BrokerEvent.TickEvent evt) {
-            mTickDispatcher.Dispatch(evt.Tick);
+            Tick tick = evt.Tick;
+            ITickFilter filter;
+            if (mFilterMap.TryGetValue(tick.Instrument.InstrumentID, out filter)) {
+                if (filter.Check(tick)) {
+                    mTickDispatcher.Dispatch(evt.Tick);
+                }
+            } else {
+                mFilterMap.Add(tick.Instrument.InstrumentID, new DefaultTickFilter());
+            }
         }
         #endregion
 

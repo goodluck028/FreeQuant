@@ -38,9 +38,8 @@ namespace Components.Xapi2 {
         }
 
         public override void SubscribeMarketData(Instrument inst) {
-            mFilterMap.Add(inst.InstrumentID, new DefaultTickFilter());
-            mMdApi.Subscribe(inst.InstrumentID,"");
-            LogUtil.EnginLog("订阅合约："+inst.InstrumentID);
+            mMdApi.Subscribe(inst.InstrumentID, "");
+            LogUtil.EnginLog("订阅合约：" + inst.InstrumentID);
         }
 
         public override void UnSubscribeMarketData(Instrument inst) {
@@ -48,17 +47,17 @@ namespace Components.Xapi2 {
             LogUtil.EnginLog("退订合约：" + inst.InstrumentID);
         }
 
-        private Dictionary<string, ITickFilter> mFilterMap = new Dictionary<string, ITickFilter>();
+
         private void _onRtnDepthMarketData(object sender, ref DepthMarketDataNClass marketData) {
             Instrument inst = InstrumentManager.GetInstrument(marketData.InstrumentID);
             if (inst == null)
                 return;
             Tick tick = new Tick(inst
                 , marketData.LastPrice
-                , marketData.Bids[0].Price
-                , marketData.Bids[0].Size
-                , marketData.Asks[0].Price
-                , marketData.Asks[0].Size
+                , marketData.Bids.Length > 0 ? marketData.Bids[0].Price : 0
+                , marketData.Bids.Length > 0 ? marketData.Bids[0].Size : 0
+                , marketData.Asks.Length > 0 ? marketData.Asks[0].Price : 0
+                , marketData.Asks.Length > 0 ? marketData.Asks[0].Size : 0
                 , marketData.AveragePrice
                 , Convert.ToInt64(marketData.Volume)
                 , marketData.OpenInterest
@@ -72,13 +71,8 @@ namespace Components.Xapi2 {
                     , marketData.UpdateMillisec)
                 , marketData.UpperLimitPrice
                 , marketData.LowerLimitPrice);
-
-            ITickFilter filter;
-            if (mFilterMap.TryGetValue(tick.Instrument.InstrumentID, out filter)) {
-                if (filter.Check(tick)) {
-                    PostTickEvent(tick);
-                }
-            }
+            //
+            PostTickEvent(tick);
         }
 
         private void _onConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1) {
