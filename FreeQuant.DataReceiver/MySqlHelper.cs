@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Text.RegularExpressions;
-
+using FreeQuant.Components;
 using MySql.Data.MySqlClient;
 
 namespace FreeQuant.DataReceiver {
@@ -13,10 +13,10 @@ namespace FreeQuant.DataReceiver {
 
         MySqlConnection mysqlConnection;
         DataSet dataSet;
-        string IP = "";       //连接名
-        string UserName = ""; //用户名
-        string Password = ""; //密码
-        string Database = "";//数据库
+        string IP = MySqlConfig.Config.IP;       
+        string UserName = MySqlConfig.Config.UserName; 
+        string Password = MySqlConfig.Config.Password; 
+        string Database = MySqlConfig.Config.Database;
         /// <summary>
         /// 建立mysql连接
         /// </summary>
@@ -24,7 +24,7 @@ namespace FreeQuant.DataReceiver {
             try {
                 mysqlConnection = new MySqlConnection("datasource=" + IP + ";username=" + UserName + ";password=" + Password + ";database=" + Database + ";charset=utf8");
             } catch (MySqlException ex) {
-                Console.WriteLine(ex.Message);
+                LogUtil.Error(ex);
             }
         }
 
@@ -33,7 +33,7 @@ namespace FreeQuant.DataReceiver {
                 string connectionString = "datasource=" + IP + ";username=" + UserName + ";password=" + Password + ";database=" + Database + ";charset=gb2312";
                 mysqlConnection = new MySqlConnection(connectionString);
             } catch (MySqlException ex) {
-                Console.WriteLine(ex.Message);
+                LogUtil.Error(ex);
             }
         }
 
@@ -47,7 +47,7 @@ namespace FreeQuant.DataReceiver {
                 mysqlInfo += "Connection ServerVersion:" + mysqlConnection.ServerVersion.ToString() + Environment.NewLine;
                 mysqlInfo += "Connection State:" + mysqlConnection.State.ToString() + Environment.NewLine;
             } catch (MySqlException ex) {
-                Console.WriteLine("MySqlException Error:" + ex.ToString());
+                LogUtil.Error(ex);
             } finally {
                 mysqlConnection.Close();
             }
@@ -56,17 +56,33 @@ namespace FreeQuant.DataReceiver {
         /// <summary>
         /// 执行sql语句无返回结果
         /// </summary>
-        public int MysqlCommand(string MysqlCommand) {
+        public long MysqlCommand(string MysqlCommand) {
             try {
                 mysqlConnection.Open();
-                Console.WriteLine("MysqlConnection Opened.");
                 MySqlCommand mysqlCommand = new MySqlCommand(MysqlCommand, mysqlConnection);
-                return mysqlCommand.ExecuteNonQuery();
+                mysqlCommand.ExecuteNonQuery();
+                return mysqlCommand.LastInsertedId;
             } catch (MySqlException ex) {
-                Console.WriteLine("MySqlException Error:" + ex.ToString());
-                if (Regex.IsMatch(ex.ToString(), "")) {
-                    Console.WriteLine(ex.Message);
-                }
+                LogUtil.Error(ex);
+            } finally {
+                mysqlConnection.Close();
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// 执行sql语句无返回结果
+        /// </summary>
+        public long MysqlCommand(string MysqlCommand,params MySqlParameter[] parameters) {
+            try {
+                mysqlConnection.Open();
+                MySqlCommand mysqlCommand = new MySqlCommand(MysqlCommand, mysqlConnection);
+                mysqlCommand.ExecuteNonQuery();
+                mysqlCommand.CommandType = CommandType.Text;
+                mysqlCommand.Parameters.Add(parameters);
+                return mysqlCommand.LastInsertedId;
+            } catch (MySqlException ex) {
+                LogUtil.Error(ex);
             } finally {
                 mysqlConnection.Close();
             }
@@ -85,7 +101,7 @@ namespace FreeQuant.DataReceiver {
                 mysqlDataAdapter.Fill(dataSet, table);
                 dataView = dataSet.Tables[table].DefaultView;
             } catch (MySqlException ex) {
-                Console.WriteLine(ex.Message);
+                LogUtil.Error(ex);
             } finally {
                 mysqlConnection.Close();
             }
@@ -100,16 +116,14 @@ namespace FreeQuant.DataReceiver {
                 mysqlConnection.Open();
 
                 MySqlCommand mycm = new MySqlCommand(sql, mysqlConnection);
-                // MySqlDataReader msdr = mycm.ExecuteReader();
                 long recordCount = (long)mycm.ExecuteScalar();
                 return recordCount;
-            } catch (MySqlException) {
+            } catch (MySqlException ex) {
+                LogUtil.Error(ex);
                 return -1;
-                // Console.WriteLine(ex.Message);
             } finally {
                 mysqlConnection.Close();
             }
-            // return 0;
         }
     }
 }

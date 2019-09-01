@@ -18,8 +18,6 @@ namespace FreeQuant.Components {
         private double mAskPrice;
         //申卖量一
         private long mAskVolume;
-        //当日均价
-        private double mAveragePrice;
         //数量
         private long mVolume;
         //持仓量
@@ -31,14 +29,13 @@ namespace FreeQuant.Components {
         //跌停板价
         private double mLowerLimitPrice;
 
-        public Tick(Instrument instrument, double lastPrice, double bidPrice, long bidVolume, double askPrice, long askVolume, double averagePrice, long volume, double openInterest, DateTime updateTime, double upperLimitPrice, double lowerLimitPrice) {
+        public Tick(Instrument instrument, double lastPrice, double bidPrice, long bidVolume, double askPrice, long askVolume, long volume, double openInterest, DateTime updateTime, double upperLimitPrice, double lowerLimitPrice) {
             mInstrument = instrument;
             mLastPrice = lastPrice;
             mBidPrice = bidPrice;
             mBidVolume = bidVolume;
             mAskPrice = askPrice;
             mAskVolume = askVolume;
-            mAveragePrice = averagePrice;
             mVolume = volume;
             mOpenInterest = openInterest;
             mUpdateTime = updateTime;
@@ -57,8 +54,6 @@ namespace FreeQuant.Components {
         public double AskPrice => mAskPrice;
 
         public long AskVolume => mAskVolume;
-
-        public double AveragePrice => mAveragePrice;
 
         public long Volume => mVolume;
 

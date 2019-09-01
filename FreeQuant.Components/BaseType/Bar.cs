@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FreeQuant.Components {
     public class Bar {
         // 合约代码;
-        private string mInstrumentID;
+        private Instrument mInstrument;
         // 开始价
         private double mOpenPrice;
         // 最高价
@@ -25,9 +25,9 @@ namespace FreeQuant.Components {
         // 长度
         private BarSizeType mSizeType;
 
-        public string InstrumentId {
-            get { return mInstrumentID; }
-            internal set { mInstrumentID = value; }
+        public Instrument Instrument {
+            get { return mInstrument; }
+            internal set { mInstrument = value; }
         }
 
         public double OpenPrice {
