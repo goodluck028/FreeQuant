@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
 using FreeQuant.Components;
 using System.IO;
 using FreeQuant.Framework;
@@ -95,9 +94,8 @@ namespace Components.Xapi2 {
 
         private void _onRspQryInstrument(object sender, ref InstrumentField instrument, int size1, bool bIsLast) {
             //只订阅期货，并且不订阅套利等其他合约
-            Regex re = new Regex(@"^[a-zA-Z]+\d+$", RegexOptions.None);
             if (instrument.Type == InstrumentType.Future
-                && re.IsMatch(instrument.InstrumentID)) {
+                && RegexUtils.MatchInstrument(instrument.InstrumentID)) {
                 Exchange exchange = Exchange.SHFE;
                 switch (instrument.ExchangeID) {
                     case "SHFE":

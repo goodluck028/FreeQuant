@@ -55,12 +55,12 @@ namespace FreeQuant.DataReceiver {
             }
         }
 
-        public string InstrumentID {
+        public string Instruments {
             get {
-                string text = ConfigUtil.Config["MySql", "InstrumentID"];
+                string text = ConfigUtil.Config["Product", "Instruments"];
                 if (text.Equals("")) {
                     text = "rb,ni,al,zn,cu,ag,fu,bu,MA,ZC,I,J,JM,V,PP,EG";
-                    ConfigUtil.Config["MySql", "InstrumentID"] = text;
+                    ConfigUtil.Config["Product", "Instruments"] = text;
                 }
                 return text;
             }

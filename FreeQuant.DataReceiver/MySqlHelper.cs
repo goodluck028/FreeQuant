@@ -60,27 +60,7 @@ namespace FreeQuant.DataReceiver {
             try {
                 mysqlConnection.Open();
                 MySqlCommand mysqlCommand = new MySqlCommand(MysqlCommand, mysqlConnection);
-                mysqlCommand.ExecuteNonQuery();
-                return mysqlCommand.LastInsertedId;
-            } catch (MySqlException ex) {
-                LogUtil.Error(ex);
-            } finally {
-                mysqlConnection.Close();
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 执行sql语句无返回结果
-        /// </summary>
-        public long MysqlCommand(string MysqlCommand,params MySqlParameter[] parameters) {
-            try {
-                mysqlConnection.Open();
-                MySqlCommand mysqlCommand = new MySqlCommand(MysqlCommand, mysqlConnection);
-                mysqlCommand.ExecuteNonQuery();
-                mysqlCommand.CommandType = CommandType.Text;
-                mysqlCommand.Parameters.Add(parameters);
-                return mysqlCommand.LastInsertedId;
+                return mysqlCommand.ExecuteNonQuery();
             } catch (MySqlException ex) {
                 LogUtil.Error(ex);
             } finally {

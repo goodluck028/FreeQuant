@@ -74,6 +74,7 @@
     <Compile Include="Strategy\StrategyEvent.cs" />
     <Compile Include="Strategy\StrategyManager.cs" />
     <Compile Include="Strategy\TickDispatcher.cs" />
+    <Compile Include="Utils\RegexUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreeQuant.Framework\FreeQuant.Framework.csproj">

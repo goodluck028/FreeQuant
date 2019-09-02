@@ -14,13 +14,11 @@ namespace FreeQuant.DataReceiver {
             }
         }
 
-        public static void Stop()
-        {
+        public static void Stop() {
             EventBus.Stop();
         }
 
-        private void start()
-        {
+        private void start() {
             //登录行情
             BrokerEvent.MdLoginRequest request = new BrokerEvent.MdLoginRequest();
             EventBus.PostEvent(request);
@@ -36,8 +34,7 @@ namespace FreeQuant.DataReceiver {
 
         //交易登录成功
         [OnEvent]
-        private void OnTdLogin(BrokerEvent.TdLoginEvent evt)
-        {
+        private void OnTdLogin(BrokerEvent.TdLoginEvent evt) {
             //查询合约
             BrokerEvent.QueryInstrumentRequest request = new BrokerEvent.QueryInstrumentRequest();
             EventBus.PostEvent(request);
@@ -45,12 +42,16 @@ namespace FreeQuant.DataReceiver {
 
         //合约返回
         [OnEvent]
-        private void OnInstrument(BrokerEvent.InstrumentEvent evt)
-        {
+        private void OnInstrument(BrokerEvent.InstrumentEvent evt) {
             //订阅合约
-            Instrument inst = evt.Instrument;
-            BrokerEvent.SubscribeInstrumentRequest request = new BrokerEvent.SubscribeInstrumentRequest(inst);
-            EventBus.PostEvent(request);
+            string[] names = MySqlConfig.Config.Instruments.Split(',');
+            foreach (string name in names) {
+                if (name.Equals(RegexUtils.TakeProductName(evt.Instrument.InstrumentID))) {
+                    Instrument inst = evt.Instrument;
+                    BrokerEvent.SubscribeInstrumentRequest request = new BrokerEvent.SubscribeInstrumentRequest(inst);
+                    EventBus.PostEvent(request);
+                }
+            }
         }
 
 

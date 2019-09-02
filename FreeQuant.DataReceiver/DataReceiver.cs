@@ -23,7 +23,7 @@ namespace FreeQuant.DataReceiver {
             Tick tick = evt.Tick;
             BarGenerator generator;
             if (!GeneratorMap.TryGetValue(tick.Instrument.InstrumentID, out generator)) {
-                generator = new BarGenerator(tick.Instrument.InstrumentID, BarSizeType.Min1);
+                generator = new BarGenerator(tick.Instrument, BarSizeType.Min1);
                 generator.OnBarTick += _onBarTick;
                 GeneratorMap.Add(tick.Instrument.InstrumentID, generator);
             }
@@ -34,9 +34,11 @@ namespace FreeQuant.DataReceiver {
 
         private MySqlHelper mWriter = new MySqlHelper();
         private void _onBarTick(Bar bar, List<Tick> ticks) {
+            return;
+            string tbName = RegexUtils.TakeShortInstrumentID(bar.Instrument.InstrumentID);
             StringBuilder sb = new StringBuilder();
             //bar
-            sb.Append($@"INSERT INTO `hisdata_future`.`bar1min_{}`
+            sb.Append($@"INSERT INTO `hisdata_future`.`bar1min_{tbName}`
                         (`exchange_id`,
                         `instrument_id`,
                         `begin_time`,
@@ -63,7 +65,7 @@ namespace FreeQuant.DataReceiver {
             sb.Clear();
             if (ticks.Count == 0)
                 return;
-            sb.Append($@"INSERT INTO `hisdata_future`.`tick_{}`
+            sb.Append($@"INSERT INTO `hisdata_future`.`tick_{tbName}`
                         (`instrument_id`,
                         `last_price`,
                         `bid_price`,

@@ -9,15 +9,15 @@ using FreeQuant.Framework;
 namespace FreeQuant.Components {
     public class BarGenerator {
         //
-        private string mInstrumentID;
+        private Instrument mInstrument;
         private List<Tick> mTickList;
         private Bar mBar;
         private BarSizeType mSizeType = BarSizeType.Min1;
         //
         public Action<Bar, List<Tick>> OnBarTick;
         //
-        public BarGenerator(string instrumentID, BarSizeType sizeType) {
-            mInstrumentID = instrumentID;
+        public BarGenerator(Instrument instrument, BarSizeType sizeType) {
+            mInstrument = instrument;
             mSizeType = sizeType;
             EventBus.Register(this);
         }
@@ -37,7 +37,7 @@ namespace FreeQuant.Components {
 
         //
         public void addTick(Tick tick) {
-            if (!tick.Instrument.Equals(mInstrumentID))
+            if (!tick.Instrument.Equals(mInstrument))
                 return;
 
             //判断是否需要生成新bar
@@ -47,7 +47,7 @@ namespace FreeQuant.Components {
             if (mBar == null) {
                 mBar = new Bar();
                 mTickList = new List<Tick>();
-                mBar.InstrumentId = mInstrumentID;
+                mBar.Instrument = mInstrument;
                 mBar.OpenPrice = tick.LastPrice;
                 mBar.HighPrice = tick.LastPrice;
                 mBar.LowPrice = tick.LastPrice;

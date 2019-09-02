@@ -30,7 +30,6 @@ namespace FreeQuant.Components {
                 || tick.UpperLimitPrice <= 0
                 || tick.Volume < 0
                 || tick.Instrument.Equals(String.Empty)
-                || tick.AveragePrice <= 0
                 || tick.OpenInterest <= 0)
             {
                 lastTick = tick;

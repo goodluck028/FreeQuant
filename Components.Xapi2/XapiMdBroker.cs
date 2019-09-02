@@ -58,7 +58,6 @@ namespace Components.Xapi2 {
                 , marketData.Bids.Length > 0 ? marketData.Bids[0].Size : 0
                 , marketData.Asks.Length > 0 ? marketData.Asks[0].Price : 0
                 , marketData.Asks.Length > 0 ? marketData.Asks[0].Size : 0
-                , marketData.AveragePrice
                 , Convert.ToInt64(marketData.Volume)
                 , marketData.OpenInterest
                 , new DateTime(

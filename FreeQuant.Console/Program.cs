@@ -11,7 +11,7 @@ namespace FreeQuant.Console {
     class Program {
         static void Main(string[] args)
         {
-            LogUtil.Open();
+            LogUtil.Logger.Record();
             //启动
             ComponentLoader.LoadAllComponents();
             ComponentsScheduler.Begin();
