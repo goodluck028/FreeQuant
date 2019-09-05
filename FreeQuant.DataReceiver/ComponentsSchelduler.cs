@@ -2,7 +2,7 @@
 using FreeQuant.Components;
 
 namespace FreeQuant.DataReceiver {
-    public class ComponentsSchelduler {
+    internal class ComponentsSchelduler {
         public static ComponentsSchelduler mInstance;
         private ComponentsSchelduler() {
             EventBus.Register(this);
@@ -44,7 +44,7 @@ namespace FreeQuant.DataReceiver {
         [OnEvent]
         private void OnInstrument(BrokerEvent.InstrumentEvent evt) {
             //订阅合约
-            string[] names = MySqlConfig.Config.Instruments.Split(',');
+            string[] names = DataBaseConfig.Config.Instruments.Split(',');
             foreach (string name in names) {
                 if (name.Equals(RegexUtils.TakeProductName(evt.Instrument.InstrumentID))) {
                     Instrument inst = evt.Instrument;

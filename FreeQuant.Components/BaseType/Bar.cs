@@ -17,7 +17,7 @@ namespace FreeQuant.Components {
         // 结束价
         private double mClosePrice;
         // 成交量
-        private long mVolume;
+        private double mVolume;
         // 持仓量
         private double mOpenInterest;
         // 开始时间
@@ -50,7 +50,7 @@ namespace FreeQuant.Components {
             internal set { mClosePrice = value; }
         }
 
-        public long Volume {
+        public double Volume {
             get { return mVolume; }
             internal set { mVolume = value; }
         }

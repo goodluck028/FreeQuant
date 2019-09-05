@@ -50,18 +50,17 @@ namespace FreeQuant.Components {
         [OnLog]
         private void OnException(Exception ex) {
             EnginLog(ex.Message);
-            PrintLog("error", ex.Message);
+            PrintLog("Error", ex.Message);
         }
 
         //
-        private void PrintLog(string fileName, string content) {
+        private void PrintLog(string folderName, string content) {
             string log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + content;
             Console.WriteLine(log);
             if (!mIsRecord)
                 return;
             //
             string path = AppDomain.CurrentDomain.BaseDirectory;
-            string folderName = fileName;
             if (!string.IsNullOrEmpty(path)) {
                 path = AppDomain.CurrentDomain.BaseDirectory + "\\log\\" + folderName;
                 if (!Directory.Exists(path)) {
