@@ -28,7 +28,7 @@ namespace FreeQuant.DataReceiver {
 
         public void InsertBar(Bar bar) {
             SqlConnection conn = new SqlConnection(DataBaseConfig.Config.Server);
-            string tbName = RegexUtils.TakeProductName(bar.Instrument.InstrumentID);
+            string tbName = RegexUtils.TakeShortInstrumentID(bar.Instrument.InstrumentID);
             try {
                 conn.Open();
                 //
@@ -111,7 +111,7 @@ namespace FreeQuant.DataReceiver {
             //
             SqlConnection conn = new SqlConnection(DataBaseConfig.Config.Server);
             SqlBulkCopy bulkCopy = new SqlBulkCopy(conn);
-            string tbName = RegexUtils.TakeProductName(ticks[0].Instrument.InstrumentID);
+            string tbName = RegexUtils.TakeShortInstrumentID(ticks[0].Instrument.InstrumentID);
             bulkCopy.DestinationTableName = $"[hisdata_future].[dbo].[t_tick_{tbName}]";
             bulkCopy.BatchSize = ticks.Count;
             try {

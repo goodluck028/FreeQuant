@@ -19,20 +19,6 @@ namespace FreeQuant.Components {
         public BarGenerator(Instrument instrument, BarSizeType sizeType) {
             mInstrument = instrument;
             mSizeType = sizeType;
-            EventBus.Register(this);
-        }
-
-        //每过1分钟判断一次，是否要生成新bar
-        public class TimerEvent { }
-        public static Timer timer = new Timer(_ => OnCallBack(), null, 0, 1000 * 60);
-        private static void OnCallBack() {
-            TimerEvent evt = new TimerEvent();
-            EventBus.PostEvent(evt);
-        }
-
-        [OnEvent]
-        private void onTimerEvent(TimerEvent evt) {
-            refreshBar(DateTime.Now);
         }
 
         //
@@ -72,7 +58,7 @@ namespace FreeQuant.Components {
             //
             DateTime barTime = mTickList[0].UpdateTime;
             int barQuotient = (barTime.Day * 1440 + barTime.Hour * 60 + barTime.Minute) / ((int)mSizeType);
-            int tickQuotient = (current.Day * 1440 + current.Hour * 60 + barTime.Minute) / ((int)mSizeType);
+            int tickQuotient = (current.Day * 1440 + current.Hour * 60 + current.Minute) / ((int)mSizeType);
             if (!barQuotient.Equals(tickQuotient)) {
                 OnBarTick?.Invoke(mBar, mTickList);
                 mBar = null;

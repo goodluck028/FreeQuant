@@ -123,7 +123,7 @@ namespace FreeQuant.DataReceiver {
                 row["instrumentId"] = tick.Instrument.InstrumentID;
                 row["tickSum"] = (long)row["tickSum"] + 1;
                 row["lastPrice"] = tick.LastPrice;
-                row["updateTime"] = tick.UpdateTime.ToString("yyyy-MM-dd hh:mm:ss.fff");
+                row["updateTime"] = tick.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
             }
         }
 
