@@ -17,6 +17,7 @@ namespace Components.Xapi2 {
         ConcurrentDictionary<string, Order> mOrderMap = new ConcurrentDictionary<string, Order>();
         //
         protected override void Login() {
+            //
             mTdApi = new XApi(mdPath);
             mTdApi.Server.AppID = ConfigUtil.Config.AppId;
             mTdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
@@ -73,8 +74,7 @@ namespace Components.Xapi2 {
             field.Qty = order.Volume;
 
             //自动开平
-            if (order.Offset == OffsetType.Auto)
-            {
+            if (order.Offset == OffsetType.Auto) {
                 BrokerPositionManger.Instance.AutoClose(field);
             }
 
@@ -130,8 +130,7 @@ namespace Components.Xapi2 {
 
         //这样搞，是为了避免接口线程和事件线程同时操作对象需要加锁的麻烦，但是会增加延迟。
         [OnEvent]
-        private void onBroderPosition(PositionField field)
-        {
+        private void onBroderPosition(PositionField field) {
             BrokerPositionManger.Instance.UpdatePosition(field);
         }
 
@@ -140,8 +139,7 @@ namespace Components.Xapi2 {
         }
 
         [OnEvent]
-        private void onBrokerOrder(OrderField field)
-        {
+        private void onBrokerOrder(OrderField field) {
             BrokerPositionManger.Instance.AddOrder(field);
             //转换订单
             Order order = convertOrder(field);
@@ -153,9 +151,23 @@ namespace Components.Xapi2 {
         }
 
         [OnEvent]
-        private void onBroderTrade(TradeField field)
-        {
+        private void onBroderTrade(TradeField field) {
             BrokerPositionManger.Instance.UpdatePosition(field);
+        }
+
+        [OnEvent]
+        private void _onCheck(BrokerEvent.MonitorEvent evt) {
+            if(mTdApi == null)
+                return;
+            long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
+            if (now > 231 && now < 845)
+                return;
+            if (now > 1516 && now < 2045)
+                return;
+            //
+            if (!mTdApi.IsConnected) {
+                mTdApi.Connect();
+            }
         }
 
         //转换订单
@@ -208,17 +220,16 @@ namespace Components.Xapi2 {
         }
 
         //状态变化
-        private void _onConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1)
-        {
-            switch (status)
-            {
+        private void _onConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1) {
+            switch (status) {
                 case ConnectionStatus.Done:
-                    BrokerEvent.TdLoginEvent evt = new BrokerEvent.TdLoginEvent(true,"");
+                    BrokerEvent.TdLoginEvent evt = new BrokerEvent.TdLoginEvent(true, "");
                     EventBus.PostEvent(evt);
                     break;
             }
             //
             LogUtil.EnginLog("交易状态:" + status.ToString());
         }
+
     }
 }

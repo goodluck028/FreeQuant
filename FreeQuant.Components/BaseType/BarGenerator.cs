@@ -38,7 +38,7 @@ namespace FreeQuant.Components {
                 mBar.HighPrice = tick.LastPrice;
                 mBar.LowPrice = tick.LastPrice;
                 mBar.ClosePrice = tick.LastPrice;
-                mBar.Volume = tick.Volume;
+                mBar.Volume += tick.Volume;
                 mBar.OpenInterest = tick.OpenInterest;
                 mBar.BeginTime = tick.UpdateTime;
                 mBar.SizeType = mSizeType;

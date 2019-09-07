@@ -36,8 +36,14 @@ namespace FreeQuant.DataReceiver {
         //合约
         [OnEvent]
         private void OnInstrument(BrokerEvent.InstrumentEvent evt) {
-            string name = RegexUtils.TakeShortInstrumentID(evt.Instrument.InstrumentID);
-            mWriter.CreateTable(name);
+            //建表
+            string[] products = DataBaseConfig.Config.Instruments.Split(',');
+            foreach (string product in products) {
+                if (product.Equals(RegexUtils.TakeProductName(evt.Instrument.InstrumentID))) {
+                    string name = RegexUtils.TakeShortInstrumentID(evt.Instrument.InstrumentID);
+                    mWriter.CreateTable(name);
+                }
+            }
         }
 
         //

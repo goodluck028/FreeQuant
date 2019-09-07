@@ -14,6 +14,7 @@ namespace Components.Xapi2 {
     [Component]
     public class XapiMdBroker : BaseMdBroker {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Quote_x64.dll");
+
         XApi mMdApi;
 
         public override void Login() {
@@ -37,28 +38,45 @@ namespace Components.Xapi2 {
             mMdApi.Dispose();
         }
 
+        //todo
+        private HashSet<string> mInstIds = new HashSet<string>();
         public override void SubscribeMarketData(Instrument inst) {
-            mMdApi.Subscribe(inst.InstrumentID, "");
-            LogUtil.EnginLog("订阅合约：" + inst.InstrumentID);
+            if (mInstIds.Add(inst.InstrumentID)) {
+                mMdApi.Subscribe(inst.InstrumentID, "");
+            }
         }
 
         public override void UnSubscribeMarketData(Instrument inst) {
             mMdApi.Unsubscribe(inst.InstrumentID, "");
+            mInstIds.Remove(inst.InstrumentID);
             LogUtil.EnginLog("退订合约：" + inst.InstrumentID);
         }
 
-
+        private Dictionary<string, double> volumeMap = new Dictionary<string, double>();
         private void _onRtnDepthMarketData(object sender, ref DepthMarketDataNClass marketData) {
             Instrument inst = InstrumentManager.GetInstrument(marketData.InstrumentID);
             if (inst == null)
                 return;
+            //计算量的差值
+            double vol = 0;
+            double difVol = 0;
+            if (volumeMap.TryGetValue(marketData.InstrumentID, out vol)) {
+                if (marketData.Volume < vol)
+                    return;
+                difVol = marketData.Volume - vol;
+                vol = marketData.Volume;
+            } else {
+                volumeMap.Add(marketData.InstrumentID, marketData.Volume);
+                return;
+            }
+            //
             Tick tick = new Tick(inst
                 , marketData.LastPrice
                 , marketData.Bids.Length > 0 ? marketData.Bids[0].Price : 0
                 , marketData.Bids.Length > 0 ? marketData.Bids[0].Size : 0
                 , marketData.Asks.Length > 0 ? marketData.Asks[0].Price : 0
                 , marketData.Asks.Length > 0 ? marketData.Asks[0].Size : 0
-                , marketData.Volume
+                , difVol
                 , marketData.OpenInterest
                 , new DateTime(
                     marketData.ActionDay / 10000
@@ -78,6 +96,7 @@ namespace Components.Xapi2 {
             switch (status) {
                 case ConnectionStatus.Done:
                     PostLoginEvent(true, "登录成功");
+                    Resub();
                     break;
             }
             LogUtil.EnginLog("行情状态:" + status.ToString());
@@ -85,6 +104,27 @@ namespace Components.Xapi2 {
 
         private void _onRtnError(object sender, ref ErrorField error) {
             LogUtil.EnginLog($"行情错误({error.RawErrorID}):{error.Text}");
+        }
+
+        [OnEvent]
+        private void _onCheck(BrokerEvent.MonitorEvent evt) {
+            if (mMdApi == null)
+                return;
+            long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
+            if (now > 231 && now < 845)
+                return;
+            if (now > 1516 && now < 2045)
+                return;
+            //
+            if (!mMdApi.IsConnected) {
+                mMdApi.Connect();
+            }
+        }
+
+        private void Resub() {
+            foreach (string instId in mInstIds) {
+                mMdApi.Subscribe(instId, "");
+            }
         }
     }
 }

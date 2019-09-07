@@ -184,5 +184,9 @@ namespace FreeQuant.Components {
 
         #endregion
 
+        #region 其他
+        public class MonitorEvent{}
+        #endregion
+
     }
 }
