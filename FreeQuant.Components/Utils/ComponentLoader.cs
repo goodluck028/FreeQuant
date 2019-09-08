@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 
 
-namespace FreeQuant.Framework {
+namespace FreeQuant.Components {
     public static class ComponentLoader {
         private static ArrayList mList = new ArrayList();
         public static void LoadAllComponents() {

@@ -37,20 +37,20 @@ namespace FreeQuant.Components {
         //系统日志
         [OnLog]
         private void OnEnginLog(LogEvent.EnginLog evt) {
-            PrintLog("EnginLog", evt.Content);
+            PrintLog("enginLog", evt.Content);
         }
 
         //用户日志
         [OnLog]
         private void OnUserLog(LogEvent.UserLog evt) {
-            PrintLog("UserLog", evt.Content);
+            PrintLog("userLog", evt.Content);
         }
 
         //异常
         [OnLog]
         private void OnException(Exception ex) {
             EnginLog(ex.Message);
-            PrintLog("Error", ex.Message);
+            PrintLog("error", ex.Message);
         }
 
         //

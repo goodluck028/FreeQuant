@@ -42,11 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attribute.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="EventQueue.cs" />
-    <Compile Include="ComponentLoader.cs" />
-    <Compile Include="Attribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

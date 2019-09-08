@@ -14,13 +14,13 @@ namespace FreeQuant.Console {
             LogUtil.Logger.Record();
             //启动
             ComponentLoader.LoadAllComponents();
-            ComponentsScheduler.Begin();
+            ComponentsScheduler.Instance.start();
             //键盘退出
             while (true) {
                 System.Console.WriteLine("输入Ctrl + Q退出");
                 ConsoleKeyInfo info = System.Console.ReadKey();
                 if (info.Modifiers == ConsoleModifiers.Control && info.Key == ConsoleKey.Q) {
-                    ComponentsScheduler.Stop();
+                    ComponentsScheduler.Instance.Stop();
                     break;
                 }
             }

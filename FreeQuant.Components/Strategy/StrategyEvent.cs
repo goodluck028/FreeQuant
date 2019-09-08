@@ -55,5 +55,27 @@ namespace FreeQuant.Components {
 
             public Order Order => mOrder;
         }
+
+        public class StrategyStartRequest
+        {
+            private string mTypeName;
+
+            public StrategyStartRequest(string typeName)
+            {
+                mTypeName = typeName;
+            }
+
+            public string TypeName => mTypeName;
+        }
+
+        public class StrategStopRequest {
+            private string mTypeName;
+
+            public StrategStopRequest(string typeName) {
+                mTypeName = typeName;
+            }
+
+            public string TypeName => mTypeName;
+        }
     }
 }

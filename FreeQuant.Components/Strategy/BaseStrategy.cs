@@ -1,20 +1,32 @@
-﻿using System;
+﻿using FreeQuant.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace FreeQuant.Components {
+    public enum StrategyStatus { Starting, Ruing, Stoping, Stoped }
+
+    //基本
     public partial class BaseStrategy {
-        internal event Action<BaseStrategy, Instrument> OnSubscribeInstrument;
-        internal event Action<Order> OnSendOrder;
-        internal event Action<Order> OnCancelOrder;
-        internal event Action<Position> OnChangePosition;
+        private string mName;
+        private StrategyStatus mStatus = StrategyStatus.Stoped;
+
+        public string Name {
+            get { return mName ?? GetType().FullName; }
+            protected set { }
+        }
+
+        //写日志
+        public void Log(string content) {
+            LogUtil.UserLog(content);
+        }
     }
 
     //用户实现
     public partial class BaseStrategy {
-        public virtual void OnStart() { }
-        public virtual void OnStop() { }
-        public virtual void OnTick(Tick tick) { }
-        public virtual void OnPositionChanged(Position position) { }
+        protected virtual void OnStart() { }
+        protected virtual void OnStop() { }
+        protected virtual void OnTick(Tick tick) { }
+        protected virtual void OnPositionChanged(Position position) { }
     }
 
     //行情
@@ -28,27 +40,55 @@ namespace FreeQuant.Components {
         private Dictionary<Instrument, Tick> lastTickDic = new Dictionary<Instrument, Tick>();
 
         //订阅行情
-        public void SubscribInstrument(params string[] instIds) {
+        internal void AddInstruments(params string[] instIds) {
             foreach (string instId in instIds) {
                 Instrument inst = InstrumentManager.GetInstrument(instId);
-                OnSubscribeInstrument?.Invoke(this, inst);
+                if (inst == null)
+                    continue;
+                //
                 mMainInstrument = mMainInstrument ?? inst;
                 mInstrumentSet.Add(inst);
             }
         }
 
         //启停信号
-        internal void SendStart() {
-            OnStart();
+        [OnEvent]
+        private void OnStart(StrategyEvent.StrategyStartRequest request) {
+            if (GetType().FullName.Equals(request.TypeName) && mStatus == StrategyStatus.Stoped) {
+                Start();
+            }
         }
-        internal void SendStop() {
-            OnStop();
+        [OnEvent]
+        private void OnStop(StrategyEvent.StrategStopRequest request) {
+            if (GetType().FullName.Equals(request.TypeName) && mStatus == StrategyStatus.Ruing) {
+                Stop();
+            }
         }
 
-        //发送tick
-        internal void SendTick(Tick tick) {
-            lastTickDic[tick.Instrument] = tick;
-            OnTick(tick);
+        internal void Start() {
+            mStatus = StrategyStatus.Starting;
+            OnStart();
+            mStatus = StrategyStatus.Ruing;
+            //
+            foreach (Instrument inst in mInstrumentSet) {
+                BrokerEvent.SubscribeInstrumentRequest request = new BrokerEvent.SubscribeInstrumentRequest(inst);
+                EventBus.PostEvent(request);
+            }
+        }
+        internal void Stop() {
+            mStatus = StrategyStatus.Stoping;
+            OnStop();
+            mStatus = StrategyStatus.Stoped;
+        }
+
+        //tick
+        [OnEvent]
+        private void OnTick(BrokerEvent.TickEvent evt) {
+            Tick tick = evt.Tick;
+            if (mInstrumentSet.Contains(evt.Tick.Instrument)) {
+                lastTickDic[tick.Instrument] = tick;
+                OnTick(tick);
+            }
         }
     }
 
@@ -66,7 +106,8 @@ namespace FreeQuant.Components {
         internal void AddPosition(Instrument instrument, int vol) {
             mPositionMap[instrument] = mPositionMap.ContainsKey(instrument) ? mPositionMap[instrument] + vol : vol;
             Position p = new Position(this, instrument, mPositionMap[instrument], DateTime.Now);
-            OnChangePosition?.Invoke(p);
+            StrategyEvent.ChangePositionEvent evt = new StrategyEvent.ChangePositionEvent(p);
+            EventBus.PostEvent(evt);
         }
 
         //订单管理
@@ -92,14 +133,16 @@ namespace FreeQuant.Components {
                 order.Price = lower;
             }
             //
-            OnSendOrder?.Invoke(order);
-            //
             mOrderManager.AddOrder(order);
+            //
+            StrategyEvent.SendOrderRequest request = new StrategyEvent.SendOrderRequest(order);
+            EventBus.PostEvent(request);
         }
 
         //撤单
         internal void CancleOrder(Order order) {
-            OnCancelOrder?.Invoke(order);
+            StrategyEvent.CancelOrderRequest request = new StrategyEvent.CancelOrderRequest(order);
+            EventBus.PostEvent(request);
         }
 
         //订单生成函数
@@ -167,14 +210,5 @@ namespace FreeQuant.Components {
             }
         }
     }
-
-    //其他
-    public partial class BaseStrategy {
-        //写日志
-        public void Log(string content) {
-            LogUtil.UserLog(content);
-        }
-    }
-
 
 }

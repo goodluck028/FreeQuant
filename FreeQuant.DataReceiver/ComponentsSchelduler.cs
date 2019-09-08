@@ -3,22 +3,17 @@ using FreeQuant.Components;
 
 namespace FreeQuant.DataReceiver {
     internal class ComponentsSchelduler {
-        public static ComponentsSchelduler mInstance;
+        private static ComponentsSchelduler mInstance = new ComponentsSchelduler();
+        public static ComponentsSchelduler Instance => mInstance;
         private ComponentsSchelduler() {
             EventBus.Register(this);
-            start();
-        }
-        public static void Begin() {
-            if (mInstance == null) {
-                mInstance = new ComponentsSchelduler();
-            }
         }
 
-        public static void Stop() {
+        public void Stop() {
             EventBus.Stop();
         }
 
-        private void start() {
+        public void start() {
             //登录行情
             BrokerEvent.MdLoginRequest request = new BrokerEvent.MdLoginRequest();
             EventBus.PostEvent(request);

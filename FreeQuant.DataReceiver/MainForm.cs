@@ -18,7 +18,7 @@ namespace FreeQuant.DataReceiver {
             LogUtil.Logger.Record();
             //
             ComponentLoader.LoadAllComponents();
-            ComponentsSchelduler.Begin();
+            ComponentsSchelduler.Instance.start();
             //
             initView();
         }
@@ -59,7 +59,7 @@ namespace FreeQuant.DataReceiver {
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e) {
-            ComponentsSchelduler.Stop();
+            ComponentsSchelduler.Instance.Stop();
         }
 
         //instrument

@@ -133,6 +133,8 @@ namespace FreeQuant.Framework {
                     }
                 }
             }
+            //将事件流转到log队列
+            mLogQueue.post(evt);
         }
 
 

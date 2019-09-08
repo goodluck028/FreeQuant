@@ -17,22 +17,23 @@ namespace FreeQuant.Components {
             LogUtil.EnginLog("数据库组件启动");
         }
 
-        [OnEvent]
-        public void _onPostion(Position position) {
-            savePosition(position);
+        [OnLog]
+        private void OnPostion(StrategyEvent.ChangePositionEvent evt) {
+            savePosition(evt.Position);
         }
 
-        [OnEvent]
-        public void _onOrder(Order order) {
+        [OnLog]
+        private void OnOrder(Order order) {
             saveOrder(order);
         }
 
         //持仓
-        private int GetPosition(string strategyName, string instrumentID) {
+        public static long GetPosition(string strategyName, string instrumentID) {
             string sql = $@" select position from t_position where strategy_name = '{strategyName}' and instrument_id = '{instrumentID}'";
             object vol = SQLiteHelper.ExecuteScalar(sql);
-            return vol == null ? 0 : (int)(long)vol;
+            return vol == null ? 0 : (long)vol;
         }
+
         private void savePosition(Position p) {
             string sql = @"replace into [t_position]
                             ([strategy_name], [instrument_id], [position], [last_time]) 

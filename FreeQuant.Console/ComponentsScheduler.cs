@@ -3,23 +3,18 @@ using FreeQuant.Components;
 
 namespace FreeQuant.Console {
     public class ComponentsScheduler {
-        public static ComponentsScheduler mInstance;
+        public static ComponentsScheduler mInstance = new ComponentsScheduler();
+        public static ComponentsScheduler Instance => mInstance;
         private ComponentsScheduler() {
             EventBus.Register(this);
-            start();
-        }
-        public static void Begin() {
-            if (mInstance == null) {
-                mInstance = new ComponentsScheduler();
-            }
         }
 
-        public static void Stop()
+        public void Stop()
         {
             EventBus.Stop();
         }
 
-        private void start()
+        public void start()
         {
             //登录行情
             BrokerEvent.MdLoginRequest request = new BrokerEvent.MdLoginRequest();
@@ -41,12 +36,6 @@ namespace FreeQuant.Console {
             //查询合约
             BrokerEvent.QueryInstrumentRequest request = new BrokerEvent.QueryInstrumentRequest();
             EventBus.PostEvent(request);
-        }
-
-        //合约返回
-        [OnEvent]
-        private void OnInstrument(BrokerEvent.InstrumentEvent evt)
-        {
         }
 
 
