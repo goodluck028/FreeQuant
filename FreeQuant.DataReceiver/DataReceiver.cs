@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
-using FreeQuant.Components;
 using FreeQuant.Framework;
+using FreeQuant.EventEngin;
 
 namespace FreeQuant.DataReceiver {
-    [Component]
+    [AutoCreate]
     internal class DataReceiver {
         //单例
         public DataReceiver() {

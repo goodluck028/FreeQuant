@@ -1,4 +1,4 @@
-﻿using FreeQuant.Components;
+﻿using FreeQuant.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;

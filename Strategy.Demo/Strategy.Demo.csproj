@@ -45,9 +45,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FreeQuant.Components\FreeQuant.Components.csproj">
+    <ProjectReference Include="..\FreeQuant.Framework\FreeQuant.Framework.csproj">
       <Project>{6BE77E5E-291D-456B-97D3-30DFCF93985C}</Project>
-      <Name>FreeQuant.Components</Name>
+      <Name>FreeQuant.Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

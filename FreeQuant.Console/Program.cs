@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using FreeQuant.Components;
 using FreeQuant.Framework;
+using FreeQuant.EventEngin;
 
 namespace FreeQuant.Console {
     class Program {
@@ -13,7 +13,7 @@ namespace FreeQuant.Console {
         {
             LogUtil.Logger.Record();
             //启动
-            ComponentLoader.LoadAllComponents();
+            ObjectCreater.LoadAndCreate();
             ComponentsScheduler.Instance.start();
             //键盘退出
             while (true) {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Windows.Forms;
-using FreeQuant.Components;
 using FreeQuant.Framework;
+using FreeQuant.EventEngin;
 
 namespace FreeQuant.DataReceiver {
     public partial class MainForm : Form {
@@ -17,7 +17,7 @@ namespace FreeQuant.DataReceiver {
             //
             LogUtil.Logger.Record();
             //
-            ComponentLoader.LoadAllComponents();
+            ObjectCreater.LoadAndCreate();
             ComponentsSchelduler.Instance.start();
             //
             initView();

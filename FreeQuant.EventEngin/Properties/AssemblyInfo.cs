@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("FreeQuant.Components")]
+[assembly: AssemblyTitle("FreeQuant.Framework")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("FreeQuant.Components")]
+[assembly: AssemblyProduct("FreeQuant.Framework")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("6be77e5e-291d-456b-97d3-30dfcf93985c")]
+[assembly: Guid("87b4aea7-403c-44cd-aa46-a700b8cec2a3")]
 
 // 程序集的版本信息由下列四个值组成: 
 //

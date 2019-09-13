@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.Framework", "FreeQuant.Framework\FreeQuant.Framework.csproj", "{87B4AEA7-403C-44CD-AA46-A700B8CEC2A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.EventEngin", "FreeQuant.EventEngin\FreeQuant.EventEngin.csproj", "{87B4AEA7-403C-44CD-AA46-A700B8CEC2A3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.Console", "FreeQuant.Console\FreeQuant.Console.csproj", "{4571375B-9B84-467D-964D-25DA4AAECC44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.UI", "FreeQuant.UI\FreeQuant.UI.csproj", "{F0C263B8-C170-4F46-9D2B-5C5058BBF8F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.Components", "FreeQuant.Components\FreeQuant.Components.csproj", "{6BE77E5E-291D-456B-97D3-30DFCF93985C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.Framework", "FreeQuant.Framework\FreeQuant.Framework.csproj", "{6BE77E5E-291D-456B-97D3-30DFCF93985C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Components.Xapi2", "Components.Xapi2\Components.Xapi2.csproj", "{F28B8655-3CDD-4691-97FC-9E0EFCAA2663}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broker.Xapi2", "Broker.Xapi2\Broker.Xapi2.csproj", "{F28B8655-3CDD-4691-97FC-9E0EFCAA2663}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeQuant.DataReceiver", "FreeQuant.DataReceiver\FreeQuant.DataReceiver.csproj", "{EEDE9DA5-8CB1-49F8-9C63-A2F6A4832EC5}"
 EndProject

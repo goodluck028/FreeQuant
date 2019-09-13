@@ -56,9 +56,9 @@
     <Compile Include="Utils\RegexUtilsTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FreeQuant.Components\FreeQuant.Components.csproj">
+    <ProjectReference Include="..\FreeQuant.Framework\FreeQuant.Framework.csproj">
       <Project>{6be77e5e-291d-456b-97d3-30dfcf93985c}</Project>
-      <Name>FreeQuant.Components</Name>
+      <Name>FreeQuant.Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
