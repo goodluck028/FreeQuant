@@ -12,7 +12,7 @@ namespace FreeQuant.Framework {
         private static ConcurrentDictionary<string, Instrument> mInstrumentMap = new ConcurrentDictionary<string, Instrument>();
         public InstrumentManager() {
             EventBus.Register(this);
-            LogUtil.EnginLog("合约管理模块启动");
+            LogUtil.EnginLog("合约管理组件启动");
         }
 
         [OnEvent]

@@ -17,6 +17,13 @@ namespace Broker.Xapi2 {
         ConcurrentDictionary<string, Order> mOrderMap = new ConcurrentDictionary<string, Order>();
         //
         protected override void Login() {
+            if (mTdApi != null) {
+                if (!mTdApi.IsConnected) {
+                    mTdApi.Dispose();
+                    mTdApi = null;
+                }
+                return;
+            }
             //
             mTdApi = new XApi(mdPath);
             mTdApi.Server.AppID = ConfigUtil.Config.AppId;
@@ -40,7 +47,14 @@ namespace Broker.Xapi2 {
         }
 
         protected override void Logout() {
-            mTdApi.Dispose();
+            if (mTdApi == null)
+                return;
+            if (mTdApi.IsConnected) {
+                mTdApi.Disconnect();
+            } else {
+                mTdApi.Dispose();
+                mTdApi = null;
+            }
         }
 
         protected override void QueryInstrument() {
@@ -157,16 +171,21 @@ namespace Broker.Xapi2 {
 
         [OnEvent]
         private void _onCheck(BrokerEvent.MonitorEvent evt) {
-            if(mTdApi == null)
+            if (mTdApi == null)
                 return;
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
-            if (now > 231 && now < 845)
+            if (now > 231 && now < 845) {
+                Logout();
                 return;
-            if (now > 1516 && now < 2045)
+            }
+
+            if (now > 1516 && now < 2045) {
+                Logout();
                 return;
+            }
             //
             if (!mTdApi.IsConnected) {
-                mTdApi.Connect();
+                Login();
             }
         }
 

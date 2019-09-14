@@ -18,6 +18,14 @@ namespace Broker.Xapi2 {
         XApi mMdApi;
 
         public override void Login() {
+            if (mMdApi != null) {
+                if (!mMdApi.IsConnected) {
+                    mMdApi.Dispose();
+                    mMdApi = null;
+                }
+                return;
+            }
+            //
             mMdApi = new XApi(mdPath);
             mMdApi.Server.AppID = ConfigUtil.Config.AppId;
             mMdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
@@ -35,7 +43,14 @@ namespace Broker.Xapi2 {
         }
 
         public override void Logout() {
-            mMdApi.Dispose();
+            if (mMdApi == null)
+                return;
+            if (mMdApi.IsConnected) {
+                mMdApi.Disconnect();
+            } else {
+                mMdApi.Dispose();
+                mMdApi = null;
+            }
         }
 
         //todo
@@ -111,13 +126,18 @@ namespace Broker.Xapi2 {
             if (mMdApi == null)
                 return;
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
-            if (now > 231 && now < 845)
+            if (now > 231 && now < 845) {
+                Logout();
                 return;
-            if (now > 1516 && now < 2045)
+            }
+
+            if (now > 1516 && now < 2045) {
+                Logout();
                 return;
+            }
             //
             if (!mMdApi.IsConnected) {
-                mMdApi.Connect();
+                Login();
             }
         }
 
