@@ -1,27 +1,44 @@
-﻿using FreeQuant.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
+using System.Threading;
+using FreeQuant.EventEngin;
+using System.Data;
 
-namespace FreeQuant.UI {
-    internal class MainModel
-    {
-        //单例
-        private MainModel()
-        {
+namespace FreeQuant.Framework {
+    [AutoCreate]
+    public class DataMonitor {
+
+        public DataMonitor() {
+            EventBus.Register(this);
+            LogUtil.EnginLog("数据库组件启动");
+        }
+
+        [OnLog]
+        private void OnPostion(StrategyEvent.ChangePositionEvent evt) {
+            Position p = evt.Position;
+            DataManager.Instance.SetPosition(p.StrategyName.GetType().FullName, p.Instrument.InstrumentID, p.Vol);
+        }
+
+        [OnLog]
+        private void OnOrder(Order order) {
+            DataManager.Instance.SaveOrder(order);
+        }
+    }
+
+    public class DataManager {
+
+        private static DataManager mInstance = new DataManager();
+
+        private DataManager() {
             loadTables();
         }
-        private static MainModel instance = new MainModel();
-        internal static MainModel Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
+
+        public static DataManager Instance => mInstance;
 
         //
         private DataTable strategyTable;
@@ -46,17 +63,15 @@ namespace FreeQuant.UI {
                                                         [order_time]
                                                         from [t_order]";
 
-        internal DataTable StrategyTable
-        {
-            get
-            {
+        //
+        internal DataTable StrategyTable {
+            get {
                 return strategyTable;
             }
         }
 
         //
-        private void loadTables()
-        {
+        private void loadTables() {
             //加载当前策略
             strategyTable = new DataTable("strategys");
             strategyTable.Columns.Add("strategy_name", Type.GetType("System.String"));
@@ -64,22 +79,16 @@ namespace FreeQuant.UI {
 
             //获取文件列表 
             string[] files = new string[] { };
-            try
-            {
+            try {
                 files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\strategys");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.StackTrace);
+            } catch (Exception ex) {
             }
 
             //加载策略
-            foreach (string f in files)
-            {
+            foreach (string f in files) {
                 Assembly assembly = Assembly.LoadFrom(f);
                 Type[] types = assembly.GetTypes();
-                foreach (Type t in types)
-                {
+                foreach (Type t in types) {
                     //必须要是策略子类
                     if (!t.IsSubclassOf(typeof(BaseStrategy)))
                         continue;
@@ -93,15 +102,13 @@ namespace FreeQuant.UI {
 
             //加载持仓
             DataTable positionTable = SQLiteHelper.GetDataTable(QUERY_POSITION);
-            foreach (DataRow row in positionTable.Rows)
-            {
+            foreach (DataRow row in positionTable.Rows) {
                 string strategyName = row.Field<string>("strategy_name");
                 if (strategyTable.Select($"strategy_name = '{strategyName}'").Length == 0)
                     strategyTable.Rows.Add(strategyName, false);
 
                 DataTable t;
-                if (!positionDic.TryGetValue(strategyName, out t))
-                {
+                if (!positionDic.TryGetValue(strategyName, out t)) {
                     t = positionTable.Clone();
                     positionDic.Add(strategyName, t);
                 }
@@ -110,15 +117,13 @@ namespace FreeQuant.UI {
 
             //加载订单
             DataTable orderTable = SQLiteHelper.GetDataTable(QUERY_ORDER);
-            foreach (DataRow row in orderTable.Rows)
-            {
+            foreach (DataRow row in orderTable.Rows) {
                 string strategyName = row.Field<string>("strategy_name");
                 if (strategyTable.Select($"strategy_name = '{strategyName}'").Length == 0)
                     strategyTable.Rows.Add(strategyName, false);
 
                 DataTable t;
-                if (!orderDic.TryGetValue(strategyName, out t))
-                {
+                if (!orderDic.TryGetValue(strategyName, out t)) {
                     t = orderTable.Clone();
                     orderDic.Add(strategyName, t);
                 }
@@ -126,20 +131,31 @@ namespace FreeQuant.UI {
             }
         }
 
-        //
-        internal DataTable getPositionTable(string strategyName)
-        {
+        //持仓
+        public long GetPosition(string strategyName, string instrumentID) {
+            long pos = 0;
+            DataTable dt;
+            if (positionDic.TryGetValue(strategyName, out dt)) {
+                try {
+                    pos = (long)dt.Select($"instrument_id='{instrumentID}'")[0]["position"];
+                } catch (Exception e) {
+                    pos = 0;
+                }
+
+            }
+            return pos;
+        }
+        public DataTable GetPositionTable(string strategyName) {
             DataTable t;
             return positionDic.TryGetValue(strategyName, out t) ? t : new DataTable();
         }
-        internal void setPosition(string strategyName, string instrumentID, int position)
-        {
-            try
-            {
+        public void SetPosition(string strategyName, string instrumentID, long position) {
+            try {
                 //修改数据库
-                string sql = @"update [t_position]
-                            set [position] = @position,[last_time] = @lastTime
-                            where [strategy_name] = @strategyName and [instrument_id] = @instrumentID";
+                string sql = @"replace into [t_position]
+                            ([strategy_name], [instrument_id], [position], [last_time]) 
+                            values
+                            (@strategyName,@instrumentID,@position,@lastTime)";
                 SQLiteHelper.ExecuteNonQuery(sql
                     , new System.Data.SQLite.SQLiteParameter("strategyName", strategyName)
                     , new System.Data.SQLite.SQLiteParameter("instrumentID", instrumentID)
@@ -148,60 +164,63 @@ namespace FreeQuant.UI {
 
                 //修改缓存
                 DataTable t;
-                if (positionDic.TryGetValue(strategyName, out t))
-                {
+                if (positionDic.TryGetValue(strategyName, out t)) {
                     DataRow[] rows = t.Select($"strategy_name = '{strategyName}' and instrument_id = '{instrumentID}'");
-                    if (rows.Length > 0)
-                    {
+                    if (rows.Length > 0) {
                         rows[0]["position"] = position;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.StackTrace);
+            } catch (Exception ex) {
+                LogUtil.Error(ex);
             }
         }
 
         //
-        internal DataTable getOrderTable(string strategyName)
-        {
+        public DataTable GetOrderTable(string strategyName) {
             DataTable t;
             return orderDic.TryGetValue(strategyName, out t) ? t : new DataTable();
         }
-
-        //
-        internal void deleteStrategy(string strategyName)
-        {
-            try
-            {
-                //删持仓
-                string sql = @"delete
-                            from [t_position]
-                            where [strategy_name] = @strategyName";
+        public void SaveOrder(Order o) {
+            try {
+                string direction = o.Direction == DirectionType.Buy ? "多" : "空";
+                string sql = $@"replace into [t_order]
+                            ([strategy_name], [instrument_id], [direction], [price], [volume], [volume_traded], [order_time])
+                            values
+                            (@strategyName,@instrumentID,@direction,@price,@volume,@olumeTraded,@orderTime)";
                 SQLiteHelper.ExecuteNonQuery(sql
-                    , new System.Data.SQLite.SQLiteParameter("strategyName", strategyName));
-
-                //删订单
-                sql = @"delete
-                        from [t_order]
-                        where [strategy_name] = @strategyName";
-                SQLiteHelper.ExecuteNonQuery(sql
-                    , new System.Data.SQLite.SQLiteParameter("strategyName", strategyName));
-
-                //删缓存
-                DataRow[] rows = strategyTable.Select($"strategy_name='{strategyName}'");
-                foreach (var r in rows)
-                {
-                    strategyTable.Rows.Remove(r);
-                }
+                    , new System.Data.SQLite.SQLiteParameter("strategyName", o.Strategy.GetType().Name)
+                    , new System.Data.SQLite.SQLiteParameter("instrumentID", o.Instrument.InstrumentID)
+                    , new System.Data.SQLite.SQLiteParameter("direction", direction)
+                    , new System.Data.SQLite.SQLiteParameter("price", o.Price)
+                    , new System.Data.SQLite.SQLiteParameter("volume", o.Volume)
+                    , new System.Data.SQLite.SQLiteParameter("olumeTraded", o.Volume - o.VolumeLeft)
+                    , new System.Data.SQLite.SQLiteParameter("orderTime", o.OrderTime));
+            } catch (Exception ex) {
+                LogUtil.Error(ex);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.StackTrace);
-            }
-
         }
 
+        //
+        public void DeleteStrategy(string strategyName) {
+            //删持仓
+            string sql = @"delete
+                            from [t_position]
+                            where [strategy_name] = @strategyName";
+            SQLiteHelper.ExecuteNonQuery(sql
+                , new System.Data.SQLite.SQLiteParameter("strategyName", strategyName));
+
+            //删订单
+            sql = @"delete
+                        from [t_order]
+                        where [strategy_name] = @strategyName";
+            SQLiteHelper.ExecuteNonQuery(sql
+                , new System.Data.SQLite.SQLiteParameter("strategyName", strategyName));
+
+            //删缓存
+            DataRow[] rows = strategyTable.Select($"strategy_name='{strategyName}'");
+            foreach (var r in rows) {
+                strategyTable.Rows.Remove(r);
+            }
+        }
     }
 }

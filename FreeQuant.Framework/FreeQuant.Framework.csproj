@@ -67,7 +67,7 @@
     <Compile Include="Strategy\OrderManager.cs" />
     <Compile Include="Utils\ObjectCreater.cs" />
     <Compile Include="Utils\ConfigUtil.cs" />
-    <Compile Include="DataBase\DataBaseManager.cs" />
+    <Compile Include="DataBase\DataMonitor.cs" />
     <Compile Include="DataBase\SqliteHelper.cs" />
     <Compile Include="Instrument\InstrumentManager.cs" />
     <Compile Include="Utils\LogEvent.cs" />

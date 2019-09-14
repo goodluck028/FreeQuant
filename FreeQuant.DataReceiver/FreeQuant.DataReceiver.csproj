@@ -104,9 +104,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DataReceiver.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Broker.Xapi2\Broker.Xapi2.csproj">
       <Project>{f28b8655-3cdd-4691-97fc-9e0efcaa2663}</Project>
       <Name>Broker.Xapi2</Name>
@@ -119,6 +116,9 @@
       <Project>{87b4aea7-403c-44cd-aa46-a700b8cec2a3}</Project>
       <Name>FreeQuant.EventEngin</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DataReceiver.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

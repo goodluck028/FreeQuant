@@ -32,6 +32,7 @@
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.buttonStartStrategy = new System.Windows.Forms.Button();
             this.dataGridViewStrategy = new System.Windows.Forms.DataGridView();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPagePosition = new System.Windows.Forms.TabPage();
             this.dataGridViewPosition = new System.Windows.Forms.DataGridView();
@@ -50,6 +51,9 @@
             this.splitContainerMain.Panel2.SuspendLayout();
             this.splitContainerMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewStrategy)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPagePosition.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPosition)).BeginInit();
@@ -74,7 +78,7 @@
             // 
             // splitContainerMain.Panel2
             // 
-            this.splitContainerMain.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainerMain.Panel2.Controls.Add(this.splitContainer1);
             this.splitContainerMain.Size = new System.Drawing.Size(884, 561);
             this.splitContainerMain.SplitterDistance = 225;
             this.splitContainerMain.SplitterWidth = 5;
@@ -111,6 +115,20 @@
             this.dataGridViewStrategy.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewStrategy_CellClick);
             this.dataGridViewStrategy.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewStrategy_CellMouseDown);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Size = new System.Drawing.Size(654, 561);
+            this.splitContainer1.SplitterDistance = 156;
+            this.splitContainer1.TabIndex = 1;
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPagePosition);
@@ -120,8 +138,8 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(654, 561);
-            this.tabControl1.TabIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(654, 401);
+            this.tabControl1.TabIndex = 1;
             // 
             // tabPagePosition
             // 
@@ -130,7 +148,7 @@
             this.tabPagePosition.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPagePosition.Name = "tabPagePosition";
             this.tabPagePosition.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPagePosition.Size = new System.Drawing.Size(646, 531);
+            this.tabPagePosition.Size = new System.Drawing.Size(646, 371);
             this.tabPagePosition.TabIndex = 0;
             this.tabPagePosition.Text = "持仓";
             this.tabPagePosition.UseVisualStyleBackColor = true;
@@ -148,9 +166,8 @@
             this.dataGridViewPosition.ReadOnly = true;
             this.dataGridViewPosition.RowTemplate.Height = 23;
             this.dataGridViewPosition.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewPosition.Size = new System.Drawing.Size(640, 523);
+            this.dataGridViewPosition.Size = new System.Drawing.Size(640, 363);
             this.dataGridViewPosition.TabIndex = 0;
-            this.dataGridViewPosition.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewPosition_CellMouseDown);
             // 
             // tabPageOrder
             // 
@@ -163,7 +180,7 @@
             this.tabPageOrder.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageOrder.Name = "tabPageOrder";
             this.tabPageOrder.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageOrder.Size = new System.Drawing.Size(646, 531);
+            this.tabPageOrder.Size = new System.Drawing.Size(646, 371);
             this.tabPageOrder.TabIndex = 1;
             this.tabPageOrder.Text = "订单";
             this.tabPageOrder.UseVisualStyleBackColor = true;
@@ -211,7 +228,6 @@
             this.dataGridViewOrder.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridViewOrder.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataGridViewOrder.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewOrder.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.dataGridViewOrder.Location = new System.Drawing.Point(3, 51);
             this.dataGridViewOrder.Name = "dataGridViewOrder";
             this.dataGridViewOrder.ReadOnly = true;
@@ -269,6 +285,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
             this.splitContainerMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewStrategy)).EndInit();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPagePosition.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPosition)).EndInit();
@@ -284,21 +303,22 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainerMain;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPagePosition;
-        private System.Windows.Forms.TabPage tabPageOrder;
         private System.Windows.Forms.Button buttonStartStrategy;
         private System.Windows.Forms.DataGridView dataGridViewStrategy;
-        private System.Windows.Forms.DataGridView dataGridViewPosition;
-        private System.Windows.Forms.Button buttonExport;
-        private System.Windows.Forms.DataGridView dataGridViewOrder;
-        private System.Windows.Forms.Button buttonPageAfter;
-        private System.Windows.Forms.Label labelPage;
-        private System.Windows.Forms.Button buttonPageBefore;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripStrategy;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemDelete;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripPosition;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSet;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPagePosition;
+        private System.Windows.Forms.DataGridView dataGridViewPosition;
+        private System.Windows.Forms.TabPage tabPageOrder;
+        private System.Windows.Forms.Button buttonPageAfter;
+        private System.Windows.Forms.Label labelPage;
+        private System.Windows.Forms.Button buttonPageBefore;
+        private System.Windows.Forms.Button buttonExport;
+        private System.Windows.Forms.DataGridView dataGridViewOrder;
     }
 }
 
