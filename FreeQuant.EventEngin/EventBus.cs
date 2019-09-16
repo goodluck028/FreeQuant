@@ -128,7 +128,7 @@ namespace FreeQuant.EventEngin {
                         try {
                             wrapper.Invoke(evt.Value);
                         } catch (Exception e) {
-                            PostLog(e);
+                            PostLog(new Exception($"订阅类型:{wrapper.Obj.GetType().FullName},事件类型:{evt.ValueType}", e));
                         }
                     }
                 }
@@ -162,8 +162,9 @@ namespace FreeQuant.EventEngin {
                     foreach (InvokeWrapper wrapper in set) {
                         try {
                             wrapper.Invoke(evt.Value);
-                        } catch (Exception e) {
-                            PostLog(e);
+                        } catch (Exception e)
+                        {
+                            PostLog(new Exception($"订阅类型:{wrapper.Obj.GetType().FullName},事件类型:{evt.ValueType}",e));
                         }
                     }
                 }

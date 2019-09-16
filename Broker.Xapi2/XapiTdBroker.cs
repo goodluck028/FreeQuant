@@ -17,11 +17,7 @@ namespace Broker.Xapi2 {
         ConcurrentDictionary<string, Order> mOrderMap = new ConcurrentDictionary<string, Order>();
         //
         protected override void Login() {
-            if (mTdApi != null) {
-                if (!mTdApi.IsConnected) {
-                    mTdApi.Dispose();
-                    mTdApi = null;
-                }
+            if (mTdApi != null && mTdApi.IsConnected) {
                 return;
             }
             //
@@ -171,8 +167,6 @@ namespace Broker.Xapi2 {
 
         [OnEvent]
         private void _onCheck(BrokerEvent.MonitorEvent evt) {
-            if (mTdApi == null)
-                return;
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
             if (now > 231 && now < 845) {
                 Logout();

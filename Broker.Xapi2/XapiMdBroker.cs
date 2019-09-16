@@ -18,11 +18,7 @@ namespace Broker.Xapi2 {
         XApi mMdApi;
 
         public override void Login() {
-            if (mMdApi != null) {
-                if (!mMdApi.IsConnected) {
-                    mMdApi.Dispose();
-                    mMdApi = null;
-                }
+            if (mMdApi != null && mMdApi.IsConnected) {
                 return;
             }
             //
@@ -123,8 +119,6 @@ namespace Broker.Xapi2 {
 
         [OnEvent]
         private void _onCheck(BrokerEvent.MonitorEvent evt) {
-            if (mMdApi == null)
-                return;
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
             if (now > 231 && now < 845) {
                 Logout();

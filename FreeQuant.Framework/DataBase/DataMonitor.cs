@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading;
 using FreeQuant.EventEngin;
 using System.Data;
+using System.Reflection;
 
 namespace FreeQuant.Framework {
     [AutoCreate]
@@ -34,8 +35,13 @@ namespace FreeQuant.Framework {
 
         private static DataManager mInstance = new DataManager();
 
-        private DataManager() {
-            loadTables();
+        private DataManager()
+        {
+            //todo
+            //策略表
+            strategyTable = new DataTable("strategys");
+            strategyTable.Columns.Add("strategy_name", Type.GetType("System.String"));
+            strategyTable.Columns.Add("useable", Type.GetType("System.Boolean"));
         }
 
         public static DataManager Instance => mInstance;
@@ -51,7 +57,8 @@ namespace FreeQuant.Framework {
                                                             [instrument_id], 
                                                             [position], 
                                                             [last_time]
-                                                            from [t_position]";
+                                                            from [t_position]
+                                                    where ";
 
         private readonly string QUERY_ORDER = @"select [id], 
                                                         [strategy_name], 
@@ -70,66 +77,6 @@ namespace FreeQuant.Framework {
             }
         }
 
-        //
-        private void loadTables() {
-            //加载当前策略
-            strategyTable = new DataTable("strategys");
-            strategyTable.Columns.Add("strategy_name", Type.GetType("System.String"));
-            strategyTable.Columns.Add("useable", Type.GetType("System.Boolean"));
-
-            //获取文件列表 
-            string[] files = new string[] { };
-            try {
-                files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\strategys");
-            } catch (Exception ex) {
-            }
-
-            //加载策略
-            foreach (string f in files) {
-                Assembly assembly = Assembly.LoadFrom(f);
-                Type[] types = assembly.GetTypes();
-                foreach (Type t in types) {
-                    //必须要是策略子类
-                    if (!t.IsSubclassOf(typeof(BaseStrategy)))
-                        continue;
-                    //避免重复添加
-                    if (strategyTable.Select($"strategy_name = '{t.Name}'").Length > 0)
-                        continue;
-
-                    strategyTable.Rows.Add(t.Name, true);
-                }
-            }
-
-            //加载持仓
-            DataTable positionTable = SQLiteHelper.GetDataTable(QUERY_POSITION);
-            foreach (DataRow row in positionTable.Rows) {
-                string strategyName = row.Field<string>("strategy_name");
-                if (strategyTable.Select($"strategy_name = '{strategyName}'").Length == 0)
-                    strategyTable.Rows.Add(strategyName, false);
-
-                DataTable t;
-                if (!positionDic.TryGetValue(strategyName, out t)) {
-                    t = positionTable.Clone();
-                    positionDic.Add(strategyName, t);
-                }
-                t.Rows.Add(row.ItemArray);
-            }
-
-            //加载订单
-            DataTable orderTable = SQLiteHelper.GetDataTable(QUERY_ORDER);
-            foreach (DataRow row in orderTable.Rows) {
-                string strategyName = row.Field<string>("strategy_name");
-                if (strategyTable.Select($"strategy_name = '{strategyName}'").Length == 0)
-                    strategyTable.Rows.Add(strategyName, false);
-
-                DataTable t;
-                if (!orderDic.TryGetValue(strategyName, out t)) {
-                    t = orderTable.Clone();
-                    orderDic.Add(strategyName, t);
-                }
-                t.Rows.Add(row.ItemArray);
-            }
-        }
 
         //持仓
         public long GetPosition(string strategyName, string instrumentID) {
@@ -141,7 +88,6 @@ namespace FreeQuant.Framework {
                 } catch (Exception e) {
                     pos = 0;
                 }
-
             }
             return pos;
         }

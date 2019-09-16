@@ -49,7 +49,6 @@ namespace FreeQuant.Framework {
         //异常
         [OnLog]
         private void OnException(Exception ex) {
-            EnginLog(ex.Message);
             PrintLog("error", $"{ex.StackTrace},{ex.Message}");
         }
 
