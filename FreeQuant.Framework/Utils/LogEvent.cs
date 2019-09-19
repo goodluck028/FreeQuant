@@ -31,5 +31,18 @@ namespace FreeQuant.Framework {
                 }
             }
         }
+
+        public class ErrorLog {
+            string error;
+
+            public ErrorLog(string error) {
+                this.error = error;
+            }
+            public string Error {
+                get {
+                    return error;
+                }
+            }
+        }
     }
 }

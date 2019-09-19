@@ -17,12 +17,12 @@ namespace FreeQuant.Framework {
             EventBus.PostLog(evt);
         }
         public static void Error(Exception ex) {
-            EventBus.PostLog(ex);
+            LogEvent.ErrorLog evt = new LogEvent.ErrorLog($"{ex.StackTrace},{ex.Message}");
+            EventBus.PostLog(evt);
         }
 
         //写日志
-        public void Output()
-        {
+        public void Output() {
             EventBus.Register(this);
             EnginLog(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>日志仅输出<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         }
@@ -48,8 +48,8 @@ namespace FreeQuant.Framework {
 
         //异常
         [OnLog]
-        private void OnException(Exception ex) {
-            PrintLog("error", $"{ex.StackTrace},{ex.Message}");
+        private void OnException(LogEvent.ErrorLog evt) {
+            PrintLog("error", evt.Error);
         }
 
         //

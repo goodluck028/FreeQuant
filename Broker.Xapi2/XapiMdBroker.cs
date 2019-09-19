@@ -49,7 +49,6 @@ namespace Broker.Xapi2 {
             }
         }
 
-        //todo
         private HashSet<string> mInstIds = new HashSet<string>();
         public override void SubscribeMarketData(Instrument inst) {
             if (mInstIds.Add(inst.InstrumentID)) {
@@ -130,9 +129,7 @@ namespace Broker.Xapi2 {
                 return;
             }
             //
-            if (!mMdApi.IsConnected) {
-                Login();
-            }
+            Login();
         }
 
         private void Resub() {

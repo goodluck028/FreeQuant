@@ -65,6 +65,9 @@ namespace FreeQuant.DataReceiver {
         //instrument
         [OnEvent]
         private void OnInstrument(BrokerEvent.SubscribeInstrumentRequest request) {
+            if(mRowMap.ContainsKey(request.Instrument.InstrumentID))
+                return;
+            //
             DataRow row;
             row = mTable.NewRow();
             row["instrumentId"] = request.Instrument.InstrumentID;

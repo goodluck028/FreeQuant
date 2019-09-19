@@ -178,9 +178,7 @@ namespace Broker.Xapi2 {
                 return;
             }
             //
-            if (!mTdApi.IsConnected) {
-                Login();
-            }
+            Login();
         }
 
         //转换订单
