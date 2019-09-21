@@ -18,35 +18,25 @@ namespace Broker.Xapi2 {
         XApi mMdApi;
 
         public override void Login() {
-            if (mMdApi != null && mMdApi.IsConnected) {
+            if (mMdApi == null) {
+                mMdApi = new XApi(mdPath);
+                mMdApi.Server.AppID = ConfigUtil.Config.AppId;
+                mMdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
+                mMdApi.Server.Address = ConfigUtil.Config.MdServer;
+                mMdApi.Server.BrokerID = ConfigUtil.Config.MdBroker;
+                mMdApi.User.UserID = ConfigUtil.Config.MdInvestor;
+                mMdApi.User.Password = ConfigUtil.Config.MdPassword;
+                //
+                mMdApi.OnConnectionStatus = _onConnectionStatus;
+                mMdApi.OnRtnError = _onRtnError;
+                mMdApi.OnRtnDepthMarketData = _onRtnDepthMarketData;
+            } else if (mMdApi.IsConnected) {
                 return;
             }
-            //
-            mMdApi = new XApi(mdPath);
-            mMdApi.Server.AppID = ConfigUtil.Config.AppId;
-            mMdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
-            mMdApi.Server.Address = ConfigUtil.Config.MdServer;
-            mMdApi.Server.BrokerID = ConfigUtil.Config.MdBroker;
-            mMdApi.User.UserID = ConfigUtil.Config.MdInvestor;
-            mMdApi.User.Password = ConfigUtil.Config.MdPassword;
-            mMdApi.OnConnectionStatus = _onConnectionStatus;
-
-            mMdApi.OnRtnError = _onRtnError;
-
-            mMdApi.OnRtnDepthMarketData = _onRtnDepthMarketData;
-
             mMdApi.Connect();
         }
 
         public override void Logout() {
-            if (mMdApi == null)
-                return;
-            if (mMdApi.IsConnected) {
-                mMdApi.Disconnect();
-            } else {
-                mMdApi.Dispose();
-                mMdApi = null;
-            }
         }
 
         private HashSet<string> mInstIds = new HashSet<string>();
@@ -120,12 +110,10 @@ namespace Broker.Xapi2 {
         private void _onCheck(BrokerEvent.MonitorEvent evt) {
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
             if (now > 231 && now < 845) {
-                Logout();
                 return;
             }
 
             if (now > 1516 && now < 2045) {
-                Logout();
                 return;
             }
             //

@@ -17,40 +17,33 @@ namespace Broker.Xapi2 {
         ConcurrentDictionary<string, Order> mOrderMap = new ConcurrentDictionary<string, Order>();
         //
         protected override void Login() {
-            if (mTdApi != null && mTdApi.IsConnected) {
+            if (mTdApi == null) {
+                mTdApi = new XApi(mdPath);
+                mTdApi.Server.AppID = ConfigUtil.Config.AppId;
+                mTdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
+                mTdApi.Server.Address = ConfigUtil.Config.TdServer;
+                mTdApi.Server.BrokerID = ConfigUtil.Config.TdBroker;
+                mTdApi.User.UserID = ConfigUtil.Config.TdInvestor;
+                mTdApi.User.Password = ConfigUtil.Config.TdPassword;
+                //
+                mTdApi.Server.PrivateTopicResumeType = ResumeType.Quick;
+                mTdApi.OnRspQryInstrument = _onRspQryInstrument;
+                mTdApi.OnRspQryInvestorPosition = _OnRspQryInvestorPosition;
+                mTdApi.OnRtnOrder = _onRtnOrder;
+                mTdApi.OnRtnTrade = _onRtnTrade;
+                mTdApi.OnRspQrySettlementInfo =
+                    (object sender, ref SettlementInfoClass settlementInfo, int size1, bool bIsLast) => {
+                        LogUtil.EnginLog("结算确认:" + settlementInfo.Content);
+                    };
+                mTdApi.OnConnectionStatus = _onConnectionStatus;
+            } else if (mTdApi.IsConnected) {
                 return;
             }
-            //
-            mTdApi = new XApi(mdPath);
-            mTdApi.Server.AppID = ConfigUtil.Config.AppId;
-            mTdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
-            mTdApi.Server.Address = ConfigUtil.Config.TdServer;
-            mTdApi.Server.BrokerID = ConfigUtil.Config.TdBroker;
-            mTdApi.User.UserID = ConfigUtil.Config.TdInvestor;
-            mTdApi.User.Password = ConfigUtil.Config.TdPassword;
-            //
-            mTdApi.Server.PrivateTopicResumeType = ResumeType.Quick;
-            mTdApi.OnRspQryInstrument = _onRspQryInstrument;
-            mTdApi.OnRspQryInvestorPosition = _OnRspQryInvestorPosition;
-            mTdApi.OnRtnOrder = _onRtnOrder;
-            mTdApi.OnRtnTrade = _onRtnTrade;
-            mTdApi.OnRspQrySettlementInfo = (object sender, ref SettlementInfoClass settlementInfo, int size1, bool bIsLast) => {
-                LogUtil.EnginLog("结算确认:" + settlementInfo.Content);
-            };
-            mTdApi.OnConnectionStatus = _onConnectionStatus;
 
             mTdApi.Connect();
         }
 
         protected override void Logout() {
-            if (mTdApi == null)
-                return;
-            if (mTdApi.IsConnected) {
-                mTdApi.Disconnect();
-            } else {
-                mTdApi.Dispose();
-                mTdApi = null;
-            }
         }
 
         protected override void QueryInstrument() {
@@ -169,12 +162,10 @@ namespace Broker.Xapi2 {
         private void _onCheck(BrokerEvent.MonitorEvent evt) {
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
             if (now > 231 && now < 845) {
-                Logout();
                 return;
             }
 
             if (now > 1516 && now < 2045) {
-                Logout();
                 return;
             }
             //
