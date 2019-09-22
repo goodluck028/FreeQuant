@@ -13,7 +13,7 @@ namespace FreeQuant.Console {
         {
             LogUtil.Logger.Record();
             //启动
-            ObjectCreater.LoadAndCreate();
+            ComponentLoader.LoadAndCreate();
             ComponentsScheduler.Instance.start();
             //键盘退出
             while (true) {

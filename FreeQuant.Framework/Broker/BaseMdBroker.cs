@@ -7,12 +7,7 @@ using FreeQuant.EventEngin;
 
 namespace FreeQuant.Framework {
 
-    public abstract class BaseMdBroker{
-        public BaseMdBroker()
-        {
-            EventBus.Register(this);
-            LogUtil.EnginLog("行情组件启动");
-        }
+    public abstract class BaseMdBroker {
 
         #region EventBus事件
         [OnEvent]

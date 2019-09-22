@@ -8,10 +8,15 @@ using System.IO;
 using FreeQuant.EventEngin;
 
 namespace FreeQuant.Framework {
-    public static class StrategyLoader {
-        //策略添加
-        private static Dictionary<string, BaseStrategy> mStgMap = new Dictionary<string, BaseStrategy>();
-        private static void loadStrategy() {
+    public class StrategyLoader :IComponent {
+        public void OnLoad() {}
+
+        public void OnReady() {
+            LoadStrategy();
+        }
+
+        private Dictionary<string, BaseStrategy> mStgMap = new Dictionary<string, BaseStrategy>();
+        public void LoadStrategy() {
             //获取文件列表 
             string[] files = new string[] { };
             try {

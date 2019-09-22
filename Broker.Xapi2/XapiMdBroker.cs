@@ -11,12 +11,16 @@ using XAPI.Callback;
 using XAPI;
 
 namespace Broker.Xapi2 {
-    [AutoCreate]
-    public class XapiMdBroker : BaseMdBroker {
+    public class XapiMdBroker : BaseMdBroker, IComponent {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Quote_x64.dll");
-
         XApi mMdApi;
-
+        //
+        public void OnLoad() {
+            EventBus.Register(this);
+            LogUtil.EnginLog("行情组件启动");
+        }
+        public void OnReady() { }
+        //
         public override void Login() {
             if (mMdApi == null) {
                 mMdApi = new XApi(mdPath);

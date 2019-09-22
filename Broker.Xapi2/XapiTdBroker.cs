@@ -8,13 +8,19 @@ using XAPI;
 using OrderStatus = XAPI.OrderStatus;
 
 namespace Broker.Xapi2 {
-    [AutoCreate]
-    public class XapiTdBroker : BaseTdBroker {
+    public class XapiTdBroker : BaseTdBroker, IComponent {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Trade_x64.dll");
         XApi mTdApi;
         //
         ConcurrentDictionary<string, OrderField> mBrokerOrderMap = new ConcurrentDictionary<string, OrderField>();
         ConcurrentDictionary<string, Order> mOrderMap = new ConcurrentDictionary<string, Order>();
+        //
+        public void OnLoad() {
+            EventBus.Register(this);
+            LogUtil.EnginLog("交易组件启动");
+        }
+
+        public void OnReady() { }
         //
         protected override void Login() {
             if (mTdApi == null) {

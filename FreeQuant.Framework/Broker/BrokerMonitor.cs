@@ -6,14 +6,14 @@ using System.Text;
 using System.Threading;
 
 namespace FreeQuant.Framework {
-    [AutoCreate]
-    public class BrokerMonitor
-    {
+    public class BrokerMonitor : IComponent {
         private Timer mTimer;
-        public BrokerMonitor()
-        {
+
+        public void OnLoad() {
             mTimer = new Timer(_check, null, 1000 * 60, 1000 * 60);
         }
+
+        public void OnReady() { }
 
         private void _check(object state) {
             BrokerEvent.MonitorEvent evt = new BrokerEvent.MonitorEvent();

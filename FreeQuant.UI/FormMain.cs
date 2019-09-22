@@ -34,7 +34,7 @@ namespace FreeQuant.UI {
                 dataGridViewPosition.Columns["id"].Visible = false;
                 dataGridViewPosition.Columns["strategy_name"].Visible = false;
                 //调整时间格式
-                dataGridViewPosition.Columns["last_time"].DefaultCellStyle.Format = "yyyy-MM-dd hh:mm:ss";
+                dataGridViewPosition.Columns["last_time"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
             }
         }
 
@@ -63,7 +63,7 @@ namespace FreeQuant.UI {
                 dataGridViewOrder.Columns["id"].Visible = false;
                 dataGridViewOrder.Columns["strategy_name"].Visible = false;
                 //调整时间格式
-                dataGridViewOrder.Columns["order_time"].DefaultCellStyle.Format = "yyyy-MM-dd hh:mm:ss";
+                dataGridViewOrder.Columns["order_time"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
             }
 
             //翻页

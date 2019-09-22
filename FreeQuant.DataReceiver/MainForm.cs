@@ -17,7 +17,7 @@ namespace FreeQuant.DataReceiver {
             //
             LogUtil.Logger.Record();
             //
-            ObjectCreater.LoadAndCreate();
+            ComponentLoader.LoadAndCreate();
             ComponentsSchelduler.Instance.start();
             //
             initView();

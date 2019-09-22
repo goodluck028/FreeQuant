@@ -8,10 +8,6 @@ using FreeQuant.EventEngin;
 namespace FreeQuant.Framework {
 
     public abstract class BaseTdBroker {
-        public BaseTdBroker() {
-            EventBus.Register(this);
-            LogUtil.EnginLog("交易组件启动");
-        }
 
         #region EventBus事件
         [OnEvent]

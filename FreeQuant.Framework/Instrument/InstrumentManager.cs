@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 using FreeQuant.EventEngin;
 
 namespace FreeQuant.Framework {
-    [AutoCreate]
-    public class InstrumentManager {
+    public class InstrumentManager : IComponent {
         private static ConcurrentDictionary<string, Instrument> mInstrumentMap = new ConcurrentDictionary<string, Instrument>();
-        public InstrumentManager() {
+
+        public void OnLoad() {
             EventBus.Register(this);
             LogUtil.EnginLog("合约管理组件启动");
         }
+
+        public void OnReady() { }
 
         [OnEvent]
         private void OnInstrument(BrokerEvent.BrokerInstrumentEvent evt) {

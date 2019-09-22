@@ -111,7 +111,7 @@ namespace FreeQuant.Framework {
         }
 
         //订单管理
-        OrderManager mOrderManager = new OrderManager();
+        OrderHolder mOrderHolder = new OrderHolder();
 
         //发送订单
         internal void SendOrder(Order order) {
@@ -133,7 +133,7 @@ namespace FreeQuant.Framework {
                 order.Price = lower;
             }
             //
-            mOrderManager.AddOrder(order);
+            mOrderHolder.AddOrder(order);
             //
             StrategyEvent.SendOrderRequest request = new StrategyEvent.SendOrderRequest(order);
             EventBus.PostEvent(request);

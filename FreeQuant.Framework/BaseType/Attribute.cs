@@ -6,15 +6,9 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Framework {
     [AttributeUsage(AttributeTargets.Class)]
-    public class AutoCreateAttribute : Attribute {
-    }
-
-    [AttributeUsage(AttributeTargets.Class)]
-    public class InstrumentsAttribute:Attribute
-    {
+    public class InstrumentsAttribute : Attribute {
         private string[] mInstruments;
-        public InstrumentsAttribute(params string[] instruments)
-        {
+        public InstrumentsAttribute(params string[] instruments) {
             mInstruments = instruments;
         }
 

@@ -7,7 +7,7 @@ using FreeQuant.EventEngin;
 
 namespace FreeQuant.Framework {
 
-    internal class OrderManager {
+    internal class OrderHolder {
         private List<Order> mOrders = new List<Order>();
         private List<Order> mActiveOrders = new List<Order>();
         private List<Order> mDoneOrders = new List<Order>();

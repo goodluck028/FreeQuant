@@ -6,14 +6,15 @@ using System.Data.SqlClient;
 using System.Text;
 using FreeQuant.Framework;
 using FreeQuant.EventEngin;
+using IComponent = FreeQuant.Framework.IComponent;
 
 namespace FreeQuant.DataReceiver {
-    [AutoCreate]
-    internal class DataReceiver {
-        //单例
-        public DataReceiver() {
+    internal class DataReceiver:IComponent {
+        public void OnLoad() {
             EventBus.Register(this);
         }
+
+        public void OnReady() {}
 
         //bar生成器
         Dictionary<string, BarGenerator> GeneratorMap = new Dictionary<string, BarGenerator>();
