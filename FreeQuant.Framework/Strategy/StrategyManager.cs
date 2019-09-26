@@ -36,16 +36,6 @@ namespace FreeQuant.Framework {
                 Type[] types = assembly.GetTypes();
                 foreach (Type t in types) {
                     //
-                    string[] instIds = null;
-                    foreach (Attribute attr in t.GetCustomAttributes()) {
-                        if (attr is InstrumentsAttribute) {
-                            if (t.IsInterface || t.IsAbstract)
-                                continue;
-                            //
-                            instIds = (attr as InstrumentsAttribute).Instruments;
-                        }
-                    }
-                    //
                     if (!t.IsSubclassOf(typeof(BaseStrategy)))
                         continue;
                     BaseStrategy stg = Activator.CreateInstance(t) as BaseStrategy;
@@ -58,7 +48,6 @@ namespace FreeQuant.Framework {
                     //
                     mStgMap.Add(t.FullName, stg);
                     EventBus.Register(stg);
-                    stg.AddInstruments(instIds);
                     stg.Start();
                 }
             }

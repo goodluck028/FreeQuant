@@ -36,9 +36,10 @@ namespace FreeQuant.Framework {
             var db = new SQLiteConnection(dbFile);
             db.CreateTable<StrategyEntity>();
             db.CreateTable<PositionEntity>();
-            db.CreateTable<PositionEntity>();
+            db.CreateTable<OrderEntity>();
         }
         //
+
 
     }
 }

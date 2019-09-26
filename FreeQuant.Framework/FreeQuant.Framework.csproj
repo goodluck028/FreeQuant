@@ -72,7 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoLoad\IComponent.cs" />
+    <Compile Include="Component\IComponent.cs" />
     <Compile Include="BaseType\Attribute.cs" />
     <Compile Include="BaseType\Bar.cs" />
     <Compile Include="BaseType\BarGenerator.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="Broker\ITickFilter.cs" />
     <Compile Include="DataBase\Entity.cs" />
     <Compile Include="Strategy\OrderHolder.cs" />
-    <Compile Include="AutoLoad\ComponentLoader.cs" />
+    <Compile Include="Component\ComponentLoader.cs" />
     <Compile Include="Utils\ConfigUtil.cs" />
     <Compile Include="DataBase\DataManager.cs" />
     <Compile Include="Instrument\InstrumentManager.cs" />

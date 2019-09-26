@@ -14,4 +14,14 @@ namespace FreeQuant.Framework {
 
         public string[] Instruments => mInstruments;
     }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class StrategyNameAttribute : Attribute {
+        private string mName;
+        public StrategyNameAttribute(string name) {
+            mName = name;
+        }
+
+        public string Name => mName;
+    }
 }

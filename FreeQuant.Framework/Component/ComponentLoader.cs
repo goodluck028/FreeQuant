@@ -32,7 +32,7 @@ namespace FreeQuant.Framework {
                             if (t.IsInterface || t.IsAbstract)
                                 continue;
                             //
-                            IComponent component = (IComponent)Activator.CreateInstance(t);
+                            IComponent component = Activator.CreateInstance(t) as IComponent;
                             if (component == null)
                                 continue;
                             //

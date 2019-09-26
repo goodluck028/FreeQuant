@@ -12,7 +12,6 @@ namespace FreeQuant.Framework {
 
         public string Name {
             get { return mName ?? GetType().FullName; }
-            protected set { }
         }
 
         //写日志
@@ -39,18 +38,6 @@ namespace FreeQuant.Framework {
         //最新tick
         private Dictionary<Instrument, Tick> lastTickDic = new Dictionary<Instrument, Tick>();
 
-        //订阅行情
-        internal void AddInstruments(params string[] instIds) {
-            foreach (string instId in instIds) {
-                Instrument inst = InstrumentManager.GetInstrument(instId);
-                if (inst == null)
-                    continue;
-                //
-                mMainInstrument = mMainInstrument ?? inst;
-                mInstrumentSet.Add(inst);
-            }
-        }
-
         //启停信号
         [OnEvent]
         private void OnStart(StrategyEvent.StrategyStartRequest request) {
@@ -66,10 +53,29 @@ namespace FreeQuant.Framework {
         }
 
         internal void Start() {
+            foreach (Attribute attr in GetType().GetCustomAttributes(true)) {
+                //策略名
+                if (attr is StrategyNameAttribute) {
+                    mName = (attr as StrategyNameAttribute).Name;
+                }
+                //加载合约
+                if (attr is InstrumentsAttribute) {
+                    string[] instIds = (attr as InstrumentsAttribute).Instruments;
+                    foreach (string instId in instIds) {
+                        Instrument inst = InstrumentManager.GetInstrument(instId);
+                        if (inst == null)
+                            continue;
+                        //主合约与去重
+                        mMainInstrument = mMainInstrument ?? inst;
+                        mInstrumentSet.Add(inst);
+                    }
+                }
+            }
+            //启动过程
             mStatus = StrategyStatus.Starting;
             OnStart();
             mStatus = StrategyStatus.Ruing;
-            //
+            //订阅合约
             foreach (Instrument inst in mInstrumentSet) {
                 BrokerEvent.SubscribeInstrumentRequest request = new BrokerEvent.SubscribeInstrumentRequest(inst);
                 EventBus.PostEvent(request);
