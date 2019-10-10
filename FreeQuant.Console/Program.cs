@@ -9,8 +9,7 @@ using FreeQuant.EventEngin;
 
 namespace FreeQuant.Console {
     class Program {
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
             LogUtil.Logger.Record();
             //启动
             ComponentLoader.LoadAndCreate();

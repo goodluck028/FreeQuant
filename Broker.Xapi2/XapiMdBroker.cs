@@ -102,6 +102,9 @@ namespace Broker.Xapi2 {
                     PostLoginEvent(true, "登录成功");
                     Resub();
                     break;
+                case ConnectionStatus.Disconnected:
+                    mMdApi.Dispose();
+                    break;
             }
             LogUtil.EnginLog("行情状态:" + status.ToString());
         }

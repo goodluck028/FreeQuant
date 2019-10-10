@@ -234,6 +234,9 @@ namespace Broker.Xapi2 {
                     BrokerEvent.TdLoginEvent evt = new BrokerEvent.TdLoginEvent(true, "");
                     EventBus.PostEvent(evt);
                     break;
+                case ConnectionStatus.Disconnected:
+                    mTdApi.Dispose();
+                    break;
             }
             //
             LogUtil.EnginLog("交易状态:" + status.ToString());
