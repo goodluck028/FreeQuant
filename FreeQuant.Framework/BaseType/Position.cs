@@ -18,7 +18,7 @@ namespace FreeQuant.Framework {
             mLastTime = lastTime;
         }
 
-        public BaseStrategy StrategyName {
+        public BaseStrategy Strategy {
             get { return mStrategy; }
             internal set { mStrategy = value; }
         }

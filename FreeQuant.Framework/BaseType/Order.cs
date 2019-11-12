@@ -8,7 +8,7 @@ namespace FreeQuant.Framework {
     //订单委托
     public class Order {
         //ID
-        private string mLocalId;
+        private string mOrderId;
         //策略
         private BaseStrategy mStrategy;
         //合约
@@ -106,9 +106,9 @@ namespace FreeQuant.Framework {
             }
         }
 
-        public string LocalId {
-            get { return mLocalId; }
-            set { mLocalId = value; }
+        public string OrderId {
+            get { return mOrderId; }
+            set { mOrderId = value; }
         }
 
         //

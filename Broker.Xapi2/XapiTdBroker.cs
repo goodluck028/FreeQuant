@@ -90,13 +90,13 @@ namespace Broker.Xapi2 {
             string localId = mTdApi.SendOrder(field);
 
             //这里只记录策略订单，接口订单要等前置返回信息再记录
-            order.LocalId = localId;
+            order.OrderId = localId;
             mOrderMap.TryAdd(localId, order);
         }
 
         protected override void CancelOrder(Order order) {
             OrderField field;
-            if (mBrokerOrderMap.TryGetValue(order.LocalId, out field)) {
+            if (mBrokerOrderMap.TryGetValue(order.OrderId, out field)) {
                 mTdApi.CancelOrder(field.ID);
             }
         }

@@ -1,38 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
 
 namespace FreeQuant.Framework {
-    public class StrategyEntity {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        public string ClassType { get; set; }
+    class T_Strategy {
+        [Key]
+        public string ClassName { get; set; }
         public string Name { get; set; }
-        public string Enable { get; set; }
+        public bool Enable { get; set; }
+        //
+        public ICollection<T_Position> Positions;
+        public ICollection<T_Order> Orders;
     }
 
-    public class PositionEntity
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        [Indexed]
-        public string StrategyId { get; set; }
+    class T_Position {
+        [Key]
+        [Column(Order = 1)]
+        public T_Strategy Strategy { get; set; }
+        [Key]
+        [Column(Order = 2)]
         public string InstrumentId { get; set; }
-        public int Position { get; set; }
+        public long Position { get; set; }
         public DateTime LastTime { get; set; }
     }
 
-    public class OrderEntity
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        [Indexed]
+    class T_Order {
+        [Key]
         public string OrderId { get; set; }
-        [Indexed]
-        public string StrategyId { get; set; }
+        public T_Strategy Strategy { get; set; }
         public string InstrumentId { get; set; }
         public string Direction { get; set; }
         public double Price { get; set; }

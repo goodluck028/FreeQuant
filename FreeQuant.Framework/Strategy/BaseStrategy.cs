@@ -8,10 +8,17 @@ namespace FreeQuant.Framework {
     //基本
     public partial class BaseStrategy {
         private string mName;
+        private bool mEnable = false;
         private StrategyStatus mStatus = StrategyStatus.Stoped;
 
         public string Name {
             get { return mName ?? GetType().FullName; }
+        }
+
+        public bool Enable
+        {
+            get { return mEnable; }
+            set { mEnable = value; }
         }
 
         //写日志
