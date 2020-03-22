@@ -1,4 +1,4 @@
-﻿using FreeQuant.EventEngin;
+﻿
 using FreeQuant.Framework;
 
 namespace FreeQuant.DataReceiver {
@@ -39,7 +39,7 @@ namespace FreeQuant.DataReceiver {
         [OnEvent]
         private void OnInstrument(BrokerEvent.InstrumentEvent evt) {
             //订阅合约
-            string[] names = DataBaseConfig.Config.Instruments.Split(',');
+            string[] names = Loger.Config.Instruments.Split(',');
             foreach (string name in names) {
                 if (name.Equals(RegexUtils.TakeProductName(evt.Instrument.InstrumentID))) {
                     Instrument inst = evt.Instrument;

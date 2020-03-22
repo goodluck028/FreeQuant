@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ComponentsScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -58,10 +57,6 @@
     <ProjectReference Include="..\FreeQuant.Framework\FreeQuant.Framework.csproj">
       <Project>{6be77e5e-291d-456b-97d3-30dfcf93985c}</Project>
       <Name>FreeQuant.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FreeQuant.EventEngin\FreeQuant.EventEngin.csproj">
-      <Project>{87b4aea7-403c-44cd-aa46-a700b8cec2a3}</Project>
-      <Name>FreeQuant.EventEngin</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

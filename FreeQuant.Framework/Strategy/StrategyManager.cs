@@ -5,18 +5,15 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using FreeQuant.EventEngin;
 
 namespace FreeQuant.Framework {
-    public class StrategyLoader :IComponent {
-        public void OnLoad() {}
-
-        public void OnReady() {
+    public static class StrategyLoader {
+        static StrategyLoader() {
             LoadStrategy();
         }
 
-        private Dictionary<string, BaseStrategy> mStgMap = new Dictionary<string, BaseStrategy>();
-        public void LoadStrategy() {
+        private static Dictionary<string, BaseStrategy> sStgDic = new Dictionary<string, BaseStrategy>();
+        public static void LoadStrategy() {
             //获取文件列表 
             string[] files = new string[] { };
             try {
@@ -41,13 +38,12 @@ namespace FreeQuant.Framework {
                     BaseStrategy stg = Activator.CreateInstance(t) as BaseStrategy;
                     if (stg == null)
                         continue;
-                    if (mStgMap.ContainsKey(t.FullName)) {
+                    if (sStgDic.ContainsKey(t.FullName)) {
                         LogUtil.EnginLog("策略命名空间重复");
                         continue;
                     }
                     //
-                    mStgMap.Add(t.FullName, stg);
-                    EventBus.Register(stg);
+                    sStgDic.Add(t.FullName, stg);
                     stg.Start();
                 }
             }

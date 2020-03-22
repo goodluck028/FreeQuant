@@ -64,7 +64,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component\IComponent.cs" />
     <Compile Include="BaseType\Attribute.cs" />
     <Compile Include="BaseType\Bar.cs" />
     <Compile Include="BaseType\BarGenerator.cs" />
@@ -74,29 +73,21 @@
     <Compile Include="BaseType\Tick.cs" />
     <Compile Include="Broker\BaseMdBroker.cs" />
     <Compile Include="Broker\BaseTdBroker.cs" />
-    <Compile Include="Broker\BrokerEvent.cs" />
-    <Compile Include="Broker\BrokerMonitor.cs" />
+    <Compile Include="Broker\BrokerManager.cs" />
     <Compile Include="Broker\ITickFilter.cs" />
     <Compile Include="DataBase\DbManager.cs" />
     <Compile Include="DataBase\Entity.cs" />
     <Compile Include="DataBase\MyDbContext.cs" />
+    <Compile Include="Position\PositionManager.cs" />
     <Compile Include="Strategy\OrderHolder.cs" />
-    <Compile Include="Component\ComponentLoader.cs" />
     <Compile Include="Utils\ConfigUtil.cs" />
     <Compile Include="Instrument\InstrumentManager.cs" />
-    <Compile Include="Utils\LogEvent.cs" />
     <Compile Include="Utils\LogUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategy\BaseStrategy.cs" />
-    <Compile Include="Strategy\StrategyEvent.cs" />
     <Compile Include="Strategy\StrategyManager.cs" />
     <Compile Include="Utils\RegexUtils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FreeQuant.EventEngin\FreeQuant.EventEngin.csproj">
-      <Project>{87b4aea7-403c-44cd-aa46-a700b8cec2a3}</Project>
-      <Name>FreeQuant.EventEngin</Name>
-    </ProjectReference>
+    <Compile Include="Utils\TimerUtil.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -4,7 +4,6 @@ using System.Data;
 using System.Threading;
 using System.Windows.Forms;
 using FreeQuant.Framework;
-using FreeQuant.EventEngin;
 
 namespace FreeQuant.DataReceiver {
     public partial class MainForm : Form {
@@ -12,14 +11,7 @@ namespace FreeQuant.DataReceiver {
             InitializeComponent();
         }
 
-        private void MainForm_Load(object sender, EventArgs e) {
-            EventBus.Register(this);
-            //
-            LogUtil.Logger.Record();
-            //
-            ComponentLoader.LoadAndCreate();
-            ComponentsSchelduler.Instance.start();
-            //
+        private void MainForm_Shown(object sender, EventArgs e) {
             initView();
         }
 
@@ -27,34 +19,21 @@ namespace FreeQuant.DataReceiver {
         private DataTable mTable = new DataTable();
         Dictionary<string, DataRow> mRowMap = new Dictionary<string, DataRow>();
         private void initView() {
+            LogUtil.OnLog += printLog;
+            //
             mTable.Columns.Add("instrumentId", typeof(string));
             mTable.Columns.Add("tickSum", typeof(long));
             mTable.Columns.Add("lastPrice", typeof(double));
             mTable.Columns.Add("updateTime", typeof(string));
         }
 
-        //输出日志
-        [OnLog]
-        private void OnEnginLog(LogEvent.EnginLog evt) {
-            printLog(evt.Content);
-        }
-        [OnLog]
-        private void OnUserLog(LogEvent.UserLog evt) {
-            printLog(evt.Content);
-        }
-        [OnLog]
-        private void OnException(Exception ex) {
-            printLog(ex.Message);
-        }
-
         private void printLog(string log) {
-            string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + log + "\n";
+            string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + log + "r\n\r\n";
             Invoke(new Action(() => {
-                listBox1.Items.Add(c);
-                if (listBox1.Items.Count > 256) {
-                    listBox1.Items.RemoveAt(0);
+                textBox1.AppendText(c);
+                if(textBox1.TextLength > 1000 * 10) {
+                    textBox1.Clear();
                 }
-                listBox1.SelectedIndex = listBox1.Items.Count - 1;
             }));
         }
 
@@ -63,17 +42,16 @@ namespace FreeQuant.DataReceiver {
         }
 
         //instrument
-        [OnEvent]
-        private void OnInstrument(BrokerEvent.SubscribeInstrumentRequest request) {
-            if(mRowMap.ContainsKey(request.Instrument.InstrumentID))
+        private void _onInstrument(Instrument inst) {
+            if(mRowMap.ContainsKey(inst.InstrumentID))
                 return;
             //
             DataRow row;
             row = mTable.NewRow();
-            row["instrumentId"] = request.Instrument.InstrumentID;
+            row["instrumentId"] = inst.InstrumentID;
             row["tickSum"] = 0;
             mTable.Rows.Add(row);
-            mRowMap.Add(request.Instrument.InstrumentID, row);
+            mRowMap.Add(inst.InstrumentID, row);
             delayOrderBy();
         }
         //延时排序
@@ -118,9 +96,7 @@ namespace FreeQuant.DataReceiver {
         }
 
         //tick
-        [OnEvent]
-        private void OnTick(BrokerEvent.TickEvent evt) {
-            Tick tick = evt.Tick;
+        private void _onTick(Tick tick) {
             DataRow row;
             if (mRowMap.TryGetValue(tick.Instrument.InstrumentID, out row)) {
                 row["instrumentId"] = tick.Instrument.InstrumentID;
@@ -133,6 +109,17 @@ namespace FreeQuant.DataReceiver {
         //行号
         private void dataGridView1_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e) {
             e.Row.HeaderCell.Value = string.Format("{0}", e.Row.Index + 1);
+        }
+
+        //
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            DialogResult result = MessageBox.Show("确认退出吗?", "操作提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (result == DialogResult.OK) {
+                Dispose();
+                Application.Exit();
+            } else {
+                e.Cancel = true;
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace FreeQuant.DataReceiver {
     internal class SqlServerWriter : IDataWriter {
 
         public void CreateTable(string dbName) {
-            SqlConnection conn = new SqlConnection(DataBaseConfig.Config.Server);
+            SqlConnection conn = new SqlConnection(Config.Server);
             try {
                 conn.Open();
                 //
@@ -20,14 +20,14 @@ namespace FreeQuant.DataReceiver {
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
             } catch (Exception e) {
-                LogUtil.Error(e);
+                Loger.Error(e.ToString());
             } finally {
                 conn.Close();
             }
         }
 
         public void InsertBar(Bar bar) {
-            SqlConnection conn = new SqlConnection(DataBaseConfig.Config.Server);
+            SqlConnection conn = new SqlConnection(Config.Server);
             string tbName = RegexUtils.TakeShortInstrumentID(bar.Instrument.InstrumentID);
             try {
                 conn.Open();
@@ -67,7 +67,7 @@ namespace FreeQuant.DataReceiver {
                 cmd.Parameters.AddWithValue("@open_interest", bar.OpenInterest);
                 cmd.ExecuteNonQuery();
             } catch (Exception e) {
-                LogUtil.Error(e);
+                Loger.Error(e.ToString());
             } finally {
                 conn.Close();
             }
@@ -109,7 +109,7 @@ namespace FreeQuant.DataReceiver {
                 dt.Rows.Add(dr);
             }
             //
-            SqlConnection conn = new SqlConnection(DataBaseConfig.Config.Server);
+            SqlConnection conn = new SqlConnection(Config.Server);
             SqlBulkCopy bulkCopy = new SqlBulkCopy(conn);
             string tbName = RegexUtils.TakeShortInstrumentID(ticks[0].Instrument.InstrumentID);
             bulkCopy.DestinationTableName = $"[hisdata_future].[dbo].[t_tick_{tbName}]";
@@ -118,7 +118,7 @@ namespace FreeQuant.DataReceiver {
                 conn.Open();
                 bulkCopy.WriteToServer(dt);
             } catch (Exception e) {
-                LogUtil.Error(e);
+                Loger.Error(e.ToString());
             } finally {
                 conn.Close();
             }

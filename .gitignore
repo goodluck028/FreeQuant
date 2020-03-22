@@ -3,3 +3,10 @@
 ################################################################################
 
 /Broker.Xapi2/obj/Debug
+/FreeQuant.Console/bin/Debug
+/FreeQuant.Console/obj/Debug
+/FreeQuant.DataReceiver/bin/Debug
+/FreeQuant.DataReceiver/obj/Debug
+/FreeQuant.Framework/obj/Debug
+/FreeQuant.UI/obj/Debug
+/packages

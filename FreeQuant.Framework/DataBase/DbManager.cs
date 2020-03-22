@@ -6,29 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
-using FreeQuant.EventEngin;
 using System.Data;
 using System.Reflection;
 
 namespace FreeQuant.Framework {
-    public class DbManager : IComponent {
-
-        public void OnLoad() {
-            EventBus.Register(this);
-            LogUtil.EnginLog("数据库组件启动");
-        }
-
-        public void OnReady() { }
+    public class DbManager {
 
         //
-        [OnLog]
-        private void OnPostion(StrategyEvent.ChangePositionEvent evt) {
-            Position p = evt.Position;
-            updatePosition(p);
+        public void SetPostion(Position pos) {
+            updatePosition(pos);
         }
 
-        [OnLog]
-        private void OnOrder(Order order) {
+        //
+        public void SetOrder(Order order) {
             updateOrder(order);
         }
 

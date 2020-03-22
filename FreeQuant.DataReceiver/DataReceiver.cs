@@ -5,24 +5,16 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using FreeQuant.Framework;
-using FreeQuant.EventEngin;
-using IComponent = FreeQuant.Framework.IComponent;
+using IComponent = FreeQuant.Framework;
 
 namespace FreeQuant.DataReceiver {
-    internal class DataReceiver:IComponent {
-        public void OnLoad() {
-            EventBus.Register(this);
-        }
-
-        public void OnReady() {}
+    internal class DataReceiver {
 
         //bar生成器
         Dictionary<string, BarGenerator> GeneratorMap = new Dictionary<string, BarGenerator>();
 
         //数据
-        [OnEvent]
-        private void OnTick(BrokerEvent.TickEvent evt) {
-            Tick tick = evt.Tick;
+        private void _onTick(Tick tick) {
             BarGenerator generator;
             if (!GeneratorMap.TryGetValue(tick.Instrument.InstrumentID, out generator)) {
                 generator = new BarGenerator(tick.Instrument, BarSizeType.Min1);
@@ -31,17 +23,15 @@ namespace FreeQuant.DataReceiver {
             }
             //
             generator.addTick(tick);
-
         }
 
         //合约
-        [OnEvent]
-        private void OnInstrument(BrokerEvent.InstrumentEvent evt) {
+        private void _onInstrument(Instrument inst) {
             //建表
-            string[] products = DataBaseConfig.Config.Instruments.Split(',');
+            string[] products = Config.Instruments.Split(',');
             foreach (string product in products) {
-                if (product.Equals(RegexUtils.TakeProductName(evt.Instrument.InstrumentID))) {
-                    string name = RegexUtils.TakeShortInstrumentID(evt.Instrument.InstrumentID);
+                if (product.Equals(RegexUtils.TakeProductName(inst.InstrumentID))) {
+                    string name = RegexUtils.TakeShortInstrumentID(inst.InstrumentID);
                     mWriter.CreateTable(name);
                 }
             }

@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 using FreeQuant.Framework;
 
 namespace FreeQuant.DataReceiver {
-    internal class DataBaseConfig {
-        private static DataBaseConfig mInstance = new DataBaseConfig();
-        private DataBaseConfig() { }
-        public static DataBaseConfig Config => mInstance;
-        //
-        public string Server {
+    internal class Config {
+        public static string Server {
             get {
                 string text = ConfigUtil.Config["DataBase", "Server"];
                 if (text.Equals("")) {
@@ -22,7 +18,7 @@ namespace FreeQuant.DataReceiver {
             }
         }
 
-        public string Instruments {
+        public static string Instruments {
             get {
                 string text = ConfigUtil.Config["DataBase", "Instruments"];
                 if (text.Equals("")) {

@@ -10,141 +10,168 @@ using IniParser;
 using IniParser.Model;
 
 namespace FreeQuant.Framework {
-    public class ConfigUtil {
-        private static ConfigUtil mInstance = new ConfigUtil();
-
-        private ConfigUtil() {
+    public static class ConfigUtil {
+        static ConfigUtil() {
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\config.ini";
             if (!File.Exists(path)) {
                 File.Create(path).Close();
             }
         }
-        public static ConfigUtil Config => mInstance;
+        public static IniConfig Config { get; }
 
-        //        
-        public string this[string type, string name] {
-            get {
-                var parser = new FileIniDataParser();
-                IniData data = parser.ReadFile("config.ini");
-                string text = data[type][name];
-                return text ?? "";
-            }
-            set {
-                var parser = new FileIniDataParser();
-                IniData data = parser.ReadFile("config.ini");
-                data[type][name] = value;
-                parser.WriteFile("config.ini", data);
+        public class IniConfig {
+            public string this[string type, string name] {
+                get {
+                    var parser = new FileIniDataParser();
+                    IniData data = parser.ReadFile("config.ini");
+                    string text = data[type][name];
+                    if (text == null) {
+                        data[type][name] = "";
+                        parser.WriteFile("config.ini", data);
+                        return "";
+                    } else {
+                        return text;
+                    }
+                }
+                set {
+                    var parser = new FileIniDataParser();
+                    IniData data = parser.ReadFile("config.ini");
+                    data[type][name] = value;
+                    parser.WriteFile("config.ini", data);
+                }
             }
         }
 
         //
-        public string TdServer {
+        public static string DefaultMdBroker {
             get {
-                string text = this["TdAccount", "Server"];
+                string text = Config["Broker", "DefaultMdBroker"];
+                if (text.Equals("")) {
+                    text = "Broker.Xapi2.XapiMdBroker";
+                    Config["Broker", "DefaultMdBroker"] = text;
+                }
+                return text;
+            }
+        }
+        public static string DefaultTdBroker {
+            get {
+                string text = Config["Broker", "DefaultTdBroker"];
+                if (text.Equals("")) {
+                    text = "Broker.Xapi2.XapiTdBroker";
+                    Config["Broker", "DefaultTdBroker"] = text;
+                }
+                return text;
+            }
+        }
+
+        //
+        public static string TdServer {
+            get {
+                string text = Config["TdAccount", "Server"];
                 if (text.Equals("")) {
                     text = "tcp://180.168.146.187:10100";
-                    this["TdAccount", "Server"] = text;
+                    Config["TdAccount", "Server"] = text;
                 }
                 return text;
             }
         }
 
-        public string TdBroker {
+        public static string TdBroker {
             get {
-                string text = this["TdAccount", "Broker"];
+                string text = Config["TdAccount", "Broker"];
                 if (text.Equals("")) {
                     text = "9999";
-                    this["TdAccount", "Broker"] = text;
+                    Config["TdAccount", "Broker"] = text;
                 }
                 return text;
             }
         }
 
-        public string TdInvestor {
+        public static string TdInvestor {
             get {
-                string text = this["TdAccount", "Investor"];
+                string text = Config["TdAccount", "Investor"];
                 if (text.Equals("")) {
                     text = "123456";
-                    this["TdAccount", "Investor"] = text;
+                    Config["TdAccount", "Investor"] = text;
                 }
                 return text;
             }
         }
 
-        public string TdPassword {
+        public static string TdPassword {
             get {
-                string text = this["TdAccount", "Password"];
+                string text = Config["TdAccount", "Password"];
                 if (text.Equals("")) {
                     text = "123456";
-                    this["TdAccount", "Password"] = text;
+                    Config["TdAccount", "Password"] = text;
                 }
                 return text;
             }
         }
 
         //
-        public string MdServer {
+        public static string MdServer {
             get {
-                string text = this["MdAccount", "Server"];
+                string text = Config["MdAccount", "Server"];
                 if (text.Equals("")) {
                     text = "tcp://180.168.146.187:10110";
-                    this["MdAccount", "Server"] = text;
+                    Config["MdAccount", "Server"] = text;
                 }
                 return text;
             }
         }
 
-        public string MdBroker {
+        public static string MdBroker {
             get {
-                string text = this["MdAccount", "Broker"];
+                string text = Config["MdAccount", "Broker"];
                 if (text.Equals("")) {
                     text = "9999";
-                    this["MdAccount", "Broker"] = text;
+                    Config["MdAccount", "Broker"] = text;
                 }
                 return text;
             }
         }
 
-        public string MdInvestor {
+        public static string MdInvestor {
             get {
-                string text = this["MdAccount", "Investor"];
+                string text = Config["MdAccount", "Investor"];
                 if (text.Equals("")) {
                     text = "123456";
-                    this["MdAccount", "Investor"] = text;
+                    Config["MdAccount", "Investor"] = text;
                 }
                 return text;
             }
         }
 
-        public string MdPassword {
+        public static string MdPassword {
             get {
-                string text = this["MdAccount", "Password"];
+                string text = Config["MdAccount", "Password"];
                 if (text.Equals("")) {
                     text = "123456";
-                    this["MdAccount", "Password"] = text;
+                    Config["MdAccount", "Password"] = text;
                 }
                 return text;
             }
         }
 
         //
-        public string AppId {
+        public static string AppId {
             get {
-                string text = this["BrokerAuth", "AppId"];
+                string text = Config["BrokerAuth", "AppId"];
                 if (text.Equals("")) {
                     text = "simnow_client_test";
-                    this["BrokerAuth", "AppId"] = text;
+                    Config["BrokerAuth", "AppId"] = text;
                 }
                 return text;
             }
         }
 
-        public string AuthCode {
+        public static string AuthCode {
             get {
-                string text = this["BrokerAuth", "AuthCode"];
+                string text = Config["BrokerAuth", "AuthCode"];
                 if (text.Equals("")) {
                     text = "0000000000000000";
-                    this["BrokerAuth", "AuthCode"] = text;
+                    Config["BrokerAuth", "AuthCode"] = text;
                 }
                 return text;
             }
