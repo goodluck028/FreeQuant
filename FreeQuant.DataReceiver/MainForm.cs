@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading;
 using System.Windows.Forms;
 using FreeQuant.Framework;
+using System.Threading.Tasks;
+using System.Collections;
 
 namespace FreeQuant.DataReceiver {
     public partial class MainForm : Form {
@@ -16,22 +17,16 @@ namespace FreeQuant.DataReceiver {
         }
 
         //
-        private DataTable mTable = new DataTable();
-        Dictionary<string, DataRow> mRowMap = new Dictionary<string, DataRow>();
+        Dictionary<string, ListViewItem> mRowMap = new Dictionary<string, ListViewItem>();
         private void initView() {
             LogUtil.OnLog += printLog;
-            //
-            mTable.Columns.Add("instrumentId", typeof(string));
-            mTable.Columns.Add("tickSum", typeof(long));
-            mTable.Columns.Add("lastPrice", typeof(double));
-            mTable.Columns.Add("updateTime", typeof(string));
         }
 
         private void printLog(string log) {
             string c = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "-->" + log + "r\n\r\n";
             Invoke(new Action(() => {
                 textBox1.AppendText(c);
-                if(textBox1.TextLength > 1000 * 10) {
+                if (textBox1.TextLength > 1000 * 10) {
                     textBox1.Clear();
                 }
             }));
@@ -43,66 +38,60 @@ namespace FreeQuant.DataReceiver {
 
         //instrument
         private void _onInstrument(Instrument inst) {
-            if(mRowMap.ContainsKey(inst.InstrumentID))
+            if (mRowMap.ContainsKey(inst.InstrumentID))
                 return;
             //
-            DataRow row;
-            row = mTable.NewRow();
-            row["instrumentId"] = inst.InstrumentID;
-            row["tickSum"] = 0;
-            mTable.Rows.Add(row);
-            mRowMap.Add(inst.InstrumentID, row);
+            ListViewItem li = new ListViewItem();
+            li.SubItems.Add(inst.InstrumentID);
+            li.SubItems.Add("0");
+            listView1.Items.Add(li);
+            mRowMap.Add(inst.InstrumentID, li);
             delayOrderBy();
         }
         //延时排序
-        private long mTimeMili;
-        private Thread mDelay;
+        private class Sorter : IComparer {
+            public int Compare(object x, object y) {
+                int returnVal = -1;
+                returnVal = string.Compare(((ListViewItem)x).SubItems[0].Text,
+                ((ListViewItem)y).SubItems[0].Text);
+                return returnVal;
+            }
+        }
+        private DateTime mLastTime;
         private void delayOrderBy() {
-            mTimeMili = DateTime.Now.Millisecond * DateTime.Now.Second;
-            //
-            if (mDelay != null && mDelay.IsAlive)
-                return;
-            //
-            mDelay = new Thread((() => {
-                long lastMili = 0;
-                while (lastMili != mTimeMili) {
-                    lastMili = mTimeMili;
-                    Thread.Sleep(1000);
+            //小于10秒就返回
+            if (mLastTime == null) {
+                mLastTime = DateTime.Now.AddSeconds(10);
+                Task.Run(() => {
+                    while (true) {
+                        Thread.Sleep(1000);
+                        lock (this) {
+                            if (DateTime.Now.CompareTo(mLastTime) < 0) {
+                                continue;
+                            }
+                        }
+                        //排序
+                        listView1.ListViewItemSorter = new Sorter();
+                        listView1.Sort();
+                        break;
+                    }
+                });
+            } else {
+                lock (this) {
+                    mLastTime = DateTime.Now.AddSeconds(10);
                 }
-                //重排序
-                mTable.DefaultView.Sort = "instrumentId ASC";
-                mTable = mTable.DefaultView.ToTable();
-                //从新映射row
-                mRowMap.Clear();
-                foreach (DataRow row in mTable.Rows) {
-                    mRowMap.Add((string)row["instrumentId"], row);
-                }
-                //更新界面
-                Invoke(new Action((() => {
-                    dataGridView1.DataSource = mTable;
-                    //
-                    dataGridView1.Columns["instrumentId"].Width = 96;
-                    dataGridView1.Columns["instrumentId"].SortMode = DataGridViewColumnSortMode.NotSortable;
-                    dataGridView1.Columns["tickSum"].Width = 72;
-                    dataGridView1.Columns["tickSum"].SortMode = DataGridViewColumnSortMode.NotSortable;
-                    dataGridView1.Columns["lastPrice"].Width = 80;
-                    dataGridView1.Columns["lastPrice"].SortMode = DataGridViewColumnSortMode.NotSortable;
-                    dataGridView1.Columns["updateTime"].Width = 160;
-                    dataGridView1.Columns["updateTime"].SortMode = DataGridViewColumnSortMode.NotSortable;
-                })));
-            }));
-            mDelay.Start();
-
+            }
         }
 
         //tick
         private void _onTick(Tick tick) {
-            DataRow row;
-            if (mRowMap.TryGetValue(tick.Instrument.InstrumentID, out row)) {
-                row["instrumentId"] = tick.Instrument.InstrumentID;
-                row["tickSum"] = (long)row["tickSum"] + 1;
-                row["lastPrice"] = tick.LastPrice;
-                row["updateTime"] = tick.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            ListViewItem li;
+            if (mRowMap.TryGetValue(tick.Instrument.InstrumentID, out li)) {
+                li.SubItems[0].Text = tick.Instrument.InstrumentID;
+                li.SubItems[1].Tag = (long)(li.SubItems[1].Tag) + 1;
+                li.SubItems[1].Text = li.SubItems[1].Tag.ToString();
+                li.SubItems[2].Text = tick.LastPrice.ToString();
+                li.SubItems[3].Text = tick.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
             }
         }
 
