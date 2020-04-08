@@ -7,22 +7,23 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Framework {
     public static class PositionManager {
-        private static ConcurrentDictionary<string, ConcurrentDictionary<string, int>> sPositionMap = new ConcurrentDictionary<string, ConcurrentDictionary<string, int>>();
+        #region 策略持仓
+        private static ConcurrentDictionary<string, ConcurrentDictionary<string, int>> mStgPosMap = new ConcurrentDictionary<string, ConcurrentDictionary<string, int>>();
 
-        public static void SetPosition(string stgName, string instId, int pos) {
+        public static void SetPosition(string stgName, string instID, int pos) {
             ConcurrentDictionary<string, int> dic;
-            if (!sPositionMap.TryGetValue(stgName, out dic)) {
+            if (!mStgPosMap.TryGetValue(stgName, out dic)) {
                 dic = new ConcurrentDictionary<string, int>();
             }
-            dic[instId] = pos;
+            dic[instID] = pos;
         }
 
-        public static int GetPosition(string stgName, string instId) {
+        public static int GetPosition(string stgName, string instID) {
             ConcurrentDictionary<string, int> dic;
-            if (sPositionMap.TryGetValue(stgName, out dic)) {
+            if (mStgPosMap.TryGetValue(stgName, out dic)) {
                 dic = new ConcurrentDictionary<string, int>();
                 int i = 0;
-                if (dic.TryGetValue(instId, out i)) {
+                if (dic.TryGetValue(instID, out i)) {
                     return i;
                 } else {
                     return 0;
@@ -31,5 +32,35 @@ namespace FreeQuant.Framework {
                 return 0;
             }
         }
+        #endregion
+
+        #region broker持仓
+        private static Dictionary<Instrument, Position> mPositionMap = new Dictionary<Instrument, Position>();
+
+        public static Position getPosition(Instrument inst) {
+            Position bp;
+            mPositionMap.TryGetValue(inst, out bp);
+            if (bp == null) {
+                bp = new Position(inst);
+                mPositionMap.Add(inst, bp);
+            }
+            return bp;
+        }
+        public static void UpdatePosition(BrokerPosition position) {
+            getPosition(position.Instrument).UpdatePosition(position);
+        }
+
+        public static void UpdatePosition(BrokerTrade trade) {
+            getPosition(trade.Instrument).UpdatePosition(trade);
+        }
+
+        public static void AutoClose(Order order) {
+            getPosition(order.Instrument).AutoClose(order);
+        }
+
+        public static void AddOrder(Order order) {
+            getPosition(order.Instrument).AddOrder(order);
+        }
+        #endregion
     }
 }

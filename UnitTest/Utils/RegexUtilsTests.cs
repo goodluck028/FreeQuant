@@ -11,15 +11,15 @@ namespace FreeQuant.Framework.Tests {
     public class RegexUtilsTests {
         [TestMethod()]
         public void TakeShortInstrumentIDTest() {
-            string instId = "TA909";
-            string resualt = RegexUtils.TakeShortInstrumentID(instId);
+            string instID = "TA909";
+            string resualt = RegexUtils.TakeShortInstrumentID(instID);
             Assert.AreEqual("TA09", resualt);
         }
 
         [TestMethod()]
         public void TakeProductNameTest() {
-            string instId = "TA909";
-            string resualt = RegexUtils.TakeProductName(instId);
+            string instID = "TA909";
+            string resualt = RegexUtils.TakeProductName(instID);
             Assert.AreEqual("TA", resualt);
         }
     }

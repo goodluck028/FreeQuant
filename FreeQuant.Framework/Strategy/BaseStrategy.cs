@@ -31,7 +31,7 @@ namespace FreeQuant.Framework {
         protected virtual void OnStart() { }
         protected virtual void OnStop() { }
         protected virtual void OnTick(Tick tick) { }
-        protected virtual void OnPositionChanged(Position position) { }
+        protected virtual void OnPositionChanged(StrategyPosition position) { }
     }
 
     //行情
@@ -43,7 +43,7 @@ namespace FreeQuant.Framework {
         private HashSet<Instrument> mInstrumentSet = new HashSet<Instrument>();
 
         //最新tick
-        private Dictionary<Instrument, Tick> lastTickDic = new Dictionary<Instrument, Tick>();
+        private Dictionary<Instrument, Tick> mLastTickDic = new Dictionary<Instrument, Tick>();
 
         //启停信号
         private void EmitStartEvent() {
@@ -57,7 +57,7 @@ namespace FreeQuant.Framework {
             }
         }
 
-        internal void Start() {
+        internal bool Start() {
             foreach (Attribute attr in GetType().GetCustomAttributes(true)) {
                 //策略名
                 if (attr is StrategyNameAttribute) {
@@ -65,11 +65,13 @@ namespace FreeQuant.Framework {
                 }
                 //加载合约
                 if (attr is InstrumentsAttribute) {
-                    string[] instIds = (attr as InstrumentsAttribute).Instruments;
-                    foreach (string instId in instIds) {
-                        Instrument inst = InstrumentManager.GetInstrument(instId);
-                        if (inst == null)
-                            continue;
+                    string[] instIDs = (attr as InstrumentsAttribute).Instruments;
+                    foreach (string instID in instIDs) {
+                        Instrument inst = InstrumentManager.GetInstrument(instID);
+                        if (inst == null) {
+                            LogUtil.SysLog($"合约{instID}缺失");
+                            return false;
+                        }
                         //主合约与去重
                         mMainInstrument = mMainInstrument ?? inst;
                         mInstrumentSet.Add(inst);
@@ -82,8 +84,9 @@ namespace FreeQuant.Framework {
             mStatus = StrategyStatus.Ruing;
             //订阅合约
             foreach (Instrument inst in mInstrumentSet) {
-                mMdBroker.SubscribeMarketData(inst.InstrumentID);
+                mMdBroker.SubscribeMarketData(inst);
             }
+            return true;
         }
         internal void Stop() {
             mStatus = StrategyStatus.Stoping;
@@ -94,7 +97,7 @@ namespace FreeQuant.Framework {
         //tick
         private void EmitTickEvent(Tick tick) {
             if (mInstrumentSet.Contains(tick.Instrument)) {
-                lastTickDic[tick.Instrument] = tick;
+                mLastTickDic[tick.Instrument] = tick;
                 OnTick(tick);
             }
         }
@@ -106,16 +109,16 @@ namespace FreeQuant.Framework {
 
         //持仓
         private Dictionary<string, int> mPositionMap = new Dictionary<string, int>();
-        public int GetPosition(string instId) {
-            if (mPositionMap.ContainsKey(instId)) {
-                return mPositionMap[instId];
+        public int GetPosition(string instID) {
+            if (mPositionMap.ContainsKey(instID)) {
+                return mPositionMap[instID];
             } else {
                 return 0;
             }
         }
-        internal void AddPosition(string instId, int vol) {
-            mPositionMap[instId] = mPositionMap.ContainsKey(instId) ? mPositionMap[instId] + vol : vol;
-            PositionManager.SetPosition(GetType().FullName, instId, vol);
+        internal void AddPosition(string instID, int vol) {
+            mPositionMap[instID] = mPositionMap.ContainsKey(instID) ? mPositionMap[instID] + vol : vol;
+            PositionManager.SetPosition(GetType().FullName, instID, vol);
         }
 
         //订单管理
@@ -126,7 +129,7 @@ namespace FreeQuant.Framework {
             Tick t;
             double uper = 0;
             double lower = 0;
-            if (lastTickDic.TryGetValue(order.Instrument, out t)) {
+            if (mLastTickDic.TryGetValue(order.Instrument, out t)) {
                 uper = t.UpperLimitPrice;
                 lower = t.LowerLimitPrice;
             }
@@ -153,40 +156,40 @@ namespace FreeQuant.Framework {
         }
 
         //订单生成函数
-        protected Order BuyOrder(int vol, OffsetType offset = OffsetType.Auto) {
-            if (lastTickDic.ContainsKey(mMainInstrument)) {
+        protected Order BuyOrder(int vol, OpenCloseType offset = OpenCloseType.Auto) {
+            if (mLastTickDic.ContainsKey(mMainInstrument)) {
                 double price = 0;
-                price = lastTickDic[mMainInstrument].UpperLimitPrice;
+                price = mLastTickDic[mMainInstrument].UpperLimitPrice;
                 return BuyOrder(vol, price, offset);
             } else {
                 return BuyOrder(0, 0);
             }
 
         }
-        protected Order BuyOrder(int vol, double price, OffsetType offset = OffsetType.Auto) {
+        protected Order BuyOrder(int vol, double price, OpenCloseType offset = OpenCloseType.Auto) {
             return BuyOrder(vol, price, mMainInstrument, offset);
         }
-        protected Order BuyOrder(int vol, double price, Instrument instrument, OffsetType offset = OffsetType.Auto) {
+        protected Order BuyOrder(int vol, double price, Instrument instrument, OpenCloseType offset = OpenCloseType.Auto) {
             if (vol < 0) {
                 return BuyOrder(0, price, instrument);
             }
             Order order = new Order(this, instrument, DirectionType.Buy, offset, price, vol);
             return order;
         }
-        protected Order SellOrder(int vol, OffsetType offset = OffsetType.Auto) {
-            if (lastTickDic.ContainsKey(mMainInstrument)) {
+        protected Order SellOrder(int vol, OpenCloseType offset = OpenCloseType.Auto) {
+            if (mLastTickDic.ContainsKey(mMainInstrument)) {
                 double price = 0;
-                price = lastTickDic[mMainInstrument].LowerLimitPrice;
+                price = mLastTickDic[mMainInstrument].LowerLimitPrice;
                 return SellOrder(vol, price, offset);
             } else {
                 return SellOrder(0, 0);
             }
 
         }
-        protected Order SellOrder(int vol, double price, OffsetType offset = OffsetType.Auto) {
+        protected Order SellOrder(int vol, double price, OpenCloseType offset = OpenCloseType.Auto) {
             return SellOrder(vol, price, mMainInstrument, offset);
         }
-        protected Order SellOrder(int vol, double price, Instrument instrument, OffsetType offset = OffsetType.Auto) {
+        protected Order SellOrder(int vol, double price, Instrument instrument, OpenCloseType offset = OpenCloseType.Auto) {
             if (vol < 0) {
                 return SellOrder(0, price, instrument);
             }
@@ -195,10 +198,10 @@ namespace FreeQuant.Framework {
         }
         protected Order ToPositionOrder(int position) {
             int myPos = GetPosition(mMainInstrument.InstrumentID);
-            if (position > myPos && lastTickDic.ContainsKey(mMainInstrument)) {
-                return BuyOrder(position - myPos, lastTickDic[mMainInstrument].UpperLimitPrice, mMainInstrument);
-            } else if (position < myPos && lastTickDic.ContainsKey(mMainInstrument)) {
-                return SellOrder(myPos - position, lastTickDic[mMainInstrument].LowerLimitPrice, mMainInstrument);
+            if (position > myPos && mLastTickDic.ContainsKey(mMainInstrument)) {
+                return BuyOrder(position - myPos, mLastTickDic[mMainInstrument].UpperLimitPrice, mMainInstrument);
+            } else if (position < myPos && mLastTickDic.ContainsKey(mMainInstrument)) {
+                return SellOrder(myPos - position, mLastTickDic[mMainInstrument].LowerLimitPrice, mMainInstrument);
             } else {
                 return BuyOrder(0);
             }

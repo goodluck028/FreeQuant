@@ -7,7 +7,6 @@ using System.Diagnostics;
 namespace FreeQuant.UI {
     public partial class FormMain : Form
     {
-        MainPresenter mPresenter;
         public FormMain()
         {
             InitializeComponent();
@@ -15,7 +14,6 @@ namespace FreeQuant.UI {
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            mPresenter = new MainPresenter(this);
             showDefault();
         }
 
@@ -150,12 +148,12 @@ namespace FreeQuant.UI {
         private void toolStripMenuItemSet_Click(object sender, EventArgs e)
         {
             string strategyName = (string)dataGridViewStrategy.SelectedRows[0].Cells["strategy_name"].Value;
-            string instrumentID = (string)dataGridViewPosition.SelectedRows[0].Cells["instrument_id"].Value;
-            string s = Interaction.InputBox($"更改策略{strategyName}，{instrumentID}的持仓", "更改持仓", "", -1, -1);
+            string InstrumentID = (string)dataGridViewPosition.SelectedRows[0].Cells["instrument_id"].Value;
+            string s = Interaction.InputBox($"更改策略{strategyName}，{InstrumentID}的持仓", "更改持仓", "", -1, -1);
             try
             {
                 int position = Convert.ToInt32(s);
-                mPresenter.setPostion(strategyName, instrumentID, position);
+                mPresenter.setPostion(strategyName, InstrumentID, position);
             }
             catch (Exception ex)
             {

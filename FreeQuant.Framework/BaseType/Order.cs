@@ -8,175 +8,55 @@ namespace FreeQuant.Framework {
     //订单委托
     public class Order {
         //ID
-        private string mOrderId;
+        public string OrderId { get; set; }
         //策略
-        private BaseStrategy mStrategy;
+        public BaseStrategy Strategy { get; }
         //合约
-        private Instrument mInstrument;
+        public Instrument Instrument { get; }
         //买卖
-        private DirectionType mDirection = DirectionType.Buy;
+        public DirectionType Direction { get; }
         //开平
-        private OffsetType mOffset = OffsetType.Auto;
+        public OpenCloseType OpenClose { get; internal set; }
         //报价
-        private double mPrice = 0d;
+        public double Price { get; internal set; }
         //报单时间(本地时间)
-        private DateTime mOrderTime = DateTime.Now;
+        public DateTime OrderTime { get; }
         //报单数量
-        private int mVolume = 0;
+        public int Qty { get; }
         //成交数量
-        private int mVolumeTraded = 0;
+        public int QtyTraded { get; set; }
         //未成交
-        private int mVolumeLeft = 0;
+        public int QtyLeft { get; set; }
         //状态
-        private OrderStatus mStatus = OrderStatus.Normal;
+        public OrderStatus Status { get; set; }
 
         //事件
-        public event Action<Order> OnChanged;
-
-        public Order(BaseStrategy strategy, Instrument instrument, DirectionType direction, OffsetType offset, double price, int volume) {
-            mStrategy = strategy;
-            mInstrument = instrument;
-            mDirection = direction;
-            mOffset = offset;
-            mPrice = price;
-            mOrderTime = DateTime.Now;
-            mVolume = volume;
-            mVolumeLeft = volume;
-            mStatus = OrderStatus.Normal;
-        }
-
-        //
-        public Instrument Instrument {
-            get {
-                return mInstrument;
+        private Action<Order> mOnChanged;
+        public event Action<Order> OnChanged {
+            add {
+                mOnChanged -= value;
+                mOnChanged += value;
+            }
+            remove {
+                mOnChanged -= value;
             }
         }
 
-        public DirectionType Direction {
-            get {
-                return mDirection;
-            }
-        }
-
-        public OffsetType Offset => mOffset;
-
-        public double Price {
-            internal set {
-                mPrice = value;
-            }
-            get {
-                return mPrice;
-            }
-        }
-
-        public int Volume {
-            get {
-                return mVolume;
-            }
-        }
-
-        public int VolumeTraded {
-            get { return mVolumeTraded; }
-            set { mVolumeTraded = value; }
-        }
-
-        public int VolumeLeft {
-            get {
-                return mVolumeLeft;
-            }
-            set { mVolumeLeft = value; }
-        }
-
-        public OrderStatus Status {
-            get {
-                return mStatus;
-            }
-            set { mStatus = value; }
-        }
-
-        public DateTime OrderTime {
-            get {
-                return mOrderTime;
-            }
-        }
-
-        public BaseStrategy Strategy {
-            get {
-                return mStrategy;
-            }
-        }
-
-        public string OrderId {
-            get { return mOrderId; }
-            set { mOrderId = value; }
+        public Order(BaseStrategy strategy, Instrument inst, DirectionType direction, OpenCloseType openClose, double price, int volume) {
+            Strategy = strategy;
+            Instrument = inst;
+            Direction = direction;
+            OpenClose = openClose;
+            Price = price;
+            OrderTime = DateTime.Now;
+            Qty = volume;
+            QtyLeft = volume;
+            Status = OrderStatus.Normal;
         }
 
         //
         internal void EmmitChange() {
-            OnChanged?.Invoke(this);
+            mOnChanged?.Invoke(this);
         }
-
-        //发送订单
-        public void Send() {
-            mStrategy.SendOrder(this);
-        }
-
-        public void Cancle() {
-            mStrategy.CancleOrder(this);
-        }
-    }
-
-    public enum DirectionType {
-        /// <summary>
-        /// 买
-        /// </summary>
-        Buy,
-
-        /// <summary>
-        /// 卖
-        /// </summary>
-        Sell
-    }
-
-    public enum OrderStatus {
-        /// <summary>
-        /// 委托
-        /// </summary>
-        Normal,
-        /// <summary>
-        /// 部成
-        /// </summary>
-        Partial,
-        /// <summary>
-        /// 全成
-        /// </summary>
-        Filled,
-        /// <summary>
-        /// 撤单[某些"被拒绝"的委托也会触发此状态]
-        /// </summary>
-        Canceled,
-        /// <summary>
-        /// 错误
-        /// </summary>
-        Error
-    }
-
-    public enum OffsetType {
-        /// <summary>
-        /// 自动
-        /// </summary>
-        Auto,
-        /// <summary>
-        /// 开仓
-        /// </summary>
-        Open,
-        /// <summary>
-        /// 平仓
-        /// </summary>
-        Close,
-        /// <summary>
-        /// 平今
-        /// </summary>
-        CloseToday
     }
 }

@@ -6,70 +6,32 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Framework {
     public class Bar {
+        public Bar(Instrument instrument, double openPrice, DateTime beginTime, BarSizeType mSizeType) {
+            Instrument = instrument;
+            OpenPrice = openPrice;
+            BeginTime = beginTime;
+            this.mSizeType = mSizeType;
+        }
+
+
         // 合约代码;
-        private Instrument mInstrument;
+        public Instrument Instrument { get; private set; }
         // 开始价
-        private double mOpenPrice;
+        public double OpenPrice { get; private set; }
         // 最高价
-        private double mHighPrice;
+        public double HighPrice { get; internal set; }
         // 最低价
-        private double mLowPrice;
+        public double LowPrice { get; internal set; }
         // 结束价
-        private double mClosePrice;
+        public double ClosePrice { get; internal set; }
         // 成交量
-        private double mVolume;
+        public double Volume { get; internal set; }
         // 持仓量
-        private double mOpenInterest;
+        public double OpenInterest { get; internal set; }
         // 开始时间
-        private DateTime mBeginTime;
+        public DateTime BeginTime { get; private set; }
         // 长度
-        private BarSizeType mSizeType;
-
-        public Instrument Instrument {
-            get { return mInstrument; }
-            internal set { mInstrument = value; }
-        }
-
-        public double OpenPrice {
-            get { return mOpenPrice; }
-            internal set { mOpenPrice = value; }
-        }
-
-        public double HighPrice {
-            get { return mHighPrice; }
-            internal set { mHighPrice = value; }
-        }
-
-        public double LowPrice {
-            get { return mLowPrice; }
-            internal set { mLowPrice = value; }
-        }
-
-        public double ClosePrice {
-            get { return mClosePrice; }
-            internal set { mClosePrice = value; }
-        }
-
-        public double Volume {
-            get { return mVolume; }
-            internal set { mVolume = value; }
-        }
-
-        public double OpenInterest {
-            get { return mOpenInterest; }
-            internal set { mOpenInterest = value; }
-        }
-
-        public DateTime BeginTime {
-            get { return mBeginTime; }
-            internal set { mBeginTime = value; }
-        }
-
-        public BarSizeType SizeType
-        {
-            get { return mSizeType; }
-            internal set { mSizeType = value; }
-        }
+        public BarSizeType mSizeType { get; private set; }
     }
 
     public enum BarSizeType {

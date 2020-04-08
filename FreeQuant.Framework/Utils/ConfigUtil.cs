@@ -17,7 +17,9 @@ namespace FreeQuant.Framework {
                 File.Create(path).Close();
             }
         }
-        public static IniConfig Config { get; }
+
+        private static IniConfig mConfig = new IniConfig();
+        public static IniConfig Config => mConfig;
 
         public class IniConfig {
             public string this[string type, string name] {

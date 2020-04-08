@@ -23,7 +23,7 @@ namespace FreeQuant.Framework {
         public T_Strategy Strategy { get; set; }
         [Key]
         [Column(Order = 2)]
-        public string InstrumentId { get; set; }
+        public string InstrumentID { get; set; }
         public long Position { get; set; }
         public DateTime LastTime { get; set; }
     }
@@ -32,7 +32,7 @@ namespace FreeQuant.Framework {
         [Key]
         public string OrderId { get; set; }
         public T_Strategy Strategy { get; set; }
-        public string InstrumentId { get; set; }
+        public string InstrumentID { get; set; }
         public string Direction { get; set; }
         public double Price { get; set; }
         public long Volume { get; set; }

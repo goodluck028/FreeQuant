@@ -7,15 +7,19 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Framework {
     public static class InstrumentManager {
-        private static ConcurrentDictionary<string, Instrument> SInstrumentMap = new ConcurrentDictionary<string, Instrument>();
+        private static ConcurrentDictionary<string, Instrument> mInstrumentDic = new ConcurrentDictionary<string, Instrument>();
 
-        public static void SetInstrument(Instrument inst) {
-            SInstrumentMap.TryAdd(inst.InstrumentID, inst);
+        static InstrumentManager() {
+            BrokerManager.DefaultTdBroker.OnInstrument += addInstrument;
         }
 
-        public static Instrument GetInstrument(string instrumentId) {
+        private static void addInstrument(Instrument inst) {
+            mInstrumentDic.TryAdd(inst.InstrumentID, inst);
+        }
+
+        public static Instrument GetInstrument(string InstrumentID) {
             Instrument inst;
-            if (SInstrumentMap.TryGetValue(instrumentId, out inst)) {
+            if (mInstrumentDic.TryGetValue(InstrumentID, out inst)) {
                 return inst;
             } else {
                 return null;

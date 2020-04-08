@@ -9,30 +9,83 @@ using IComponent = FreeQuant.Framework;
 
 namespace FreeQuant.DataReceiver {
     internal class DataReceiver {
+        private DataReceiver() { }
+        private static DataReceiver mInstance = new DataReceiver();
+        public static DataReceiver Instance => mInstance;
+        //
+        private Action<Instrument> mOnInstrument;
+        public event Action<Instrument> OnInstrument {
+            add {
+                mOnInstrument -= value;
+                mOnInstrument += value;
+            }
+            remove {
+                mOnInstrument -= value;
+            }
+        }
+        private Action<Tick> mOnTick;
+        public event Action<Tick> OnTick {
+            add {
+                mOnTick -= value;
+                mOnTick += value;
+            }
+            remove {
+                mOnTick -= value;
+            }
+        }
+        //
+        private BaseMdBroker MdBroker => BrokerManager.DefaultMdBroker;
+        private BaseTdBroker TdBroker => BrokerManager.DefaultTdBroker;
 
         //bar生成器
-        Dictionary<string, BarGenerator> GeneratorMap = new Dictionary<string, BarGenerator>();
+        Dictionary<Instrument, BarGenerator> GeneratorMap = new Dictionary<Instrument, BarGenerator>();
+
+        public void run() {
+            MdBroker.OnTick += _onTick;
+            MdBroker.OnStatusChanged += (ConnectionStatus mdStatus) => {
+                if (mdStatus == ConnectionStatus.Connected) {
+                    TdBroker.OnInstrument += _onInstrument;
+                    TdBroker.OnStatusChanged += (ConnectionStatus tdStatus) => {
+                        if (tdStatus == ConnectionStatus.Connected) {
+                            TdBroker.QueryInstrument();
+                        }
+                    };
+                    TdBroker.Login();
+                }
+            };
+            //
+            MdBroker.Login();
+        }
 
         //数据
         private void _onTick(Tick tick) {
+            if (!mInstruments.Contains(tick.Instrument))
+                return;
+            //
             BarGenerator generator;
-            if (!GeneratorMap.TryGetValue(tick.Instrument.InstrumentID, out generator)) {
+            if (!GeneratorMap.TryGetValue(tick.Instrument, out generator)) {
                 generator = new BarGenerator(tick.Instrument, BarSizeType.Min1);
                 generator.OnBarTick += _onBarTick;
-                GeneratorMap.Add(tick.Instrument.InstrumentID, generator);
+                GeneratorMap.Add(tick.Instrument, generator);
             }
             //
+            mOnTick?.Invoke(tick);
             generator.addTick(tick);
         }
 
         //合约
+        private string[] mProducts = Config.Instruments.Split(',');
+        private HashSet<Instrument> mInstruments = new HashSet<Instrument>();
         private void _onInstrument(Instrument inst) {
             //建表
-            string[] products = Config.Instruments.Split(',');
-            foreach (string product in products) {
-                if (product.Equals(RegexUtils.TakeProductName(inst.InstrumentID))) {
+            foreach (string product in mProducts) {
+                if (product.Equals(inst.ProductID)) {
                     string name = RegexUtils.TakeShortInstrumentID(inst.InstrumentID);
                     mWriter.CreateTable(name);
+                    //
+                    mInstruments.Add(inst);
+                    mOnInstrument?.Invoke(inst);
+                    MdBroker.SubscribeMarketData(inst);
                 }
             }
         }

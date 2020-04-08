@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 namespace FreeQuant.Framework {
     public static class RegexUtils {
         //过滤合约
-        public static bool MatchInstrument(string instId) {
+        public static bool MatchInstrument(string instID) {
             Regex re = new Regex(@"^[a-zA-Z]+\d+$", RegexOptions.None);
-            return re.IsMatch(instId);
+            return re.IsMatch(instID);
         }
         //提取短合约名
-        public static string TakeShortInstrumentID(string instId) {
-            string name = Regex.Replace(instId, @"[0-9]", "", RegexOptions.None);
-            string month = Regex.Replace(instId, @"[a-zA-Z]", "", RegexOptions.None);
+        public static string TakeShortInstrumentID(string instID) {
+            string name = Regex.Replace(instID, @"[0-9]", "", RegexOptions.None);
+            string month = Regex.Replace(instID, @"[a-zA-Z]", "", RegexOptions.None);
             return name + month.Substring(month.Length - 2);
         }
         // 提取品种名
-        public static string TakeProductName(string instId)
+        public static string TakeProductName(string instID)
         {
-            return Regex.Replace(instId, @"[0-9]", "", RegexOptions.None);
+            return Regex.Replace(instID, @"[0-9]", "", RegexOptions.None);
         }
     }
 }

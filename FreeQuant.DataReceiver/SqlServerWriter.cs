@@ -20,7 +20,7 @@ namespace FreeQuant.DataReceiver {
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
             } catch (Exception e) {
-                Loger.Error(e.ToString());
+                LogUtil.ErrLog(e.ToString());
             } finally {
                 conn.Close();
             }
@@ -55,7 +55,7 @@ namespace FreeQuant.DataReceiver {
                            ,@volume
                            ,@open_interest)";
                 SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@exchange_id", bar.Instrument.ExchangeID);
+                cmd.Parameters.AddWithValue("@exchange_id", bar.Instrument.Exchange);
                 cmd.Parameters.AddWithValue("@instrument_id", bar.Instrument.InstrumentID);
                 cmd.Parameters.AddWithValue("@multiplier", bar.Instrument.VolumeMultiple);
                 cmd.Parameters.AddWithValue("@begin_time", bar.BeginTime);
@@ -67,7 +67,7 @@ namespace FreeQuant.DataReceiver {
                 cmd.Parameters.AddWithValue("@open_interest", bar.OpenInterest);
                 cmd.ExecuteNonQuery();
             } catch (Exception e) {
-                Loger.Error(e.ToString());
+                LogUtil.ErrLog(e.ToString());
             } finally {
                 conn.Close();
             }
@@ -93,7 +93,7 @@ namespace FreeQuant.DataReceiver {
             dt.Columns.Add("update_time", typeof(DateTime));
             foreach (Tick tcik in ticks) {
                 DataRow dr = dt.NewRow();
-                dr["exchange_id"] = tcik.Instrument.ExchangeID;
+                dr["exchange_id"] = tcik.Instrument.Exchange;
                 dr["instrument_id"] = tcik.Instrument.InstrumentID;
                 dr["multiplier"] = tcik.Instrument.VolumeMultiple;
                 dr["ask_price"] = tcik.AskPrice;
@@ -118,7 +118,7 @@ namespace FreeQuant.DataReceiver {
                 conn.Open();
                 bulkCopy.WriteToServer(dt);
             } catch (Exception e) {
-                Loger.Error(e.ToString());
+                LogUtil.ErrLog(e.ToString());
             } finally {
                 conn.Close();
             }

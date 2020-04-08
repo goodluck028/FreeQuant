@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FreeQuant.Framework;
+using System.Threading;
 
 namespace FreeQuant.DataReceiver {
     static class Program {
@@ -21,14 +22,26 @@ namespace FreeQuant.DataReceiver {
             Application.Run(new MainForm());
         }
 
+        //非主线程异常
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             Exception ex = e.ExceptionObject as Exception;
-            Loger.Error(ex.ToString());
+            LogUtil.ErrLog(ex.ToString());
+            restart();
         }
 
+        //主线程异常
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e) {
             Exception ex = e.Exception;
-            Loger.Error(ex.ToString());
+            LogUtil.ErrLog(ex.ToString());
+        }
+
+        static void restart() {
+            Thread.Sleep(10 * 1000);
+            System.Diagnostics.ProcessStartInfo cp = new System.Diagnostics.ProcessStartInfo();
+            cp.FileName = Application.ExecutablePath;
+            cp.Arguments = "cmd params";
+            cp.UseShellExecute = true;
+            System.Diagnostics.Process.Start(cp);
         }
     }
 }

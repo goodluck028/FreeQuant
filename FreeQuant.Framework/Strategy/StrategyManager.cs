@@ -24,12 +24,17 @@ namespace FreeQuant.Framework {
                     Directory.CreateDirectory(dir);
                 }
             } catch (Exception ex) {
-                LogUtil.EnginLog(ex.StackTrace);
+                LogUtil.SysLog(ex.StackTrace);
             }
 
             //加载策略
             foreach (string f in files) {
-                Assembly assembly = Assembly.LoadFrom(f);
+                Assembly assembly;
+                try {
+                    assembly = Assembly.LoadFrom(f);
+                }catch(Exception e) {
+                    continue;
+                }
                 Type[] types = assembly.GetTypes();
                 foreach (Type t in types) {
                     //
@@ -39,7 +44,7 @@ namespace FreeQuant.Framework {
                     if (stg == null)
                         continue;
                     if (sStgDic.ContainsKey(t.FullName)) {
-                        LogUtil.EnginLog("策略命名空间重复");
+                        LogUtil.SysLog("策略命名空间重复");
                         continue;
                     }
                     //

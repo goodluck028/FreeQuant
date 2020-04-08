@@ -7,16 +7,61 @@ using System.Threading.Tasks;
 namespace FreeQuant.Framework {
 
     public abstract class BaseTdBroker {
-        //日志事件
-        public Action<string> OnLog;
         //订单事件
-        public Action<Order> OnOrder;
+        protected Action<Order> mOnOrder;
+        public event Action<Order> OnOrder {
+            add {
+                mOnOrder -= value;
+                mOnOrder += value;
+            }
+            remove {
+                mOnOrder -= value;
+            }
+        }
         //交易事件
-        public Action<Order, long> OnTrade;
+        protected Action<BrokerTrade> mOnTrade;
+        public event Action<BrokerTrade> OnTrade {
+            add {
+                mOnTrade -= value;
+                mOnTrade += value;
+            }
+            remove {
+                mOnTrade -= value;
+            }
+        }
         //合约事件
-        public Action<Instrument> OnInstrument;
+        protected Action<Instrument> mOnInstrument;
+        public event Action<Instrument> OnInstrument {
+            add {
+                mOnInstrument -= value;
+                mOnInstrument += value;
+            }
+            remove {
+                mOnInstrument -= value;
+            }
+        }
         //持仓事件
-        public Action<BrokerPosition> OnBroderPosition;
+        protected Action<BrokerPosition> mOnBroderPosition;
+        public event Action<BrokerPosition> OnBroderPosition {
+            add {
+                mOnBroderPosition -= value;
+                mOnBroderPosition += value;
+            }
+            remove {
+                mOnBroderPosition -= value;
+            }
+        }
+        //连接状态
+        protected Action<ConnectionStatus> mOnStatusChanged;
+        public event Action<ConnectionStatus> OnStatusChanged {
+            add {
+                mOnStatusChanged -= value;
+                mOnStatusChanged += value;
+            }
+            remove {
+                mOnStatusChanged -= value;
+            }
+        }
 
         //登陆
         public abstract void Login();

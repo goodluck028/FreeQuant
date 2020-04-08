@@ -10,3 +10,15 @@
 /FreeQuant.Framework/obj/Debug
 /FreeQuant.UI/obj/Debug
 /packages
+/Broker.Xapi2/bin
+/Broker.Xapi2/obj/Release
+/FreeQuant.Console/obj/Release
+/FreeQuant.DataReceiver/bin/Release
+/FreeQuant.DataReceiver/obj/Release
+/FreeQuant.Framework/bin
+/FreeQuant.Framework/obj/Release
+/FreeQuant.UI/bin
+/FreeQuant.UI/obj/Release
+/Strategy.Demo/obj/Release
+/UnitTest/obj/Release
+/UnitTest/obj/Debug/build.force

@@ -8,7 +8,27 @@ using FreeQuant.Framework;
 
 namespace FreeQuant.Console {
     class Program {
+        static Action<string> pt;
+        static event Action<string> print {
+            add {
+                pt -= value;
+                pt += value;
+            }
+            remove {
+                pt -= value;
+            }
+        }
         static void Main(string[] args) {
+            add();
+            add();
+            pt?.Invoke("aaa");
+            System.Console.ReadKey();
+        }
+
+        static void add() {
+            print += log=>{
+                System.Console.WriteLine(log);
+            };
         }
     }
 }

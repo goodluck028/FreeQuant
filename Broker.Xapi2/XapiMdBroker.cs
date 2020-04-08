@@ -6,30 +6,27 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 using FreeQuant.Framework;
-using FreeQuant.EventEngin;
 using XAPI.Callback;
 using XAPI;
 
 namespace Broker.Xapi2 {
-    public class XapiMdBroker : BaseMdBroker, IComponent {
+    public class XapiMdBroker : BaseMdBroker {
         string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Quote_x64.dll");
         XApi mMdApi;
         //
-        public void OnLoad() {
-            EventBus.Register(this);
-            LogUtil.EnginLog("行情组件启动");
+        public XapiMdBroker() {
+            TimerUtil.On1Min += _onCheck;
         }
-        public void OnReady() { }
         //
         public override void Login() {
             if (mMdApi == null) {
                 mMdApi = new XApi(mdPath);
-                mMdApi.Server.AppID = ConfigUtil.Config.AppId;
-                mMdApi.Server.AuthCode = ConfigUtil.Config.AuthCode;
-                mMdApi.Server.Address = ConfigUtil.Config.MdServer;
-                mMdApi.Server.BrokerID = ConfigUtil.Config.MdBroker;
-                mMdApi.User.UserID = ConfigUtil.Config.MdInvestor;
-                mMdApi.User.Password = ConfigUtil.Config.MdPassword;
+                mMdApi.Server.AppID = ConfigUtil.AppId;
+                mMdApi.Server.AuthCode = ConfigUtil.AuthCode;
+                mMdApi.Server.Address = ConfigUtil.MdServer;
+                mMdApi.Server.BrokerID = ConfigUtil.MdBroker;
+                mMdApi.User.UserID = ConfigUtil.MdInvestor;
+                mMdApi.User.Password = ConfigUtil.MdPassword;
                 //
                 mMdApi.OnConnectionStatus = _onConnectionStatus;
                 mMdApi.OnRtnError = _onRtnError;
@@ -43,17 +40,18 @@ namespace Broker.Xapi2 {
         public override void Logout() {
         }
 
-        private HashSet<string> mInstIds = new HashSet<string>();
+        private HashSet<Instrument> mInstruments = new HashSet<Instrument>();
         public override void SubscribeMarketData(Instrument inst) {
-            if (mInstIds.Add(inst.InstrumentID)) {
+            if (mInstruments.Add(inst)) {
                 mMdApi.Subscribe(inst.InstrumentID, "");
+                LogUtil.SysLog("订阅合约：" + inst.InstrumentID);
             }
         }
 
         public override void UnSubscribeMarketData(Instrument inst) {
             mMdApi.Unsubscribe(inst.InstrumentID, "");
-            mInstIds.Remove(inst.InstrumentID);
-            LogUtil.EnginLog("退订合约：" + inst.InstrumentID);
+            mInstruments.Remove(inst);
+            LogUtil.SysLog("退订合约：" + inst.InstrumentID);
         }
 
         private Dictionary<string, double> volumeMap = new Dictionary<string, double>();
@@ -93,28 +91,21 @@ namespace Broker.Xapi2 {
                 , marketData.UpperLimitPrice
                 , marketData.LowerLimitPrice);
             //
-            PostTickEvent(tick);
+            mOnTick?.Invoke(tick);
         }
 
-        private void _onConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1) {
-            switch (status) {
-                case ConnectionStatus.Done:
-                    PostLoginEvent(true, "登录成功");
-                    Resub();
-                    break;
-                case ConnectionStatus.Disconnected:
-                    mMdApi.Dispose();
-                    break;
-            }
-            LogUtil.EnginLog("行情状态:" + status.ToString());
+        private void _onConnectionStatus(object sender, XAPI.ConnectionStatus brokerStatus, ref RspUserLoginField userLogin, int size1) {
+            FreeQuant.Framework.ConnectionStatus status = ConvertUtil.ConvertConnectionStatus(brokerStatus);
+            mOnStatusChanged?.Invoke(status);
+            //
+            LogUtil.SysLog("行情状态:" + brokerStatus.ToString());
         }
 
         private void _onRtnError(object sender, ref ErrorField error) {
-            LogUtil.EnginLog($"行情错误({error.RawErrorID}):{error.Text}");
+            LogUtil.SysLog($"行情错误({error.RawErrorID}):{error.Text}");
         }
 
-        [OnEvent]
-        private void _onCheck(BrokerEvent.MonitorEvent evt) {
+        private void _onCheck() {
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
             if (now > 231 && now < 845) {
                 return;
@@ -128,8 +119,8 @@ namespace Broker.Xapi2 {
         }
 
         private void Resub() {
-            foreach (string instId in mInstIds) {
-                mMdApi.Subscribe(instId, "");
+            foreach (Instrument inst in mInstruments) {
+                mMdApi.Subscribe(inst.InstrumentID, "");
             }
         }
     }

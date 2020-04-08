@@ -10,68 +10,59 @@ using System.Data;
 using System.Reflection;
 
 namespace FreeQuant.Framework {
-    public class DbManager {
-
-        //
-        public void SetPostion(Position pos) {
-            updatePosition(pos);
-        }
-
-        //
-        public void SetOrder(Order order) {
-            updateOrder(order);
-        }
-
+    public static class DbManager {
         //strategy
-        private static ConcurrentDictionary<string, T_Strategy> stgDic;
+        private static ConcurrentDictionary<string, T_Strategy> mStgDic;
         private static void loadStrategy() {
-            if (stgDic == null) {
-                stgDic = new ConcurrentDictionary<string, T_Strategy>();
+            if (mStgDic == null) {
+                mStgDic = new ConcurrentDictionary<string, T_Strategy>();
                 using (MyDbContext ctx = new MyDbContext()) {
                     List<T_Strategy> stgs = ctx.Strategys.ToList();
                     foreach (T_Strategy stg in stgs) {
-                        stgDic[stg.ClassName] = stg;
+                        mStgDic[stg.ClassName] = stg;
                     }
                 }
             }
         }
 
-        private void AddStrategy(BaseStrategy stg) {
+        public static void UpdateStrategy(BaseStrategy stg) {
             loadStrategy();
-            if (stgDic.ContainsKey(stg.GetType().FullName))
-                return;
-            //
-            T_Strategy tStg = new T_Strategy();
-            tStg.Name = stg.Name;
-            tStg.ClassName = stg.GetType().FullName;
-            tStg.Enable = stg.Enable;
-            //
             using (MyDbContext ctx = new MyDbContext()) {
-                tStg = ctx.Strategys.Add(tStg);
+                T_Strategy tStg;
+                if (!mStgDic.TryGetValue(stg.GetType().FullName, out tStg)) {
+                    tStg = new T_Strategy();
+                    tStg.Name = stg.Name;
+                    tStg.ClassName = stg.GetType().FullName;
+                    tStg.Enable = stg.Enable;
+                    ctx.Strategys.Add(tStg);
+                    mStgDic[tStg.ClassName] = tStg;
+                }
+                tStg.Enable = stg.Enable;
                 ctx.SaveChanges();
-                stgDic[tStg.ClassName] = tStg;
             }
         }
-        static List<T_Strategy> Strategys {
+
+        internal static List<T_Strategy> Strategys {
             get {
                 loadStrategy();
-                return stgDic.Values.ToList();
+                return mStgDic.Values.ToList();
             }
         }
-        static T_Strategy GetStrategy(string fullName) {
-            return stgDic[fullName];
+
+        internal static T_Strategy GetStrategy(string fullName) {
+            return mStgDic[fullName];
         }
 
         //position
-        private void updatePosition(Position pos) {
-            T_Strategy stg = stgDic[pos.Strategy.GetType().FullName];
+        public static void UpdatePosition(StrategyPosition pos) {
+            T_Strategy stg = mStgDic[pos.Strategy.GetType().FullName];
             using (MyDbContext ctx = new MyDbContext()) {
                 T_Position tp = (from p in stg.Positions
-                                 where p.InstrumentId == pos.Instrument.InstrumentID
+                                 where p.InstrumentID == pos.Instrument.InstrumentID
                                  select p).First();
-                if(tp == null) {
+                if (tp == null) {
                     tp = new T_Position();
-                    tp.InstrumentId = pos.Instrument.InstrumentID;
+                    tp.InstrumentID = pos.Instrument.InstrumentID;
                     tp.Strategy = stg;
                     stg.Positions.Add(tp);
                 }
@@ -82,24 +73,24 @@ namespace FreeQuant.Framework {
         }
 
         //order
-        private void updateOrder(Order order) {
-            T_Strategy stg = stgDic[order.Strategy.GetType().FullName];
-            using(MyDbContext ctx = new MyDbContext()) {
+        public static void UpdateOrder(Order order) {
+            T_Strategy stg = mStgDic[order.Strategy.GetType().FullName];
+            using (MyDbContext ctx = new MyDbContext()) {
                 T_Order to = (from o in stg.Orders
                               where o.OrderId == order.OrderId
                               select o).First();
-                if(to == null) {
+                if (to == null) {
                     to = new T_Order();
                     to.Direction = order.Direction.ToString();
-                    to.InstrumentId = order.Instrument.InstrumentID;
+                    to.InstrumentID = order.Instrument.InstrumentID;
                     to.OrderId = order.OrderId;
                     to.OrderTime = order.OrderTime;
                     to.Price = order.Price;
                     to.Strategy = stg;
-                    to.Volume = order.Volume;
+                    to.Volume = order.Qty;
                     stg.Orders.Add(to);
                 }
-                to.VolumeTraded = order.VolumeTraded;
+                to.VolumeTraded = order.QtyTraded;
                 ctx.SaveChanges();
             }
         }

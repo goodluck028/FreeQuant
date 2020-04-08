@@ -67,10 +67,12 @@
     <Compile Include="BaseType\Attribute.cs" />
     <Compile Include="BaseType\Bar.cs" />
     <Compile Include="BaseType\BarGenerator.cs" />
+    <Compile Include="BaseType\Enum.cs" />
     <Compile Include="BaseType\Instrument.cs" />
     <Compile Include="BaseType\Order.cs" />
     <Compile Include="BaseType\Position.cs" />
     <Compile Include="BaseType\Tick.cs" />
+    <Compile Include="BaseType\Trade.cs" />
     <Compile Include="Broker\BaseMdBroker.cs" />
     <Compile Include="Broker\BaseTdBroker.cs" />
     <Compile Include="Broker\BrokerManager.cs" />

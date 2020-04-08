@@ -6,63 +6,41 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Framework {
     public class Tick {
-        // 合约;
-        private Instrument mInstrument;
-        // 最新价
-        private double mLastPrice;
-        //申买价一
-        private double mBidPrice;
-        // 申买量一
-        private long mBidVolume;
-        //申卖价一
-        private double mAskPrice;
-        //申卖量一
-        private long mAskVolume;
-        //数量
-        private double mVolume;
-        //持仓量
-        private double mOpenInterest;
-        //最后修改时间
-        private DateTime mUpdateTime;
-        //涨停板价
-        private double mUpperLimitPrice;
-        //跌停板价
-        private double mLowerLimitPrice;
-
         public Tick(Instrument instrument, double lastPrice, double bidPrice, long bidVolume, double askPrice, long askVolume, double volume, double openInterest, DateTime updateTime, double upperLimitPrice, double lowerLimitPrice) {
-            mInstrument = instrument;
-            mLastPrice = lastPrice;
-            mBidPrice = bidPrice;
-            mBidVolume = bidVolume;
-            mAskPrice = askPrice;
-            mAskVolume = askVolume;
-            mVolume = volume;
-            mOpenInterest = openInterest;
-            mUpdateTime = updateTime;
-            mUpperLimitPrice = upperLimitPrice;
-            mLowerLimitPrice = lowerLimitPrice;
+            Instrument = instrument;
+            LastPrice = lastPrice;
+            BidPrice = bidPrice;
+            BidVolume = bidVolume;
+            AskPrice = askPrice;
+            AskVolume = askVolume;
+            Volume = volume;
+            OpenInterest = openInterest;
+            UpdateTime = updateTime;
+            UpperLimitPrice = upperLimitPrice;
+            LowerLimitPrice = lowerLimitPrice;
         }
 
-        public Instrument Instrument => mInstrument;
-
-        public double LastPrice => mLastPrice;
-
-        public double BidPrice => mBidPrice;
-
-        public long BidVolume => mBidVolume;
-
-        public double AskPrice => mAskPrice;
-
-        public long AskVolume => mAskVolume;
-
-        public double Volume => mVolume;
-
-        public double OpenInterest => mOpenInterest;
-
-        public DateTime UpdateTime => mUpdateTime;
-
-        public double UpperLimitPrice => mUpperLimitPrice;
-
-        public double LowerLimitPrice => mLowerLimitPrice;
+        // 合约;
+        public Instrument Instrument { get; private set; }
+        // 最新价
+        public double LastPrice { get; private set; }
+        //申买价一
+        public double BidPrice { get; private set; }
+        // 申买量一
+        public long BidVolume { get; private set; }
+        //申卖价一
+        public double AskPrice { get; private set; }
+        //申卖量一
+        public long AskVolume { get; private set; }
+        //数量
+        public double Volume { get; private set; }
+        //持仓量
+        public double OpenInterest { get; private set; }
+        //最后修改时间
+        public DateTime UpdateTime { get; private set; }
+        //涨停板价
+        public double UpperLimitPrice { get; private set; }
+        //跌停板价
+        public double LowerLimitPrice { get; private set; }
     }
 }
