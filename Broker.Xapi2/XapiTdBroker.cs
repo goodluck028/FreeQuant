@@ -15,7 +15,7 @@ namespace Broker.Xapi2 {
         ConcurrentDictionary<string, Order> mOrderMap = new ConcurrentDictionary<string, Order>();
         //
         public XapiTdBroker() {
-            TimerUtil.On1Min += _onCheck;
+            //TimerUtil.On1Min += _onCheck;
         }
         //
         public override void Login() {
@@ -41,7 +41,7 @@ namespace Broker.Xapi2 {
             } else if (mTdApi.IsConnected) {
                 return;
             }
-
+            mTdApi.ReconnectInterval = 60;
             mTdApi.Connect();
         }
 

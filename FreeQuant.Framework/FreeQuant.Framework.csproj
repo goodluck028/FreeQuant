@@ -76,7 +76,7 @@
     <Compile Include="Broker\BaseMdBroker.cs" />
     <Compile Include="Broker\BaseTdBroker.cs" />
     <Compile Include="Broker\BrokerManager.cs" />
-    <Compile Include="Broker\ITickFilter.cs" />
+    <Compile Include="Broker\TickFilter.cs" />
     <Compile Include="DataBase\DbManager.cs" />
     <Compile Include="DataBase\Entity.cs" />
     <Compile Include="DataBase\MyDbContext.cs" />

@@ -15,7 +15,7 @@ namespace Broker.Xapi2 {
         XApi mMdApi;
         //
         public XapiMdBroker() {
-            TimerUtil.On1Min += _onCheck;
+            //TimerUtil.On1Min += _onTimer;
         }
         //
         public override void Login() {
@@ -34,6 +34,7 @@ namespace Broker.Xapi2 {
             } else if (mMdApi.IsConnected) {
                 return;
             }
+            mMdApi.ReconnectInterval = 60;
             mMdApi.Connect();
         }
 
@@ -98,6 +99,10 @@ namespace Broker.Xapi2 {
             FreeQuant.Framework.ConnectionStatus status = ConvertUtil.ConvertConnectionStatus(brokerStatus);
             mOnStatusChanged?.Invoke(status);
             //
+            //if (brokerStatus == XAPI.ConnectionStatus.Done) {
+            //    Resub();
+            //}
+            //
             LogUtil.SysLog("行情状态:" + brokerStatus.ToString());
         }
 
@@ -105,7 +110,7 @@ namespace Broker.Xapi2 {
             LogUtil.SysLog($"行情错误({error.RawErrorID}):{error.Text}");
         }
 
-        private void _onCheck() {
+        private void _onTimer() {
             long now = DateTime.Now.Hour * 100 + DateTime.Now.Minute;
             if (now > 231 && now < 845) {
                 return;
@@ -118,10 +123,11 @@ namespace Broker.Xapi2 {
             Login();
         }
 
-        private void Resub() {
-            foreach (Instrument inst in mInstruments) {
-                mMdApi.Subscribe(inst.InstrumentID, "");
-            }
-        }
+        //private void Resub() {
+        //    foreach (Instrument inst in mInstruments) {
+        //        mMdApi.Subscribe(inst.InstrumentID, "");
+        //        LogUtil.SysLog("订阅合约：" + inst.InstrumentID);
+        //    }
+        //}
     }
 }
