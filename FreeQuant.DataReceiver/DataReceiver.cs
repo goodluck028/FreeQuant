@@ -80,8 +80,7 @@ namespace FreeQuant.DataReceiver {
             //建表
             foreach (string product in mProducts) {
                 if (product.Equals(inst.ProductID)) {
-                    string name = RegexUtils.TakeShortInstrumentID(inst.InstrumentID);
-                    mWriter.CreateTable(name);
+                    mWriter.CreateTable(inst.ProductID);
                     //
                     mInstruments.Add(inst);
                     mOnInstrument?.Invoke(inst);

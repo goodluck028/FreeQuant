@@ -8,6 +8,7 @@ using FreeQuant.Framework;
 
 namespace FreeQuant.Console {
     class Program {
+
         static Action<string> pt;
         static event Action<string> print {
             add {
@@ -19,6 +20,8 @@ namespace FreeQuant.Console {
             }
         }
         static void Main(string[] args) {
+            string name = Exchange.CFFEX.ToString();
+            //
             add();
             add();
             pt?.Invoke("aaa");

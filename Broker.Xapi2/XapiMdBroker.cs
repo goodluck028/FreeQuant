@@ -64,8 +64,10 @@ namespace Broker.Xapi2 {
             double vol = 0;
             double difVol = 0;
             if (volumeMap.TryGetValue(marketData.InstrumentID, out vol)) {
-                if (marketData.Volume < vol)
+                if (marketData.Volume < vol) {
+                    volumeMap[marketData.InstrumentID] = marketData.Volume;
                     return;
+                }
                 difVol = marketData.Volume - vol;
                 vol = marketData.Volume;
             } else {
