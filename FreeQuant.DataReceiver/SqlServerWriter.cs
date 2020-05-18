@@ -28,7 +28,7 @@ namespace FreeQuant.DataReceiver {
 
         public void InsertBar(Bar bar) {
             SqlConnection conn = new SqlConnection(Config.Server);
-            string tbName = RegexUtils.TakeShortInstrumentID(bar.Instrument.InstrumentID);
+            string tbName = bar.Instrument.ProductID;
             try {
                 conn.Open();
                 //
@@ -55,7 +55,7 @@ namespace FreeQuant.DataReceiver {
                            ,@volume
                            ,@open_interest)";
                 SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@exchange_id", bar.Instrument.Exchange);
+                cmd.Parameters.AddWithValue("@exchange_id", bar.Instrument.Exchange.ToString());
                 cmd.Parameters.AddWithValue("@instrument_id", bar.Instrument.InstrumentID);
                 cmd.Parameters.AddWithValue("@multiplier", bar.Instrument.VolumeMultiple);
                 cmd.Parameters.AddWithValue("@begin_time", bar.BeginTime);
@@ -93,7 +93,7 @@ namespace FreeQuant.DataReceiver {
             dt.Columns.Add("update_time", typeof(DateTime));
             foreach (Tick tcik in ticks) {
                 DataRow dr = dt.NewRow();
-                dr["exchange_id"] = tcik.Instrument.Exchange;
+                dr["exchange_id"] = tcik.Instrument.Exchange.ToString();
                 dr["instrument_id"] = tcik.Instrument.InstrumentID;
                 dr["multiplier"] = tcik.Instrument.VolumeMultiple;
                 dr["ask_price"] = tcik.AskPrice;
@@ -111,7 +111,7 @@ namespace FreeQuant.DataReceiver {
             //
             SqlConnection conn = new SqlConnection(Config.Server);
             SqlBulkCopy bulkCopy = new SqlBulkCopy(conn);
-            string tbName = RegexUtils.TakeShortInstrumentID(ticks[0].Instrument.InstrumentID);
+            string tbName = ticks[0].Instrument.ProductID;
             bulkCopy.DestinationTableName = $"[hisdata_future].[dbo].[t_tick_{tbName}]";
             bulkCopy.BatchSize = ticks.Count;
             try {

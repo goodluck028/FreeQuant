@@ -11,8 +11,9 @@ using XAPI;
 
 namespace Broker.Xapi2 {
     public class XapiMdBroker : BaseMdBroker {
-        string mdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Quote_x64.dll");
+        string mMdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CTP_SE_Quote_x64.dll");
         XApi mMdApi;
+        ITickFilter mTickFilter = new DefaultTickFilter();
         //
         public XapiMdBroker() {
             //TimerUtil.On1Min += _onTimer;
@@ -20,7 +21,7 @@ namespace Broker.Xapi2 {
         //
         public override void Login() {
             if (mMdApi == null) {
-                mMdApi = new XApi(mdPath);
+                mMdApi = new XApi(mMdPath);
                 mMdApi.Server.AppID = ConfigUtil.AppId;
                 mMdApi.Server.AuthCode = ConfigUtil.AuthCode;
                 mMdApi.Server.Address = ConfigUtil.MdServer;
@@ -64,8 +65,10 @@ namespace Broker.Xapi2 {
             double vol = 0;
             double difVol = 0;
             if (volumeMap.TryGetValue(marketData.InstrumentID, out vol)) {
-                if (marketData.Volume < vol)
+                if (marketData.Volume < vol) {
+                    volumeMap[marketData.InstrumentID] = marketData.Volume;
                     return;
+                }
                 difVol = marketData.Volume - vol;
                 vol = marketData.Volume;
             } else {
@@ -92,16 +95,18 @@ namespace Broker.Xapi2 {
                 , marketData.UpperLimitPrice
                 , marketData.LowerLimitPrice);
             //
-            mOnTick?.Invoke(tick);
+            if (mTickFilter.Check(tick)) {
+                mOnTick?.Invoke(tick);
+            }
         }
 
         private void _onConnectionStatus(object sender, XAPI.ConnectionStatus brokerStatus, ref RspUserLoginField userLogin, int size1) {
             FreeQuant.Framework.ConnectionStatus status = ConvertUtil.ConvertConnectionStatus(brokerStatus);
             mOnStatusChanged?.Invoke(status);
             //
-            //if (brokerStatus == XAPI.ConnectionStatus.Done) {
-            //    Resub();
-            //}
+            if (brokerStatus == XAPI.ConnectionStatus.Done) {
+                Resub();
+            }
             //
             LogUtil.SysLog("行情状态:" + brokerStatus.ToString());
         }
@@ -123,11 +128,11 @@ namespace Broker.Xapi2 {
             Login();
         }
 
-        //private void Resub() {
-        //    foreach (Instrument inst in mInstruments) {
-        //        mMdApi.Subscribe(inst.InstrumentID, "");
-        //        LogUtil.SysLog("订阅合约：" + inst.InstrumentID);
-        //    }
-        //}
+        private void Resub() {
+            foreach (Instrument inst in mInstruments) {
+                mMdApi.Subscribe(inst.InstrumentID, "");
+                LogUtil.SysLog("订阅合约：" + inst.InstrumentID);
+            }
+        }
     }
 }
