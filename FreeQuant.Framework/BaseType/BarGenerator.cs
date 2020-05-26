@@ -44,15 +44,15 @@ namespace FreeQuant.Framework {
                 mBar.HighPrice = tick.LastPrice;
                 mBar.LowPrice = tick.LastPrice;
                 mBar.ClosePrice = tick.LastPrice;
-                mBar.Volume += tick.Volume;
+                mBar.Volume = tick.Volume;
                 mBar.OpenInterest = tick.OpenInterest;
             } else {
                 mBar.HighPrice = mBar.HighPrice < tick.LastPrice ? tick.LastPrice : mBar.HighPrice;
                 mBar.LowPrice = mBar.LowPrice > tick.LastPrice ? tick.LastPrice : mBar.LowPrice;
                 mBar.ClosePrice = tick.LastPrice;
+                mBar.Volume += tick.Volume;
+                mBar.OpenInterest = tick.OpenInterest;
             }
-            mBar.Volume = tick.Volume;
-            mBar.OpenInterest = tick.OpenInterest;
             mTickList.Add(tick);
         }
         //判断是否需要生成新bar
