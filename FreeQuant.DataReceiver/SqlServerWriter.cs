@@ -9,23 +9,23 @@ using System.Data;
 using System.Data.SqlClient;
 
 namespace FreeQuant.DataReceiver {
+    /// <summary>
+    /// sqlserver数据库
+    /// </summary>
     internal class SqlServerWriter : IDataWriter {
 
-        public void CreateTable(string dbName) {
-            SqlConnection conn = new SqlConnection(Config.Server);
-            try {
-                conn.Open();
-                //
-                string sql = $@"exec [dbo].[p_create_table] {dbName}";
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.ExecuteNonQuery();
-            } catch (Exception e) {
-                LogUtil.ErrLog(e.ToString());
-            } finally {
-                conn.Close();
-            }
+        //创建数据库
+        public void CreateDb()
+        {
+            throw new NotImplementedException();
         }
 
+        //创建表
+        public void CreateTable(string tbName) {
+            throw new NotImplementedException();
+        }
+
+        //写入bar
         public void InsertBar(Bar bar) {
             SqlConnection conn = new SqlConnection(Config.Server);
             string tbName = bar.Instrument.ProductID;
@@ -73,6 +73,7 @@ namespace FreeQuant.DataReceiver {
             }
         }
 
+        //写入ticks
         public void InsertTicks(List<Tick> ticks) {
             if (ticks.Count == 0)
                 return;

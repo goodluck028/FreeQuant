@@ -6,10 +6,18 @@ using System.Threading.Tasks;
 using FreeQuant.Framework;
 
 namespace FreeQuant.DataReceiver {
+    /// <summary>
+    /// 数据存储接口
+    /// </summary>
     internal interface IDataWriter
     {
-        void CreateTable(string dbName);
+        //创建数据库
+        void CreateDb();
+        //创建表
+        void CreateTable(string product);
+        //插入bar
         void InsertBar(Bar bar);
+        //插入ticks
         void InsertTicks(List<Tick> ticks);
     }
 }

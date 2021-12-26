@@ -2,23 +2,51 @@
 using System.Collections.Generic;
 
 namespace FreeQuant.Framework {
+    /// <summary>
+    /// 策略状态
+    /// </summary>
     public enum StrategyStatus { Starting, Ruing, Stoping, Stoped }
 
-    //基本
+    /// <summary>
+    /// 为策略配置合约的特性类
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class InstrumentsAttribute : Attribute
+    {
+        public InstrumentsAttribute(params string[] instruments)
+        {
+            Instruments = instruments;
+        }
+
+        public string[] Instruments { get; }
+    }
+
+    /// <summary>
+    /// 为策略配置名称的特性类
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class StrategyNameAttribute : Attribute
+    {
+        public StrategyNameAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    /// <summary>
+    /// 基本字段
+    /// </summary>
     public partial class BaseStrategy {
         private string mName;
-        private bool mEnable = false;
         private StrategyStatus mStatus = StrategyStatus.Stoped;
 
         public string Name {
             get { return mName ?? GetType().FullName; }
         }
 
-        public bool Enable
-        {
-            get { return mEnable; }
-            set { mEnable = value; }
-        }
+        public bool Enable { get; set; } = false;
 
         //写日志
         public void Log(string content) {
@@ -26,7 +54,9 @@ namespace FreeQuant.Framework {
         }
     }
 
-    //用户实现
+    /// <summary>
+    /// 用户实现
+    /// </summary>
     public partial class BaseStrategy {
         protected virtual void OnStart() { }
         protected virtual void OnStop() { }
@@ -34,9 +64,11 @@ namespace FreeQuant.Framework {
         protected virtual void OnPositionChanged(StrategyPosition position) { }
     }
 
-    //行情
+    /// <summary>
+    /// 行情
+    /// </summary>
     public partial class BaseStrategy {
-        BaseMdBroker mMdBroker = BrokerManager.DefaultMdBroker;
+        BaseMdBroker mMdBroker = Quanter.BrokerManager.DefaultMdBroker;
 
         //合约列表
         private Instrument mMainInstrument;
@@ -67,7 +99,7 @@ namespace FreeQuant.Framework {
                 if (attr is InstrumentsAttribute) {
                     string[] instIDs = (attr as InstrumentsAttribute).Instruments;
                     foreach (string instID in instIDs) {
-                        Instrument inst = InstrumentManager.GetInstrument(instID);
+                        Instrument inst = Quanter.InstrumentManager.GetInstrument(instID);
                         if (inst == null) {
                             LogUtil.SysLog($"合约{instID}缺失");
                             return false;
@@ -103,9 +135,11 @@ namespace FreeQuant.Framework {
         }
     }
 
-    //交易
+    /// <summary>
+    /// 交易
+    /// </summary>
     public partial class BaseStrategy {
-        BaseTdBroker mTdBroker = BrokerManager.DefaultTdBroker;
+        BaseTdBroker mTdBroker = Quanter.BrokerManager.DefaultTdBroker;
 
         //持仓
         private Dictionary<string, int> mPositionMap = new Dictionary<string, int>();
@@ -118,7 +152,7 @@ namespace FreeQuant.Framework {
         }
         internal void AddPosition(string instID, int vol) {
             mPositionMap[instID] = mPositionMap.ContainsKey(instID) ? mPositionMap[instID] + vol : vol;
-            PositionManager.SetPosition(GetType().FullName, instID, vol);
+            Quanter.PositionManager.SetPosition(GetType().FullName, instID, vol);
         }
 
         //订单管理

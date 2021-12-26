@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 using FreeQuant.Framework;
 
 namespace FreeQuant.DataReceiver {
+    /// <summary>
+    /// 配置类
+    /// </summary>
     internal class Config {
+        //sqlserver服务器配置
         public static string Server {
             get {
                 string text = ConfigUtil.Config["DataBase", "Server"];
@@ -18,6 +22,7 @@ namespace FreeQuant.DataReceiver {
             }
         }
 
+        //合约配置
         public static string Instruments {
             get {
                 string text = ConfigUtil.Config["DataBase", "Instruments"];

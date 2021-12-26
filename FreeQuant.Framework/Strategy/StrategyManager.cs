@@ -7,12 +7,21 @@ using System.Threading.Tasks;
 using System.IO;
 
 namespace FreeQuant.Framework {
-    public static class StrategyLoader {
-        static StrategyLoader() {
+
+    /// <summary>
+    /// 策略管理器
+    /// </summary>
+    public class StrategyManager {
+
+        //只能内部初始化
+        internal StrategyManager() {
             LoadStrategy();
         }
 
+        //策略字典
         private static Dictionary<string, BaseStrategy> sStgDic = new Dictionary<string, BaseStrategy>();
+
+        //动态加载策略
         public static void LoadStrategy() {
             //获取文件列表 
             string[] files = new string[] { };

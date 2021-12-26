@@ -5,60 +5,98 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreeQuant.Framework {
-    public static class PositionManager {
-        #region 策略持仓
-        private static ConcurrentDictionary<string, ConcurrentDictionary<string, int>> mStgPosMap = new ConcurrentDictionary<string, ConcurrentDictionary<string, int>>();
+namespace FreeQuant.Framework
+{
+    /// <summary>
+    /// 持仓管理器
+    /// </summary>
+    public class PositionManager
+    {
 
-        public static void SetPosition(string stgName, string instID, int pos) {
+        //只能内部初始化
+        internal PositionManager()
+        {
+
+        }
+
+        //策略持仓
+        #region
+        //存储策略持仓的字典
+        private ConcurrentDictionary<string, ConcurrentDictionary<string, int>> mStgPosMap = new ConcurrentDictionary<string, ConcurrentDictionary<string, int>>();
+
+        //设置持仓
+        internal void SetPosition(string stgName, string instID, int pos)
+        {
             ConcurrentDictionary<string, int> dic;
-            if (!mStgPosMap.TryGetValue(stgName, out dic)) {
+            if (!mStgPosMap.TryGetValue(stgName, out dic))
+            {
                 dic = new ConcurrentDictionary<string, int>();
             }
             dic[instID] = pos;
         }
 
-        public static int GetPosition(string stgName, string instID) {
+        //获取持仓
+        public int GetPosition(string stgName, string instID)
+        {
             ConcurrentDictionary<string, int> dic;
-            if (mStgPosMap.TryGetValue(stgName, out dic)) {
+            if (mStgPosMap.TryGetValue(stgName, out dic))
+            {
                 dic = new ConcurrentDictionary<string, int>();
                 int i = 0;
-                if (dic.TryGetValue(instID, out i)) {
+                if (dic.TryGetValue(instID, out i))
+                {
                     return i;
-                } else {
+                }
+                else
+                {
                     return 0;
                 }
-            } else {
+            }
+            else
+            {
                 return 0;
             }
         }
         #endregion
 
-        #region broker持仓
-        private static Dictionary<Instrument, Position> mPositionMap = new Dictionary<Instrument, Position>();
+        //broker持仓
+        #region 
+        //存储broker持仓
+        private Dictionary<Instrument, Position> mPositionMap = new Dictionary<Instrument, Position>();
 
-        public static Position getPosition(Instrument inst) {
+        //获取持仓
+        public Position getPosition(Instrument inst)
+        {
             Position bp;
             mPositionMap.TryGetValue(inst, out bp);
-            if (bp == null) {
+            if (bp == null)
+            {
                 bp = new Position(inst);
                 mPositionMap.Add(inst, bp);
             }
             return bp;
         }
-        public static void UpdatePosition(BrokerPosition position) {
+
+        //更新持仓
+        public void UpdatePosition(BrokerPosition position)
+        {
             getPosition(position.Instrument).UpdatePosition(position);
         }
 
-        public static void UpdatePosition(BrokerTrade trade) {
+        public void UpdatePosition(BrokerTrade trade)
+        {
             getPosition(trade.Instrument).UpdatePosition(trade);
         }
 
-        public static void AutoClose(Order order) {
+        //自动平仓
+        public void AutoClose(Order order)
+        {
             getPosition(order.Instrument).AutoClose(order);
         }
 
-        public static void AddOrder(Order order) {
+        //添加持仓
+        public void AddOrder(Order order)
+        {
             getPosition(order.Instrument).AddOrder(order);
         }
         #endregion

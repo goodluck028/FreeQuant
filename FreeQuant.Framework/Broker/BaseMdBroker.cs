@@ -18,14 +18,18 @@ namespace FreeQuant.Framework {
                 mOnTick -= value;
             }
         }
+
         //连接状态
         protected Action<ConnectionStatus> mOnStatusChanged;
-        public event Action<ConnectionStatus> OnStatusChanged {
-            add {
+        public event Action<ConnectionStatus> OnStatusChanged
+        {
+            add
+            {
                 mOnStatusChanged -= value;
                 mOnStatusChanged += value;
             }
-            remove {
+            remove
+            {
                 mOnStatusChanged -= value;
             }
         }
@@ -38,6 +42,5 @@ namespace FreeQuant.Framework {
         public abstract void SubscribeMarketData(Instrument inst);
         //退订行情
         public abstract void UnSubscribeMarketData(Instrument inst);
-        //行情事件
     }
 }

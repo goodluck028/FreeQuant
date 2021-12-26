@@ -6,6 +6,22 @@ using System.Threading.Tasks;
 
 namespace FreeQuant.Framework {
 
+    public enum ConnectionStatus
+    {
+        /// <summary>
+        /// 连接已经断开
+        /// </summary>
+        Disconnected,
+        /// <summary>
+        /// 连接中...
+        /// </summary>
+        Connecting,
+        /// <summary>
+        /// 连接成功
+        /// </summary>
+        Connected
+    }
+
     public abstract class BaseTdBroker {
         //订单事件
         protected Action<Order> mOnOrder;

@@ -5,23 +5,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreeQuant.Framework {
-    public static class InstrumentManager {
-        private static ConcurrentDictionary<string, Instrument> mInstrumentDic = new ConcurrentDictionary<string, Instrument>();
+namespace FreeQuant.Framework
+{
+    /// <summary>
+    /// 合约管理器
+    /// </summary>
+    public class InstrumentManager
+    {
 
-        static InstrumentManager() {
-            BrokerManager.DefaultTdBroker.OnInstrument += addInstrument;
+        //只能内部初始化
+        internal InstrumentManager()
+        {
         }
 
-        private static void addInstrument(Instrument inst) {
+        //存储合约的字典
+        private ConcurrentDictionary<string, Instrument> mInstrumentDic = new ConcurrentDictionary<string, Instrument>();
+
+        //添加合约
+        internal void addInstrument(Instrument inst)
+        {
             mInstrumentDic.TryAdd(inst.InstrumentID, inst);
         }
 
-        public static Instrument GetInstrument(string InstrumentID) {
+        //获取合约
+        public Instrument GetInstrument(string InstrumentID)
+        {
             Instrument inst;
-            if (mInstrumentDic.TryGetValue(InstrumentID, out inst)) {
+            if (mInstrumentDic.TryGetValue(InstrumentID, out inst))
+            {
                 return inst;
-            } else {
+            }
+            else
+            {
                 return null;
             }
         }
