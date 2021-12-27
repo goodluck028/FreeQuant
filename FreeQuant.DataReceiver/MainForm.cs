@@ -8,10 +8,14 @@ using System.Collections;
 
 namespace FreeQuant.DataReceiver {
     public partial class MainForm : Form {
+        //数据接收器
+        DataReceiver mDataReceiver = new DataReceiver();
+
         public MainForm() {
             InitializeComponent();
         }
 
+        //在ui线程调用函数
         private void safeInvoke(Action act) {
             if (InvokeRequired) {
                 BeginInvoke(act);
@@ -26,8 +30,8 @@ namespace FreeQuant.DataReceiver {
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
             DialogResult result = MessageBox.Show("确认退出吗?", "操作提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (result == DialogResult.OK) {
-                DataReceiver.Instance.OnInstrument -= _onInstrument;
-                DataReceiver.Instance.OnTick -= _onTick;
+                mDataReceiver.OnInstrument -= _onInstrument;
+                mDataReceiver.OnTick -= _onTick;
                 //
                 Dispose();
                 Application.Exit();
@@ -43,9 +47,9 @@ namespace FreeQuant.DataReceiver {
         }
         //
         private void start() {
-            DataReceiver.Instance.OnInstrument += _onInstrument;
-            DataReceiver.Instance.OnTick += _onTick;
-            DataReceiver.Instance.run();
+            mDataReceiver.OnInstrument += _onInstrument;
+            mDataReceiver.OnTick += _onTick;
+            mDataReceiver.run();
         }
 
         private void printLog(string log) {
@@ -74,7 +78,7 @@ namespace FreeQuant.DataReceiver {
             });
             delayOrderBy();
         }
-        //延时排序
+        //延时排序，避免频繁刷新
         private class Sorter : IComparer {
             public int Compare(object x, object y) {
                 int returnVal = -1;

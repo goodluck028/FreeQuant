@@ -157,9 +157,7 @@ namespace FreeQuant.DataReceiver
             MySqlConnection conn = ConnectionPool.getPool().getConnection();
             try
             {
-                conn.Open();
-                //
-                string sql = "CREATE SCHEMA `hisdata_future` ;";
+                string sql = "CREATE SCHEMA If Not Exists `hisdata_future` ;";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
             }
@@ -179,11 +177,10 @@ namespace FreeQuant.DataReceiver
             MySqlConnection conn = ConnectionPool.getPool().getConnection();
             try
             {
-                conn.Open();
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conn;
                 //创建一分钟bar表
-                string sql = $@"CREATE TABLE `t_bar1min_{product}` (
+                string sql = $@"CREATE TABLE If Not Exists `hisdata_future`.`t_bar1min_{product}` (
                                   `exchange_id` varchar(16) NOT NULL,
                                   `instrument_id` varchar(16) NOT NULL,
                                   `multiplier` float NOT NULL,
@@ -194,12 +191,12 @@ namespace FreeQuant.DataReceiver
                                   `close_price` float NOT NULL,
                                   `volume` float NOT NULL,
                                   `open_interest` float NOT NULL,
-                                  KEY `ix_time` (`begin_time`)
-                                ) ENGINE=MyISAM DEFAULT CHARSET=utf8$$";
+                                  INDEX `ix_time` (`begin_time` ASC)
+                                ) ENGINE=MyISAM";
                 cmd.CommandText = sql;
                 cmd.ExecuteNonQuery();
                 //创建tick表
-                sql = $@"CREATE  TABLE `hisdata_future`.`t_tick_{product}` (
+                sql = $@"CREATE  TABLE If Not Exists `hisdata_future`.`t_tick_{product}` (
                           `exchange_id` VARCHAR(16) NOT NULL ,
                           `instrument_id` VARCHAR(16) NOT NULL ,
                           `multiplier` FLOAT NOT NULL ,
@@ -235,8 +232,6 @@ namespace FreeQuant.DataReceiver
             string product = bar.Instrument.ProductID;
             try
             {
-                conn.Open();
-                //
                 string sql = $@"INSERT INTO `hisdata_future`.`t_bar1min_{product}`
                                    (`exchange_id`
                                    ,`instrument_id`
@@ -292,7 +287,6 @@ namespace FreeQuant.DataReceiver
             string product = ticks[0].Instrument.ProductID;
             try
             {
-                conn.Open();
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conn;
                 //通过事务加速插入操作
@@ -300,7 +294,7 @@ namespace FreeQuant.DataReceiver
                 cmd.Transaction = tx;
                 foreach (Tick tick in ticks)
                 {
-                    string sql = $@"INSERT INTO `hisdata_future`.`t_bar1min_{product}`
+                    cmd.CommandText = $@"INSERT INTO `hisdata_future`.`t_tick_{product}`
                                     (`exchange_id`,
                                     `instrument_id`,
                                     `multiplier`,
@@ -328,6 +322,8 @@ namespace FreeQuant.DataReceiver
                                     @uper_limit,
                                     @lower_limit,
                                     @update_time);";
+                    //
+                    cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@exchange_id", tick.Instrument.Exchange.ToString());
                     cmd.Parameters.AddWithValue("@instrument_id", tick.Instrument.InstrumentID);
                     cmd.Parameters.AddWithValue("@multiplier", tick.Instrument.VolumeMultiple);

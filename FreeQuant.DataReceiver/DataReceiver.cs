@@ -12,6 +12,9 @@ namespace FreeQuant.DataReceiver {
     /// 数据接收器
     /// </summary>
     internal class DataReceiver {
+        //使用MySql数据库
+        IDataWriter mWriter = new MySqlWriter();
+
         //合约事件
         private Action<Instrument> mOnInstrument;
         public event Action<Instrument> OnInstrument {
@@ -44,6 +47,17 @@ namespace FreeQuant.DataReceiver {
         Dictionary<Instrument, BarGenerator> GeneratorMap = new Dictionary<Instrument, BarGenerator>();
 
         public void run() {
+            //连接数据
+            try
+            {
+                mWriter.CreateDb();
+            }
+            catch
+            {
+                LogUtil.ErrLog("连接数据库错误，停止运行");
+                return;
+            }
+
             //订阅行情
             MdBroker.OnTick += _onTick;
             //监听状态变化
@@ -100,7 +114,6 @@ namespace FreeQuant.DataReceiver {
         }
 
         //写数据到数据库
-        IDataWriter mWriter = new SqlServerWriter();
         private void _onBarTick(Bar bar, List<Tick> ticks) {
             mWriter.InsertBar(bar);
             mWriter.InsertTicks(ticks);

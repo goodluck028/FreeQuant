@@ -106,7 +106,7 @@ namespace Broker.Xapi2 {
         }
 
         private void _OnRspQryInvestorPosition(object sender, ref PositionField field, int size1, bool bIsLast) {
-            Instrument inst = InstrumentManager.GetInstrument(field.InstrumentID);
+            Instrument inst = Quanter.InstrumentManager.GetInstrument(field.InstrumentID);
             if (inst == null)
                 return;
             //
@@ -128,7 +128,7 @@ namespace Broker.Xapi2 {
         }
 
         private void _onRtnTrade(object sender, ref TradeField field) {
-            Instrument inst = InstrumentManager.GetInstrument(field.InstrumentID);
+            Instrument inst = Quanter.InstrumentManager.GetInstrument(field.InstrumentID);
             if (inst == null)
                 return;
             //

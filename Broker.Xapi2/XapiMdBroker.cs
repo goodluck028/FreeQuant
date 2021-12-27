@@ -58,7 +58,7 @@ namespace Broker.Xapi2 {
 
         private Dictionary<string, double> volumeMap = new Dictionary<string, double>();
         private void _onRtnDepthMarketData(object sender, ref DepthMarketDataNClass marketData) {
-            Instrument inst = InstrumentManager.GetInstrument(marketData.InstrumentID);
+            Instrument inst = Quanter.InstrumentManager.GetInstrument(marketData.InstrumentID);
             if (inst == null)
                 return;
             //计算量的差值

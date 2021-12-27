@@ -41,7 +41,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XAPI_CSharp">
-      <HintPath>..\..\XAPI2\languages\CSharp\XAPI_CSharp\bin\x64\Release64\XAPI_CSharp.dll</HintPath>
+      <HintPath>..\FreeQuant.DataReceiver\bin\Debug\XAPI_CSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
