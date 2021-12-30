@@ -165,10 +165,6 @@ namespace FreeQuant.DataReceiver
             {
                 LogUtil.ErrLog(e.ToString());
             }
-            finally
-            {
-                conn.Close();
-            }
         }
 
         //创建表
@@ -219,10 +215,6 @@ namespace FreeQuant.DataReceiver
             {
                 LogUtil.ErrLog(e.ToString());
             }
-            finally
-            {
-                conn.Close();
-            }
         }
 
         //写入bar
@@ -255,6 +247,7 @@ namespace FreeQuant.DataReceiver
                                    ,@volume
                                    ,@open_interest)";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
+                //
                 cmd.Parameters.AddWithValue("@exchange_id", bar.Instrument.Exchange.ToString());
                 cmd.Parameters.AddWithValue("@instrument_id", bar.Instrument.InstrumentID);
                 cmd.Parameters.AddWithValue("@multiplier", bar.Instrument.VolumeMultiple);
@@ -265,15 +258,71 @@ namespace FreeQuant.DataReceiver
                 cmd.Parameters.AddWithValue("@close_price", bar.ClosePrice);
                 cmd.Parameters.AddWithValue("@volume", bar.Volume);
                 cmd.Parameters.AddWithValue("@open_interest", bar.OpenInterest);
+                //
                 cmd.ExecuteNonQuery();
             }
             catch (Exception e)
             {
                 LogUtil.ErrLog(e.ToString());
             }
-            finally
+        }
+
+        //写入tick
+        public void InsertTick(Tick tick)
+        {
+            MySqlConnection conn = ConnectionPool.getPool().getConnection();
+            string product = tick.Instrument.ProductID;
+            try
             {
-                conn.Close();
+                string sql = $@"INSERT INTO `hisdata_future`.`t_tick_{product}`
+                                    (`exchange_id`,
+                                    `instrument_id`,
+                                    `multiplier`,
+                                    `ask_price`,
+                                    `ask_vol`,
+                                    `bid_price`,
+                                    `bid_vol`,
+                                    `last_price`,
+                                    `volume`,
+                                    `open_interest`,
+                                    `uper_limit`,
+                                    `lower_limit`,
+                                    `update_time`)
+                                VALUES
+                                    (@exchange_id,
+                                    @instrument_id,
+                                    @multiplier,
+                                    @ask_price,
+                                    @ask_vol,
+                                    @bid_price,
+                                    @bid_vol,
+                                    @last_price,
+                                    @volume,
+                                    @open_interest,
+                                    @uper_limit,
+                                    @lower_limit,
+                                    @update_time);";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                //
+                cmd.Parameters.AddWithValue("@exchange_id", tick.Instrument.Exchange.ToString());
+                cmd.Parameters.AddWithValue("@instrument_id", tick.Instrument.InstrumentID);
+                cmd.Parameters.AddWithValue("@multiplier", tick.Instrument.VolumeMultiple);
+                cmd.Parameters.AddWithValue("@ask_price", tick.AskPrice);
+                cmd.Parameters.AddWithValue("@ask_vol", tick.AskVolume);
+                cmd.Parameters.AddWithValue("@bid_price", tick.BidPrice);
+                cmd.Parameters.AddWithValue("@bid_vol", tick.BidVolume);
+                cmd.Parameters.AddWithValue("@last_price", tick.LastPrice);
+                cmd.Parameters.AddWithValue("@volume", tick.Volume);
+                cmd.Parameters.AddWithValue("@open_interest", tick.OpenInterest);
+                cmd.Parameters.AddWithValue("@uper_limit", tick.UpperLimitPrice);
+                cmd.Parameters.AddWithValue("@lower_limit", tick.LowerLimitPrice);
+                cmd.Parameters.AddWithValue("@update_time", tick.UpdateTime);
+                //
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                LogUtil.ErrLog(e.ToString());
             }
         }
 
@@ -324,6 +373,7 @@ namespace FreeQuant.DataReceiver
                                     @update_time);";
                     //
                     cmd.Parameters.Clear();
+                    //
                     cmd.Parameters.AddWithValue("@exchange_id", tick.Instrument.Exchange.ToString());
                     cmd.Parameters.AddWithValue("@instrument_id", tick.Instrument.InstrumentID);
                     cmd.Parameters.AddWithValue("@multiplier", tick.Instrument.VolumeMultiple);
@@ -346,10 +396,6 @@ namespace FreeQuant.DataReceiver
             catch (Exception e)
             {
                 LogUtil.ErrLog(e.ToString());
-            }
-            finally
-            {
-                conn.Close();
             }
         }
     }

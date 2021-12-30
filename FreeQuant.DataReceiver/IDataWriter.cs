@@ -17,6 +17,8 @@ namespace FreeQuant.DataReceiver {
         void CreateTable(string product);
         //插入bar
         void InsertBar(Bar bar);
+        //插入tick
+        void InsertTick(Tick tick);
         //插入ticks
         void InsertTicks(List<Tick> ticks);
     }

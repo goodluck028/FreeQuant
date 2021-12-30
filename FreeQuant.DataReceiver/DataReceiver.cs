@@ -87,13 +87,15 @@ namespace FreeQuant.DataReceiver {
             BarGenerator generator;
             if (!GeneratorMap.TryGetValue(tick.Instrument, out generator)) {
                 generator = new BarGenerator(tick.Instrument, BarSizeType.Min1);
-                generator.OnBarTick += _onBarTick;
+                generator.OnBar += _onBar;
                 GeneratorMap.Add(tick.Instrument, generator);
             }
             //触发tick事件
             mOnTick?.Invoke(tick);
+            //存储tick
+            mWriter.InsertTick(tick);
             //生成bar
-            generator.addTick(tick);
+            generator.PutTick(tick);
         }
 
         //合约
@@ -114,9 +116,8 @@ namespace FreeQuant.DataReceiver {
         }
 
         //写数据到数据库
-        private void _onBarTick(Bar bar, List<Tick> ticks) {
+        private void _onBar(Bar bar) {
             mWriter.InsertBar(bar);
-            mWriter.InsertTicks(ticks);
         }
     }
 }

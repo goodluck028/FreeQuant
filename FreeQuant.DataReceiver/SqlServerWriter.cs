@@ -73,6 +73,11 @@ namespace FreeQuant.DataReceiver {
             }
         }
 
+        public void InsertTick(Tick tick)
+        {
+            throw new NotImplementedException();
+        }
+
         //写入ticks
         public void InsertTicks(List<Tick> ticks) {
             if (ticks.Count == 0)

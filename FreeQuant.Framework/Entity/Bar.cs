@@ -50,21 +50,20 @@ namespace FreeQuant.Framework {
     {
         //
         private Instrument mInstrument;
-        private List<Tick> mTickList;
         private Bar mBar;
         private BarSizeType mSizeType = BarSizeType.Min1;
         //
-        private Action<Bar, List<Tick>> mOnBarTick;
-        public event Action<Bar, List<Tick>> OnBarTick
+        private Action<Bar> mOnBar;
+        public event Action<Bar> OnBar
         {
             add
             {
-                mOnBarTick -= value;
-                mOnBarTick += value;
+                mOnBar -= value;
+                mOnBar += value;
             }
             remove
             {
-                mOnBarTick -= value;
+                mOnBar-= value;
             }
         }
         //
@@ -75,19 +74,31 @@ namespace FreeQuant.Framework {
         }
 
         //
-        public void addTick(Tick tick)
+        public void PutTick(Tick tick)
         {
             if (!tick.Instrument.Equals(mInstrument))
                 return;
-
-            //判断是否需要生成新bar
-            refreshBar(tick.UpdateTime);
+            //判断是否到达了bar的生成点
+            if (mBar != null)
+            {
+                DateTime barTime = mBar.BeginTime;
+                DateTime tickTime = tick.UpdateTime;
+                //计算bar开始时间除以周期得到的整倍数
+                int barQuotient = (barTime.Day * 1440 + barTime.Hour * 60 + barTime.Minute) / ((int)mSizeType);
+                //计算最新tick时间除以周期得到的整倍数
+                int tickQuotient = (tickTime.Day * 1440 + tickTime.Hour * 60 + tickTime.Minute) / ((int)mSizeType);
+                //如果两者不同，认为新周期开始，触发bar事件
+                if (!barQuotient.Equals(tickQuotient))
+                {
+                    mOnBar?.Invoke(mBar);
+                    mBar = null;
+                }
+            }
 
             //更新bar数据
             if (mBar == null)
             {
                 mBar = new Bar(mInstrument, tick.LastPrice, tick.UpdateTime, mSizeType);
-                mTickList = new List<Tick>();
                 mBar.HighPrice = tick.LastPrice;
                 mBar.LowPrice = tick.LastPrice;
                 mBar.ClosePrice = tick.LastPrice;
@@ -101,23 +112,6 @@ namespace FreeQuant.Framework {
                 mBar.ClosePrice = tick.LastPrice;
                 mBar.Volume += tick.Volume;
                 mBar.OpenInterest = tick.OpenInterest;
-            }
-            mTickList.Add(tick);
-        }
-        //判断是否需要生成新bar
-        private void refreshBar(DateTime current)
-        {
-            if (mBar == null)
-                return;
-            //
-            DateTime barTime = mTickList[0].UpdateTime;
-            int barQuotient = (barTime.Day * 1440 + barTime.Hour * 60 + barTime.Minute) / ((int)mSizeType);
-            int tickQuotient = (current.Day * 1440 + current.Hour * 60 + current.Minute) / ((int)mSizeType);
-            if (!barQuotient.Equals(tickQuotient))
-            {
-                mOnBarTick?.Invoke(mBar, mTickList);
-                mBar = null;
-                mTickList = null;
             }
         }
     }

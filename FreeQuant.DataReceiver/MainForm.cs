@@ -32,6 +32,7 @@ namespace FreeQuant.DataReceiver {
             if (result == DialogResult.OK) {
                 mDataReceiver.OnInstrument -= _onInstrument;
                 mDataReceiver.OnTick -= _onTick;
+                TimerUtil.On1Hour -= _onTimer;
                 //
                 Dispose();
                 Application.Exit();
@@ -49,6 +50,7 @@ namespace FreeQuant.DataReceiver {
         private void start() {
             mDataReceiver.OnInstrument += _onInstrument;
             mDataReceiver.OnTick += _onTick;
+            TimerUtil.On1Hour += _onTimer;
             mDataReceiver.run();
         }
 
@@ -118,6 +120,19 @@ namespace FreeQuant.DataReceiver {
         //行号
         private void dataGridView1_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e) {
             e.Row.HeaderCell.Value = string.Format("{0}", e.Row.Index + 1);
+        }
+
+        //timer
+        private void _onTimer()
+        {
+            //每天开盘前计数归零
+            if (DateTime.Now.Hour.Equals(5))
+            {
+                foreach(ListViewItem li in listView1.Items)
+                {
+                    li.SubItems[1].Tag = 0;
+                }
+            }
         }
     }
 }
