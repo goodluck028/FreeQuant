@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Strategy2.cs" />
     <Compile Include="Strategy1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -109,7 +109,7 @@ namespace FreeQuant.DataReceiver {
             safeInvoke(() => {
                 ListViewItem li;
                 if (mRowMap.TryGetValue(tick.Instrument.InstrumentID, out li)) {
-                    li.SubItems[1].Tag = li.SubItems[1].Tag == null ? 1 : (long)(li.SubItems[1].Tag) + 1;
+                    li.SubItems[1].Tag = li.SubItems[1].Tag == null ? 1 : (int)(li.SubItems[1].Tag) + 1;
                     li.SubItems[1].Text = li.SubItems[1].Tag.ToString();
                     li.SubItems[2].Text = tick.LastPrice.ToString();
                     li.SubItems[3].Text = tick.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
@@ -128,7 +128,7 @@ namespace FreeQuant.DataReceiver {
             //每天开盘前计数归零
             if (DateTime.Now.Hour.Equals(5))
             {
-                foreach(ListViewItem li in listView1.Items)
+                foreach(ListViewItem li in mRowMap.Values)
                 {
                     li.SubItems[1].Tag = 0;
                 }

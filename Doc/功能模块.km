@@ -1,0 +1,172 @@
+{
+    "root": {
+        "data": {
+            "id": "cgsnmb2lulk0",
+            "created": 1640869293576,
+            "text": "FreeQuant"
+        },
+        "children": [
+            {
+                "data": {
+                    "id": "cgsnmpwsaxs0",
+                    "created": 1640869325876,
+                    "text": "App"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "cgsno9fnwfs0",
+                            "created": 1640869446740,
+                            "text": "策略运行状态"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cgsnphr9cns0",
+                            "created": 1640869543220,
+                            "text": "持仓监控"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cgsnp23vxnk0",
+                            "created": 1640869509155,
+                            "text": "订单监控"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cgsnp606mio0",
+                            "created": 1640869517638,
+                            "text": "策略启停"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cgsnp9c68c80",
+                            "created": 1640869524894,
+                            "text": "自定义命令"
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "cgsnn5vmnns0",
+                    "created": 1640869360634,
+                    "text": "数据接收器",
+                    "layout_mind_offset": {
+                        "x": -742,
+                        "y": -233
+                    }
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "cgsnq3z0fig0",
+                            "created": 1640869591578,
+                            "text": "多路数据整合"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "cgsnr2uimww0",
+                                    "created": 1640869667494,
+                                    "text": "多行情源整合"
+                                },
+                                "children": []
+                            },
+                            {
+                                "data": {
+                                    "id": "cgsnr89w3740",
+                                    "created": 1640869679307,
+                                    "text": "多数据库整合"
+                                },
+                                "children": []
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": "cgsnq8f0xoo0",
+                            "created": 1640869601253,
+                            "text": "数据清洗"
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "cgsnnegnkig0",
+                    "created": 1640869379320,
+                    "text": "策略引擎",
+                    "layout_mind_offset": {
+                        "x": 458,
+                        "y": 151
+                    }
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "cgsntrxccvc0",
+                            "created": 1640869878812,
+                            "text": "策略持仓"
+                        },
+                        "children": []
+                    },
+                    {
+                        "data": {
+                            "id": "cgsntvvnxfc0",
+                            "created": 1640869887418,
+                            "text": "策略盈亏"
+                        },
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "id": "cgsnnmqiu3k0",
+                    "created": 1640869397331,
+                    "text": "策略分析器"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "id": "cgsnny1f1ww0",
+                            "created": 1640869421934,
+                            "text": "事前回测"
+                        },
+                        "children": [
+                            {
+                                "data": {
+                                    "id": "cgsnsm6nzpc0",
+                                    "created": 1640869787951,
+                                    "text": "回测结果存储"
+                                },
+                                "children": []
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": "cgsno2e9veg0",
+                            "created": 1640869431419,
+                            "text": "事后验证"
+                        },
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    "template": "default",
+    "theme": "fresh-blue",
+    "version": "1.4.43"
+}
